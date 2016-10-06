@@ -1,0 +1,17 @@
+{
+  "name": "bluemix_node_getting_started",
+  "version": "1.0.0",
+  "author": "erik",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "private": false,
+  "dependencies": {
+    
+  },
+  "engines": {
+    "node": "0.12.7",
+    "npm": "2.7.4"
+  }
+}

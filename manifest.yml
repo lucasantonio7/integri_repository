@@ -1,0 +1,7 @@
+applications:
+- disk_quota: 1024M
+  name: bluemix_node_getting_started
+  command: node main.js
+  path: .
+  instances: 1
+  memory: 512M
