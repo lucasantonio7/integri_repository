@@ -31,7 +31,22 @@ passport.use(new Strategy({
   consumerSecret: envVars.twitterConsumerSecret,
   callbackURL: "http://" + serverLocation + ":" + 8080 + "/api/twitter/return"
 }, function (token, tokenSecret, profile, cb) {
-  return cb(null, profile);
+  let T = new Twit({
+    consumer_key: envVars.twitterConsumerKey,
+    consumer_secret: envVars.twitterConsumerSecret,
+    access_token: token,
+    access_token_secret: tokenSecret
+  })
+
+  T.get('statuses/user_timeline', {
+    user_id: profile.id,
+    count: 20
+  }, (err, data, response) => {
+    console.log(data);
+    // Get the data send to translate and then to the NLU
+    return cb(null, profile);
+  })
+  
 }));
 
 passport.serializeUser((user, done) => {

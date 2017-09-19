@@ -17,8 +17,7 @@ module.exports = function (passport) {
       })
     } else {
       res.json({
-        login: false,
-        user: user
+        login: false
       })
     }
   });

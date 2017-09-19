@@ -1,7 +1,7 @@
 <template>
   <div>
     <a href="/api/twitter/login" v-if="!login">Login com twitter</a>
-    <h2 v-if="login">Bem vindo! {{ user.username }}</h2>
+    <h2 v-if="login">Bem vindo! {{ user.displayName }}</h2>
   </div>
 </template>
 <script>
