@@ -9,6 +9,7 @@ const path = require('path');
 const cfenv = require('./cfenv-wrapper');
 var appEnv = cfenv.getAppEnv();
 const envVars = appEnv.getEnvVars();
+const watson = require('./apis/watson')(appEnv)
 
 let _secret = "projetointegri2017";
 
@@ -42,11 +43,28 @@ passport.use(new Strategy({
     user_id: profile.id,
     count: 20
   }, (err, data, response) => {
-    console.log(data);
-    // Get the data send to translate and then to the NLU
-    return cb(null, profile);
+    let tweets = data;
+    let allTranslations = []
+    tweets.forEach(tweet => {
+      allTranslations.push(watson.translate(tweet.text))
+    })
+    Promise.all(allTranslations).then(translations => {
+      let analysisQueue = [];
+      translations.forEach(trans => {
+        console.log(trans)
+        analysisQueue.push(watson.analyze(trans));
+      })
+      Promise.all(analysisQueue).then(analysis => {
+        analysis.forEach(sample => {
+          console.log(sample)
+        });
+        // Get the data send to translate and then to the NLU
+        return cb(null, profile);
+      })
+    }).catch(err => {
+
+    })
   })
-  
 }));
 
 passport.serializeUser((user, done) => {
