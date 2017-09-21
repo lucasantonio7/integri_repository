@@ -18,9 +18,11 @@
     "body-parser": "^1.18.1",
     "cfenv": "^1.0.4",
     "cookie-parser": "^1.4.3",
+    "couchdb-model": "^0.4.0",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
     "fs-sync": "^1.0.4",
+    "googleapis": "^21.3.0",
     "nano": "^6.4.0",
     "passport": "^0.4.0",
     "passport-twitter": "^1.0.4",
@@ -28,6 +30,7 @@
     "properties-parser": "^0.3.1",
     "twit": "^2.2.9",
     "vue": "^2.4.2",
+    "vue-youtube-embed": "^2.1.2",
     "watson-developer-cloud": "^2.39.0"
   },
   "devDependencies": {

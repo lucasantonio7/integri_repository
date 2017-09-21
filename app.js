@@ -9,7 +9,15 @@ const path = require('path');
 const cfenv = require('./cfenv-wrapper');
 var appEnv = cfenv.getAppEnv();
 const envVars = appEnv.getEnvVars();
-const watson = require('./apis/watson')(appEnv)
+// DB
+const nano = require('nano')(appEnv.services['cloudantNoSQLDB'][0].credentials.url);
+const dbHandler = nano.use('integri');
+const couchDBModel = require('couchdb-model');
+const myModel = couchDBModel(dbHandler);
+const userModel = require('./models/user')(myModel);
+// API Call
+const watson = require('./apis/watson')(appEnv);
+const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler);
 
 let _secret = "projetointegri2017";
 
@@ -41,7 +49,7 @@ passport.use(new Strategy({
 
   T.get('statuses/user_timeline', {
     user_id: profile.id,
-    count: 20
+    count: 2
   }, (err, data, response) => {
     let tweets = data;
     let allTranslations = []
@@ -51,18 +59,34 @@ passport.use(new Strategy({
     Promise.all(allTranslations).then(translations => {
       let analysisQueue = [];
       translations.forEach(trans => {
-        console.log(trans)
         analysisQueue.push(watson.analyze(trans));
       })
       Promise.all(analysisQueue).then(analysis => {
         analysis.forEach(sample => {
-          console.log(sample)
+          console.log('Concepts')
+          console.log(sample.concepts)
+          console.log('Categories')
+          console.log(sample.categories)
+          console.log('Keywords')
+          console.log(sample.keywords)
+          sample.categories.forEach(cat => {
+            let query = cat.label.split('/');
+            console.log('Query:')
+            console.log(query);
+          })
+          // google.videosSources('art and entertainment').then(resp => {
+          //   console.log('Sucesso Videos:')
+          //   console.log(resp)
+          // }).catch(err => {
+          //   console.log("Erro videos")
+          //   console.log(err)
+          // })
         });
         // Get the data send to translate and then to the NLU
         return cb(null, profile);
       })
     }).catch(err => {
-
+      return cb(null, profile);
     })
   })
 }));

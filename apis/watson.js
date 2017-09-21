@@ -39,8 +39,13 @@ module.exports = function (appEnv) {
         let parameters = {
           text: text,
           features: {
-            categories: {},
-            keywords: {},
+            categories: {
+              sentiment: true
+            },
+            keywords: {
+              sentiment: true,
+              emotion: true
+            },
             concepts: {}
           }
         }
