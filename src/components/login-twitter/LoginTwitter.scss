@@ -1,0 +1,23 @@
+.jorney-btn{
+  background-color: #A275BA;
+  display: inline-flex;
+  padding: 0.75rem;
+  width: 100%;
+  .fa{
+    color: #fff;
+    font-size: 1.8rem
+  }
+  .img-piece{
+    width: 40px;
+    padding: 0.5rem;
+    display: inline-block;
+  }
+  .text-piece{
+    display: inline-block;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem!important;
+    line-height: 1rem!important;
+    color: #fff;
+  }
+}

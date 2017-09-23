@@ -1,29 +1,31 @@
 <template>
-  <div>
-    <a href="/api/twitter/login" v-if="!login">Login com twitter</a>
-    <h2 v-if="login">Bem vindo! {{ user.displayName }}</h2>
+  <div v-show="!user.login" class="jorney-btn" @click="startLogin">
+    <i class="fa fa-user-o" aria-hidden="true"></i>
+    <span class="text-piece">Inicie sua jornada!</span>
   </div>
 </template>
 <script>
 import axios from 'axios'
 export default {
-  data () {
-    // May we should consider using VUEX
-    return {
-      login: false,
-      user: {}
+  computed: {
+    user () {
+      return this.$store.getters.getUser
     }
   },
   mounted () {
     axios.get('/api/twitter/user').then(response => {
-      this.login = response.data.login
-      this.user = response.data.user
+      this.$store.commit('SET_USER', {login: response.data.login, user_data: response.data.user})
     }).catch(err => {
       console.log(err)
     })
+  },
+  methods: {
+    startLogin () {
+      window.location.href = '/api/twitter/login'
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
-@import 'LoginTwitter.scss'
+  @import 'LoginTwitter.scss'
 </style>

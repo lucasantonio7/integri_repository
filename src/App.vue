@@ -1,28 +1,31 @@
 <template>
   <div id="app">
-    <hello></hello>
+    <!-- vuetifyjs requires this v-app directive to work properly -->
+    <v-app>
+      <toolbar></toolbar>
+      <home></home>
+      <integri></integri>
+    </v-app>
   </div>
 </template>
 
 <script>
-import Hello from './components/Hello'
-import('../node_modules/vuetify/dist/vuetify.min.css')
+  import Toolbar from './components/toolbar/Toolbar'
+  import Home from './components/home/Home'
+  import Integri from './components/integri/Integri'
 
-export default {
-  name: 'app',
-  components: {
-    Hello
+  export default {
+    name: 'app',
+    components: {
+      Toolbar,
+      Home,
+      Integri
+    }
   }
-}
+
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="stylus">
+  @import './stylus/main'
+
 </style>
