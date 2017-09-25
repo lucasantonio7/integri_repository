@@ -5,12 +5,14 @@ import App from './App'
 import Vuetify from 'vuetify'
 import('../node_modules/vuetify/dist/vuetify.min.css')
 import Vuex from 'vuex'
+import VueYouTubeEmbed from 'vue-youtube-embed'
 
 import store from './store/store'
 
 Vue.config.productionTip = false
 Vue.use(Vuetify)
 Vue.use(Vuex)
+Vue.use(VueYouTubeEmbed)
 /* eslint-disable no-new */
 new Vue({
   store,

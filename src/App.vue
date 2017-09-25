@@ -5,6 +5,7 @@
       <toolbar></toolbar>
       <home></home>
       <integri></integri>
+      <trends></trends>  
     </v-app>
   </div>
 </template>
@@ -13,13 +14,15 @@
   import Toolbar from './components/toolbar/Toolbar'
   import Home from './components/home/Home'
   import Integri from './components/integri/Integri'
+  import Trends from './components/trends/Trends'
 
   export default {
     name: 'app',
     components: {
       Toolbar,
       Home,
-      Integri
+      Integri,
+      Trends
     }
   }
 
