@@ -4,8 +4,16 @@
       <v-flex xs12>
         <h4 class="display-1">Em alta</h4>
       </v-flex>
-      <v-flex xs3 v-for="video in videosTrends" :key="video">
-        <youtube :video-id="video"></youtube>
+      <v-flex xs3 v-for="video in videosTrends" :key="video.id">
+        <youtube :video-id="video.id" class="responsive-yt"></youtube>
+        <v-list two-line subheader>
+          <v-list-tile avatar>
+            <v-list-tile-content>
+              <v-list-tile-title>{{ video.title }}</v-list-tile-title>
+              <v-list-tile-sub-title>{{ video.channel }}</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
       </v-flex>
     </v-layout>
   </v-container>
@@ -27,3 +35,7 @@ export default {
   }
 }
 </script>
+<style lang="sass">
+  @import './Trends.scss'
+</style>
+

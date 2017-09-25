@@ -86,7 +86,6 @@ module.exports = function (apiKey, dbHandler) {
 
   api.get('/trends', (req, res) => {
     // Get uploads playlist from a given channel or set of channels
-    console.log('Trends')
     dbHandler.view('sources', 'getYoutubeSource', (err, body) => {
       if (!err) {
         let channels = body.rows[0].value;
@@ -104,7 +103,7 @@ module.exports = function (apiKey, dbHandler) {
           if (channelDetails.pageInfo.totalResults > 0) {
             // For each list get the videos
             let videosPromises = channelDetails.items.map(item => {
-              return new Promise((resolve,reject) => {
+              return new Promise((resolve, reject) => {
                 youtube.playlistItems.list({
                   part: 'snippet',
                   playlistId: item.contentDetails.relatedPlaylists.uploads,
@@ -120,7 +119,12 @@ module.exports = function (apiKey, dbHandler) {
                   } else {
                     let videosList = []
                     playlist.items.forEach(function (video) {
-                      videosList.push(video.snippet.resourceId.videoId)
+                      console.log(video.snippet)
+                      videosList.push({
+                        id: video.snippet.resourceId.videoId,
+                        title: video.snippet.title,
+                        channel: video.snippet.channelTitle
+                      })
                     });
                     resolve(videosList);
                   }
@@ -132,7 +136,7 @@ module.exports = function (apiKey, dbHandler) {
               let response = sucess.map(video => {
                 return video.v
               })
-              response = [].concat.apply([],response);
+              response = [].concat.apply([], response);
               res.json(response);
             }).catch(err => {
               res.status(500).send(err);

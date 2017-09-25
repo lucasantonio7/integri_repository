@@ -2,10 +2,12 @@
   <div id="app">
     <!-- vuetifyjs requires this v-app directive to work properly -->
     <v-app>
-      <toolbar></toolbar>
-      <home></home>
-      <integri></integri>
-      <trends></trends>  
+      <main>
+        <toolbar></toolbar>
+        <home></home>
+        <integri></integri>
+        <trends></trends>  
+      </main>
     </v-app>
   </div>
 </template>

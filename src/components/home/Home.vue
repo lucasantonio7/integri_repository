@@ -5,7 +5,7 @@
         <v-layout align-center justify-center>
           <v-flex xs4 justify-center class="home-middle-container">
             <img :src="require('@/assets/svg/home/Integri_circle.svg')" alt="">
-            <login-twitter class="home-middle-btn"></login-twitter>
+            <login-twitter class="home-middle-btn" v-ripple></login-twitter>
           </v-flex>
           <fcb></fcb>
         </v-layout>
