@@ -1,10 +1,10 @@
 <template>
-  <v-container grid-list-md>
+  <v-container grid-list-md class="no-fixed-height">
     <v-layout row wrap>
       <v-flex xs12>
-        <h4 class="trends-title">Em alta</h4>
+        <h6 class="trends-title">Em alta</h6>
       </v-flex>
-      <v-flex xs3 v-for="video in videosTrends" :key="video.id">
+      <v-flex xs6 md3 v-for="video in videosTrends" :key="video.id">
         <youtube :video-id="video.id" class="responsive-yt"></youtube>
         <v-list two-line subheader>
           <v-list-tile avatar>

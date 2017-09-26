@@ -6,7 +6,9 @@
         <toolbar></toolbar>
         <home></home>
         <integri></integri>
-        <trends></trends>  
+        <trends></trends>
+        <relevant></relevant>
+        <share-social></share-social>
       </main>
     </v-app>
   </div>
@@ -17,6 +19,8 @@
   import Home from './components/home/Home'
   import Integri from './components/integri/Integri'
   import Trends from './components/trends/Trends'
+  import ShareSocial from './components/share/ShareSocial'
+  import Relevant from './components/relevant/Relevant'
 
   export default {
     name: 'app',
@@ -24,7 +28,9 @@
       Toolbar,
       Home,
       Integri,
-      Trends
+      Trends,
+      Relevant,
+      ShareSocial
     }
   }
 

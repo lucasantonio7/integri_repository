@@ -1,14 +1,11 @@
-.jorney-btn{
-  background-color: #A275BA;
+$background: #C93680;
+$darkerbg: #B32B6D;
+.chat-btn{
+  background-color: $background;
   display: inline-flex;
   padding: 0.75rem;
   width: 100%;
-  .fa{
-    color: #fff;
-    font-size: 1.8rem;
-    min-width: 40px;
-    text-align: center;
-  }
+  max-height: 49px;
   .img-piece{
     width: 40px;
     padding: 0.5rem;
@@ -21,5 +18,13 @@
     font-size: 1rem!important;
     line-height: 1rem!important;
     color: #fff;
+  }
+}
+
+.chat-wrapper{
+  min-height: 100vh;
+  background: $background;
+  .chat-customized-toolbar{
+    background-color: $darkerbg!important;
   }
 }
