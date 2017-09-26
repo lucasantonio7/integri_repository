@@ -2,7 +2,7 @@
   <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex xs12>
-        <h4 class="display-1">Em alta</h4>
+        <h4 class="trends-title">Em alta</h4>
       </v-flex>
       <v-flex xs3 v-for="video in videosTrends" :key="video.id">
         <youtube :video-id="video.id" class="responsive-yt"></youtube>
@@ -15,12 +15,20 @@
           </v-list-tile>
         </v-list>
       </v-flex>
+      <v-flex xs12 class="text-xs-right">
+        <a @click="showMore" v-if="display < allTrends">Ver mais</a>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
 <script>
 import axios from 'axios'
 export default {
+  data () {
+    return {
+      display: 4
+    }
+  },
   mounted () {
     axios.get('/api/google/trends').then(response => {
       this.$store.commit('SET_TRENDS', response.data)
@@ -30,7 +38,21 @@ export default {
   },
   computed: {
     videosTrends () {
-      return this.$store.getters.getTrends
+      let count = 0
+      return this.$store.getters.getTrends.filter(trend => {
+        if (count < this.display) {
+          count += 1
+          return true
+        }
+      })
+    },
+    allTrends () {
+      return this.$store.getters.getTrends.length
+    }
+  },
+  methods: {
+    showMore () {
+      this.display += 4
     }
   }
 }
