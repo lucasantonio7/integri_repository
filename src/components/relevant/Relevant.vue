@@ -19,7 +19,7 @@
 </template>
 <script>
 import LoginTwitter from '../login-twitter/LoginTwitter'
-import Chat from '../chat/Chat'
+import Chat from '../chattoggle/ChatToggle'
 export default {
   components: {
     LoginTwitter,

@@ -3,5 +3,6 @@ export default {
     login: false,
     user_data: null
   },
-  trends: []
+  trends: [],
+  displayChat: false
 }

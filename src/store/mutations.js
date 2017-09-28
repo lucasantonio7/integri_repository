@@ -4,5 +4,8 @@ export default {
   },
   SET_TRENDS (state, payload) {
     state.trends = payload
+  },
+  TOGGLE_CHAT_VISIBILITY (state, payload) {
+    state.displayChat = !state.displayChat
   }
 }

@@ -4,5 +4,8 @@ export default {
   },
   getTrends: state => {
     return state.trends
+  },
+  displayChat: state => {
+    return state.displayChat
   }
 }

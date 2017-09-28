@@ -109,9 +109,11 @@ app.get('/', (req, res) => {
 })
 
 const twitter = require('./apis/twitter.js')(passport);
+const conversation = require('./apis/conversation')(appEnv);
 
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
+app.use('/api/conversation', conversation)
 
 app.listen(port, () => {
   console.log('running on port: ', port)

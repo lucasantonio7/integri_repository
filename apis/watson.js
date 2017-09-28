@@ -9,13 +9,14 @@ module.exports = function (appEnv) {
     password: translatorCredentials.password,
     url: translatorCredentials.url
   });
-  var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
+  const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
   let NLUCredentials = appEnv.services['natural-language-understanding'][0].credentials
-  var natural_language_understanding = new NaturalLanguageUnderstandingV1({
+  let natural_language_understanding = new NaturalLanguageUnderstandingV1({
     username: NLUCredentials.username,
     password: NLUCredentials.password,
     version_date: '2017-02-27'
   });
+  
   return {
     translate(source) {
       return new Promise((resolve, reject) => {
