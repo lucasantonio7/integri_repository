@@ -34,14 +34,12 @@ module.exports = function (apiKey, dbHandler) {
           if (!err) {
             let channels = body.rows[0].value;
             let channelsPromises = channels.map(channel => {
-              console.log(channel);
               return new Promise((resolve, reject) => {
                 youtube.search.list({
                   part: 'snippet',
                   channelId: channel.id,
                   q: query
                 }, (err, videos) => {
-                  console.log(videos)
                   if (!err) {
                     if (videos.pageInfo.totalResults > 0) {
                       videos.items.forEach(video => {
@@ -119,7 +117,6 @@ module.exports = function (apiKey, dbHandler) {
                   } else {
                     let videosList = []
                     playlist.items.forEach(function (video) {
-                      console.log(video.snippet)
                       videosList.push({
                         id: video.snippet.resourceId.videoId,
                         title: video.snippet.title,

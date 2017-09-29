@@ -63,12 +63,12 @@ passport.use(new Strategy({
       })
       Promise.all(analysisQueue).then(analysis => {
         analysis.forEach(sample => {
-          console.log('Concepts')
-          console.log(sample.concepts)
-          console.log('Categories')
-          console.log(sample.categories)
-          console.log('Keywords')
-          console.log(sample.keywords)
+          // console.log('Concepts')
+          // console.log(sample.concepts)
+          // console.log('Categories')
+          // console.log(sample.categories)
+          // console.log('Keywords')
+          // console.log(sample.keywords)
           sample.categories.forEach(cat => {
             let query = cat.label.split('/');
             console.log('Query:')

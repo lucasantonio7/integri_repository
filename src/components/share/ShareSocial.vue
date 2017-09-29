@@ -1,6 +1,6 @@
 <template>
     <v-layout row wrap class="overflow-hidden">
-      <v-flex x12 md7 class="social-medias-block">
+      <v-flex x12 md5 class="social-medias-block">
         <h6>Compartilhe a plataforma Integri!</h6>
         <v-layout row wrap class="social-btns">
           <v-btn icon>
@@ -20,6 +20,7 @@
           </v-btn>
         </v-layout>
       </v-flex>
+      <v-flex md2 hidden-sm-and-down class="slash"></v-flex>
       <v-flex x12 md5 class="social-newsletter-block">
         <h6>Fique por dentro das novidades!</h6>
         <div class="input-block">

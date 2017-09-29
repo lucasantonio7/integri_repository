@@ -9,6 +9,7 @@
         <trends></trends>
         <relevant></relevant>
         <share-social></share-social>
+        <sponsors></sponsors>
       </main>
     </v-app>
   </div>
@@ -19,8 +20,9 @@
   import Home from './components/home/Home'
   import Integri from './components/integri/Integri'
   import Trends from './components/trends/Trends'
-  import ShareSocial from './components/share/ShareSocial'
   import Relevant from './components/relevant/Relevant'
+  import ShareSocial from './components/share/ShareSocial'
+  import Sponsors from './components/sponsors/Sponsors'
 
   export default {
     name: 'app',
@@ -30,7 +32,8 @@
       Integri,
       Trends,
       Relevant,
-      ShareSocial
+      ShareSocial,
+      Sponsors
     }
   }
 
