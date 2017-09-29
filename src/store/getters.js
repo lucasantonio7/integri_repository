@@ -7,5 +7,14 @@ export default {
   },
   displayChat: state => {
     return state.displayChat
+  },
+  getContext: state => {
+    return state.context
+  },
+  getChat: state => {
+    return state.chat
+  },
+  isTyping: state => {
+    return state.typing
   }
 }

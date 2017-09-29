@@ -7,5 +7,11 @@ export default {
   },
   TOGGLE_CHAT_VISIBILITY (state, payload) {
     state.displayChat = !state.displayChat
+  },
+  ADD_TEXT (state, payload) {
+    state.chat.push(payload)
+  },
+  SET_CONTEXT (state, payload) {
+    state.context = payload
   }
 }

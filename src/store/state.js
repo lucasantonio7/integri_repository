@@ -4,5 +4,8 @@ export default {
     user_data: null
   },
   trends: [],
-  displayChat: false
+  displayChat: false,
+  context: null,
+  chat: [],
+  typing: false
 }

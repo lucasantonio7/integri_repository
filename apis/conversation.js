@@ -11,22 +11,37 @@ module.exports = function (appEnv) {
   let workspace_id = '4757feda-62f4-4e59-8c50-c1f42a05926c';
 
   api.get('/init', (req, res) => {
+    let text = req.params.text || '';
     conversation.message({
       input: {
-        text: ''
+        text: text
       },
       workspace_id: workspace_id
     }, function (err, response) {
       if (err) {
         console.error(err);
       } else {
-        console.log(JSON.stringify(response, null, 2));
+        res.json(response)
       }
     });
   })
 
   api.get('/message', (req, res) => {
-    
+    let _text = req.query.text;
+    let _context = JSON.parse(req.query.context);
+    conversation.message({
+      context: _context,
+      input: {
+        text: _text,
+      },
+      workspace_id: workspace_id
+    }, function (err, response) {
+      if (err) {
+        console.error(err);
+      } else {
+        res.json(response)
+      }
+    });
   })
 
   return api;
