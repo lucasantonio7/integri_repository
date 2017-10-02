@@ -18,12 +18,15 @@ export default {
   },
   computed: {
     displayChat () {
-      return this.$store.getters.displayChat
+      return this.$store.getters.displayChat.active
     }
   },
   methods: {
     toggle () {
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
+      if (this.displayChat) {
+        this.$store.commit('HIDE_CHAT_NOTIFICATION')
+      }
     }
   }
 }

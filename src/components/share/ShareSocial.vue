@@ -1,23 +1,33 @@
 <template>
     <v-layout row wrap class="overflow-hidden">
       <v-flex x12 md5 class="social-medias-block">
-        <h6>Compartilhe a plataforma Integri!</h6>
+        <h6>Conheça as redes sociais do Integri!</h6>
         <v-layout row wrap class="social-btns">
-          <v-btn icon>
-            <v-icon>fa fa-facebook</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>fa fa-twitter</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>fa fa-linkedin</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>fa fa-google-plus</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>fa fa-pinterest-p</v-icon>
-          </v-btn>
+          <a href="https://www.facebook.com/integri.org/" target="_blank" class="social-link">
+            <v-btn icon>
+              <v-icon>fa fa-facebook</v-icon>
+            </v-btn>
+          </a>
+          <a href="https://twitter.com/Integri_org" target="_blank" class="social-link">
+            <v-btn icon>
+              <v-icon>fa fa-twitter</v-icon>
+            </v-btn>
+          </a>
+          <!-- <a href="" target="_blank">
+            <v-btn icon>
+              <v-icon>fa fa-linkedin</v-icon>
+            </v-btn>
+          </a> -->
+          <!-- <a href="" target="_blank">
+            <v-btn icon>
+              <v-icon>fa fa-google-plus</v-icon>
+            </v-btn>
+          </a> -->
+          <a href="https://www.instagram.com/integri_org/" target="_blank" class="social-link">
+            <v-btn icon>
+              <v-icon>fa fa-instagram</v-icon>
+            </v-btn>
+          </a>
         </v-layout>
       </v-flex>
       <v-flex md2 hidden-sm-and-down class="slash"></v-flex>

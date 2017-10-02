@@ -6,7 +6,13 @@ export default {
     state.trends = payload
   },
   TOGGLE_CHAT_VISIBILITY (state, payload) {
-    state.displayChat = !state.displayChat
+    state.displayChat.active = !state.displayChat.active
+  },
+  SHOW_CHAT_NOTIFICATION (state, payload) {
+    state.displayChat.isNotificationActive = true
+  },
+  HIDE_CHAT_NOTIFICATION (state, payload) {
+    state.displayChat.isNotificationActive = false
   },
   ADD_TEXT (state, payload) {
     state.chat.push(payload)

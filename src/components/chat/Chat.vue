@@ -38,6 +38,20 @@ export default {
     },
     isTyping () {
       return this.$store.getters.isTyping
+    },
+    isDenied () {
+      return this.$store.getters.getUser.access_denied
+    },
+    askingProfile () {
+      return this.$store.getters.displayChat.askingProfile
+    }
+  },
+  watch: {
+    isDenied (newVal) {
+      // if (newVal) {
+      console.log('Watcher')
+      console.log(newVal)
+      // }
     }
   },
   data () {
@@ -47,11 +61,11 @@ export default {
   },
   methods: {
     submit () {
-      console.log('test')
       let data = {
         text: this.message,
         context: this.$store.getters.getContext
       }
+      console.log(data)
       this.$store.commit('ADD_TEXT', {
         sender: 'user',
         message: data.text
@@ -73,23 +87,56 @@ export default {
     },
     close () {
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
-    }
-  },
-  beforeMount () {
-    console.log(this.$store.getters.getContext)
-    if (!this.$store.getters.getContext) {
-      axios.get('/api/conversation/init').then(response => {
-        this.$store.commit('SET_CONTEXT', response.data.context)
+    },
+    notifyChatDeniedProfile () {
+      let data = {
+        text: 'sem acesso',
+        context: this.$store.getters.getContext
+      }
+      axios.get('/api/conversation/message', {
+        params: data
+      }).then(response => {
         response.data.output.text.forEach(text => {
           this.$store.commit('ADD_TEXT', {
             sender: 'watson',
             message: text
           })
         })
-      }).catch(err => {
-        console.log(err)
+      })
+    },
+    initChat () {
+      return new Promise((resolve, reject) => {
+        if (!this.$store.getters.getContext) {
+          axios.get('/api/conversation/init').then(response => {
+            this.$store.commit('SET_CONTEXT', response.data.context)
+            response.data.output.text.forEach(text => {
+              this.$store.commit('ADD_TEXT', {
+                sender: 'watson',
+                message: text
+              })
+            })
+            resolve(true)
+          }).catch(err => {
+            reject(err)
+          })
+        } else {
+          reject(false)
+        }
       })
     }
+  },
+  mounted () {
+    document.querySelector('.chat-wrapper').scrollIntoView({
+      behavior: 'smooth'
+    })
+    this.initChat().then(res => {
+      console.log(this.isDenied)
+      if (this.isDenied) {
+        this.notifyChatDeniedProfile()
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   }
 }
 
