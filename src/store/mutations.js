@@ -14,6 +14,9 @@ export default {
   HIDE_CHAT_NOTIFICATION (state, payload) {
     state.displayChat.isNotificationActive = false
   },
+  HIDE_CHAT_LABEL (state, payload) {
+    state.displatLabel.isNotificationActive = false
+  },
   ADD_TEXT (state, payload) {
     state.chat.push(payload)
   },

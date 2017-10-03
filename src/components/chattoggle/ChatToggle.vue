@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="chat-btn" @click="toggle">
-      <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="">
-      <span class="text-piece">Conte-nos sobre você!</span>
+      <span v-if="displayLabel">
+        <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="">
+        <span class="text-piece">Conte-nos sobre você!</span>
+      </span>
     </div>
     <div class="chat-toggle" v-if="displayChat">
       <chat></chat>
@@ -19,13 +21,18 @@ export default {
   computed: {
     displayChat () {
       return this.$store.getters.displayChat.active
+    },
+    displayLabel () {
+      return this.$store.getters.displayLabel.active
     }
   },
   methods: {
     toggle () {
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
+
       if (this.displayChat) {
         this.$store.commit('HIDE_CHAT_NOTIFICATION')
+        this.$store.commit('HIDE_CHAT_LABEL')
       }
     }
   }

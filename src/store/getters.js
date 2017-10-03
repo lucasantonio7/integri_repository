@@ -5,6 +5,9 @@ export default {
   getTrends: state => {
     return state.trends
   },
+  displayLabel: state => {
+    return state.displayLabel
+  },
   displayChat: state => {
     return state.displayChat
   },

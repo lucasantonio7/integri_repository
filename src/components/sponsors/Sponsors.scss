@@ -1,7 +1,35 @@
+.sponsors {
+  background-color: white;
+}
+
 .partners-wrapper {
-  min-height: auto!important;
-  padding: 4rem 0;
-  .partners-title{
+  background-color: #fff;
+  min-height: auto !important;
+
+  &.container {
+    padding: 4rem 0;
+  }
+
+  .partners-title {
     color: #818181;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .technical-partner {
+    border-right: 1px solid gray;
+    padding: 20px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .financial-partner {
+    padding: 20px;
+
+    img {
+      width: 100%;
+    }
   }
 }

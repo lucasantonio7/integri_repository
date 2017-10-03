@@ -10,6 +10,10 @@ export default {
     askingProfile: false,
     active: false
   },
+  displayLabel: {
+    isNotificationActive: false,
+    active: true
+  },
   context: null,
   chat: [],
   typing: false
