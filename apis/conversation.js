@@ -40,7 +40,7 @@ module.exports = function (appEnv) {
         console.error(err);
       } else {
         // Get the context and help with profile
-        console.log(response.entities)
+        console.log(response.intents)
         res.json(response)
       }
     });
