@@ -1,0 +1,94 @@
+$purple: #7A3773;
+$gray: #E6E6E6;
+$white: #fff;
+
+.social-link{
+  text-decoration: none;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+
+  .slash {
+    background: $gray;
+    position: relative;
+
+    &::after{
+      content: '';
+      border-left: 100px solid transparent;
+      border-bottom: 14.5rem solid $purple;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+  }
+
+  .social-newsletter-block {
+    background-color: $purple;
+    padding: 2rem 1rem;
+    z-index: 1;
+
+    ::-webkit-input-placeholder {
+      color: $white;
+    }
+
+    ::-moz-placeholder {
+      color: $white;
+    }
+
+    :-ms-input-placeholder {
+      color: $white;
+    }
+
+    :-moz-placeholder {
+      color: $white;
+    }
+
+    > h6 {
+      color: $white;
+      font-weight: 400;
+      padding: 2.5rem 0 0 1rem;
+    }
+
+    .btn.btn--raised.theme--light {
+      background-color: $gray;
+      border-radius: 0;
+      color: $purple;
+    }
+
+    .input-block{
+      padding: 1rem;
+    }
+
+    .email-input{
+      border: 1px solid $gray;
+      color: $white;
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  .social-medias-block {
+    background-color: $gray;
+    padding: 2rem 3rem;
+
+    > h6 {
+      color: $purple;
+      font-weight: 400;
+      padding: 2.5rem 0 0 1rem;
+    }
+
+    .social-btns {
+      padding: 0rem 1rem;
+
+      .btn.btn--icon.btn--raised{
+        border: 2px solid $purple;
+        border-radius: 0;
+        padding: 0.25rem;
+
+        .fa {
+          color: $purple;
+        }
+      }
+    }
+  }
+}

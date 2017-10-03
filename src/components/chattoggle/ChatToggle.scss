@@ -1,0 +1,32 @@
+$background: #C93680;
+
+.chat-btn {
+  background-color: $background;
+  display: inline-flex;
+  max-height: 70px;
+  padding: 10px 31px 10px 31px;
+  width: 100%;
+
+  img {
+    border-right: 1px solid #e06ea9;
+    height: 50px;
+    padding-right: 11px;
+    width: 50px;
+  }
+
+  .img-piece {
+    display: inline-block;
+    padding: 0.5rem;
+    width: 40px;
+  }
+
+  .text-piece {
+    color: #fff;
+    display: inline-block;
+    font-size: 1.5rem !important;
+    line-height: 3rem !important;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    vertical-align: top;
+  }
+}

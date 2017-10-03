@@ -1,0 +1,10 @@
+.home-middle-container {
+  position: relative;
+
+  .home-middle-btn {
+    position: absolute;
+    top: 65%;
+    margin: 0 3rem;
+    width: calc(100% - 6rem)!important
+  }
+}
