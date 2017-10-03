@@ -11,7 +11,6 @@ module.exports = function (passport) {
   });
   api.get('/denied', (req, res) => {
     req.session.denied = true;
-    console.log('Access was denied by the user')
     res.redirect('/')
   });
   // Will retrieve user's data

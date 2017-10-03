@@ -91,7 +91,8 @@ export default {
     notifyChatDeniedProfile () {
       let data = {
         text: 'sem acesso',
-        context: this.$store.getters.getContext
+        context: this.$store.getters.getContext,
+        trackingProfile: true
       }
       axios.get('/api/conversation/message', {
         params: data

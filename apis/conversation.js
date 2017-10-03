@@ -39,6 +39,8 @@ module.exports = function (appEnv) {
       if (err) {
         console.error(err);
       } else {
+        // Get the context and help with profile
+        console.log(response.entities)
         res.json(response)
       }
     });
