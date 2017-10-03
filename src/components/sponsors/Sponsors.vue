@@ -5,21 +5,21 @@
       <v-flex xs12 lg6 class="technical-partner">
         <h6 class="partners-title">PARCEIROS TÉCNICOS</h6>
         <v-layout row wrap>
-          <v-flex xs2>
+          <v-flex xs3>
             <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_4all.jpg')" alt="">
           </v-flex>
-          <v-flex xs2>
+          <v-flex xs3>
             <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_cappra.jpg')" alt="">
           </v-flex>
-          <v-flex xs2>
+          <v-flex xs3>
             <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_ciet.jpg')" alt="">
           </v-flex>
         </v-layout>
         <v-layout row wrap>
-          <v-flex xs2>
+          <v-flex xs3>
             <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_ibm.jpg')" alt="">
           </v-flex>
-          <v-flex xs2>
+          <v-flex xs3>
             <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_inst_aprender.jpg')" alt="">
           </v-flex>
         </v-layout>

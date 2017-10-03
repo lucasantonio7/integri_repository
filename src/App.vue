@@ -4,10 +4,7 @@
     <v-app>
       <main>
         <toolbar></toolbar>
-        <home></home>
-        <integri></integri>
-        <trends></trends>
-        <relevant></relevant>
+        <router-view></router-view>
         <share-social></share-social>
         <sponsors></sponsors>
       </main>
@@ -17,10 +14,6 @@
 
 <script>
   import Toolbar from './components/toolbar/Toolbar'
-  import Home from './components/home/Home'
-  import Integri from './components/integri/Integri'
-  import Trends from './components/trends/Trends'
-  import Relevant from './components/relevant/Relevant'
   import ShareSocial from './components/share/ShareSocial'
   import Sponsors from './components/sponsors/Sponsors'
 
@@ -28,10 +21,6 @@
     name: 'app',
     components: {
       Toolbar,
-      Home,
-      Integri,
-      Trends,
-      Relevant,
       ShareSocial,
       Sponsors
     }
