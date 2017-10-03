@@ -52,6 +52,21 @@ export default {
       console.log('Watcher')
       console.log(newVal)
       // }
+    },
+    chat (newVal) {
+      if (newVal) {
+        let lastMsg = newVal[newVal.length - 1]
+        let elements
+        if (lastMsg.sender === 'user') {
+          elements = document.querySelectorAll('.chatbox-user')
+        } else {
+          elements = document.querySelectorAll('.chatbox-watson')
+        }
+        let scrollTo = elements[elements.length - 1]
+        setTimeout(() => {
+          scrollTo.parentElement.parentElement.scrollTop = scrollTo.offsetTop
+        }, 500)
+      }
     }
   },
   data () {
