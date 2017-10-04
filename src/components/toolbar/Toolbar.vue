@@ -4,9 +4,9 @@
     <v-spacer></v-spacer>
     <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn flat>Plataforma</v-btn>
-      <v-btn flat>Conteúdo</v-btn>
-      <v-btn flat>Faça Parte</v-btn>
+      <v-btn flat :to="{ path: '/plataforma' }">Plataforma</v-btn>
+      <v-btn flat :to="{ path: '/conteudo' }">Conteúdo</v-btn>
+      <v-btn flat :to="{ path: '/facaparte' }">Faça Parte</v-btn>
       <v-menu offset-x :close-on-content-click="false" :nudge-width="200" v-model="menu" v-if="user.login">
         <v-avatar class="logged-profile-avatar" slot="activator">
           <img :src="user.user_data._json.profile_image_url" alt="Usuário">
