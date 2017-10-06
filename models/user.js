@@ -12,6 +12,7 @@ module.exports = (model) => {
     // dislike: [],
     location: '',
     name: '',
+    profile_image: null,
     created_at: null,
     last_change: null,
     last_login: null,

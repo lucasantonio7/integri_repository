@@ -6,21 +6,25 @@
         <h6 class="partners-title">PARCEIROS TÉCNICOS</h6>
         <v-layout row wrap>
           <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_4all.jpg')" alt="">
+            <img :src="require('@/assets/svg/partners/tech_partners_4all.svg')" alt="">
           </v-flex>
           <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_cappra.jpg')" alt="">
+            <img :src="require('@/assets/svg/partners/tech_partners_cappra.svg')" alt="">
           </v-flex>
           <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_ciet.jpg')" alt="">
-          </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-          <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_ibm.jpg')" alt="">
+            <img :src="require('@/assets/svg/partners/tech_partners_ciandt.svg')" alt="">
           </v-flex>
           <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/tecnicos/tec_partners_inst_aprender.jpg')" alt="">
+            <img :src="require('@/assets/svg/partners/tech_partners_ibm.svg')" alt="">
+          </v-flex>
+          <v-flex xs3>
+            <img :src="require('@/assets/svg/partners/tech_partners_inst_aprender.svg')" alt="">
+          </v-flex>
+          <v-flex xs3>
+            <img :src="require('@/assets/svg/partners/tech_partners_inst_microsoft.svg')" alt="">
+          </v-flex>
+          <v-flex xs3>
+            <img :src="require('@/assets/svg/partners/tech_partners_inst_unisinos.svg')" alt="">
           </v-flex>
         </v-layout>
       </v-flex>
@@ -28,21 +32,19 @@
         <h6 class="partners-title">PARCEIROS FINANCEIROS</h6>
         <v-layout row wrap>
           <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/financeiros/fin_partners_gerdau.jpg')" alt="">
+          <img :src="require('@/assets/svg/partners/fin_partners_gerdau.svg')" alt="">
           </v-flex>
           <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/financeiros/fin_partners_processor.jpg')" alt="">
+            <img :src="require('@/assets/svg/partners/fin_partners_processor.svg')" alt="">
           </v-flex>
           <v-flex xs2>
-            <img :src="require('@/assets/jpg/partners/financeiros/fin_partners_puras.jpg')" alt="">
-          </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-          <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/financeiros/fin_partners_pauloafonso.jpg')" alt="">
+            <img :src="require('@/assets/svg/partners/fin_partners_puras.svg')" alt="">
           </v-flex>
           <v-flex xs3>
-            <img :src="require('@/assets/jpg/partners/financeiros/fin_partners_stihl.jpg')" alt="">
+            <img :src="require('@/assets/svg/partners/fin_partners_paulo_afonso.svg')" alt="">
+          </v-flex>
+          <v-flex xs3>
+            <img :src="require('@/assets/svg/partners/fin_partners_paulo_stihl.svg')" alt="">
           </v-flex>
         </v-layout>
       </v-flex>
