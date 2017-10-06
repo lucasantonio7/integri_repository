@@ -5,7 +5,7 @@
         <h6 class="trends-title">Em alta</h6>
       </v-flex>
       <v-flex xs6 md3 v-for="video in videosTrends" :key="video.id">
-        <youtube :video-id="video.id" class="responsive-yt"></youtube>
+        <youtube :video-id="video.id" player-width="215" player-height="146" class="responsive-yt"></youtube>
         <v-list two-line subheader>
           <v-list-tile avatar>
             <v-list-tile-content>

@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 const app = express();
 const Twit = require('twit');
 const passport = require('passport');
@@ -18,6 +19,8 @@ const userModel = require('./models/user')(myModel);
 // API Call
 const watson = require('./apis/watson')(appEnv);
 const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler);
+const youtube = require('./apis/youtube');
+const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler);
 
 let _secret = "projetointegri2017";
 
@@ -26,6 +29,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
 }));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
@@ -46,48 +50,71 @@ passport.use(new Strategy({
     access_token: token,
     access_token_secret: tokenSecret
   })
-
-  T.get('statuses/user_timeline', {
-    user_id: profile.id,
-    count: 2
-  }, (err, data, response) => {
-    let tweets = data;
-    let allTranslations = []
-    tweets.forEach(tweet => {
-      allTranslations.push(watson.translate(tweet.text))
-    })
-    Promise.all(allTranslations).then(translations => {
-      let analysisQueue = [];
-      translations.forEach(trans => {
-        analysisQueue.push(watson.analyze(trans));
-      })
-      Promise.all(analysisQueue).then(analysis => {
-        analysis.forEach(sample => {
-          // console.log('Concepts')
-          // console.log(sample.concepts)
-          // console.log('Categories')
-          // console.log(sample.categories)
-          // console.log('Keywords')
-          // console.log(sample.keywords)
-          sample.categories.forEach(cat => {
-            let query = cat.label.split('/');
-            console.log('Query:')
-            console.log(query);
+  dbHandler.view('profiles', 'getTwitterUsers', {keys:[profile.id]}, (err, body) => {
+    if (!err && body.rows.length > 0) {
+      let user = body.rows[0].value;
+      return cb(null, user);
+    } else {
+      T.get('statuses/user_timeline', {
+        user_id: profile.id,
+        count: 2
+      }, (err, data, response) => {
+        let tweets = data;
+        let allTranslations = [];
+        let like = [];
+        tweets.forEach(tweet => {
+          allTranslations.push(watson.translate(tweet.text))
+        })
+        Promise.all(allTranslations).then(translations => {
+          let analysisQueue = [];
+          translations.forEach(trans => {
+            analysisQueue.push(watson.analyze(trans));
           })
-          // google.videosSources('art and entertainment').then(resp => {
-          //   console.log('Sucesso Videos:')
-          //   console.log(resp)
-          // }).catch(err => {
-          //   console.log("Erro videos")
-          //   console.log(err)
-          // })
-        });
-        // Get the data send to translate and then to the NLU
-        return cb(null, profile);
+          Promise.all(analysisQueue).then(analysis => {
+            analysis.forEach(sample => {
+              // console.log('Concepts')
+              // console.log(sample.concepts)
+              // console.log('Categories')
+              // console.log(sample.categories)
+              // console.log('Keywords')
+              // console.log(sample.keywords)
+              sample.categories = sample.categories.filter(cat => {
+                if (cat.score > 0.3){
+                  return true;
+                }
+              })
+              sample.categories.forEach(cat => {
+                let query = cat.label.split('/');
+                like.push(query[query.length - 1])
+                // query = query.forEach(val => {
+                //   if (val) {
+                //     like.push(val)
+                //   }
+                // })
+              })
+            });
+            let user = userModel;
+            user.like = like;
+            user.medias.twitter = profile.id;
+            user.name = profile.displayName;
+            user.profile_image = profile._json.profile_image_url;
+            user.created_at = Date.now();
+            user.last_change = Date.now();
+            user.last_login = Date.now();
+            user.location = profile.location
+            user.save((err) => {
+              if (err) {
+                return cb(null, profile);
+              } else {
+                return cb(null, user);
+              }
+            })
+          })
+        }).catch(err => {
+          return cb(null, profile);
+        })
       })
-    }).catch(err => {
-      return cb(null, profile);
-    })
+    }
   })
 }));
 
@@ -101,6 +128,8 @@ passport.deserializeUser((obj, done) => {
 
 app.use(express.static(path.resolve(__dirname, 'dist')))
 app.set('views', path.resolve(__dirname, 'dist'))
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 
 app.get('/', (req, res) => {
   res.render('index', {
@@ -109,11 +138,12 @@ app.get('/', (req, res) => {
 })
 
 const twitter = require('./apis/twitter.js')(passport);
-const conversation = require('./apis/conversation')(appEnv);
+const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars.youtubeAPIKey);
 
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
 app.use('/api/conversation', conversation)
+app.use('/api/profile', profile)
 
 app.listen(port, () => {
   console.log('running on port: ', port)

@@ -2,6 +2,7 @@ $background: #C93680;
 $darkerbg: #B32B6D;
 $watsonbox: #F27638;
 $userbox: #E6E6E6;
+$white: #fff;
 
 @mixin chatbubble ($bgColor){
   display: flex;
@@ -12,79 +13,140 @@ $userbox: #E6E6E6;
   max-width: 85%;
 }
 
+.show-overflow{
+  overflow: visible;
+}
+
+.login-dialog-wrapper{
+  background-color: #fff;
+  padding: 1.5rem;
+  .login-dialog-title {
+    .login-feather-detail{
+      text-align: center;
+      position: relative;
+      &:before{
+        content: '';
+        position: absolute;
+        min-height: 7.125rem;
+        min-width: 7.125rem;
+        max-height: 7.125rem;
+        max-width: 7.125rem;
+        top: -5.45rem;
+        background: $white;
+        left: 50%;
+        margin-left: -3.5625rem;
+        border-radius: 50%;
+      }
+      img{
+        max-height: 7.125rem;
+        max-width: 7.125rem;
+        position: absolute;
+        top: -5.8125rem;
+        left: 50%;
+        margin-left: -3.5625rem;
+      }
+    }
+  }
+  .login-form{
+    padding: 1.5rem;
+    .input-addon{
+      border: 1px solid #999;
+      margin: 1rem 0rem;
+      padding: 0.5rem;
+      .fa {
+        border-right: 1px solid #999;
+        padding: 0.25rem;
+        margin-right: 0.25rem;
+        min-width: 1.67rem;
+        box-sizing: border-box;
+      }
+    }
+  }
+  .login-submit {
+    background: $background!important;
+    color: $white!important;
+    margin-right:0!important;
+    &.btn--disabled{
+      background: #999!important
+    }
+  }
+}
+
 .chat-wrapper {
-  background: $background;
+  min-height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  max-height: 100vh;
-  min-height: 100vh;
-
+  background: $background;
   .chat-customized-toolbar {
-    background-color: $darkerbg !important;
+    background-color: $darkerbg!important;
   }
-
   .chat-header {
     padding: 1.5rem;
     width: 100%;
-
-    .text-part {
+    .text-part{
       height: 39px;
       padding: 0.2rem 1rem;
     }
   }
-
   .chatbox-messages {
-    align-items: flex-end;
-    align-content: flex-end;
+    margin: 1.5rem;
+    margin-top: 0;
     background-color: $darkerbg!important;
     display: flex;
     flex: 1 1 auto;
-    flex-flow: column;
     flex-wrap: wrap;
-    margin: 1.5rem;
-    margin-top: 0;
-
-    .chatbox-messages-wrapper {
-      align-content: flex-start;
-      align-items: flex-end;
+    flex-flow: column;
+    align-items: flex-end;
+    align-content: flex-end;
+    .chatbox-messages-wrapper{
+      width: 100%;
       display: flex;
       flex: 1 1 85%;
       flex-wrap: wrap;
+      align-items: flex-end;
+      align-content: flex-start;
       justify-content: flex-end;
       overflow: auto;
-
       .chatbox-dialog-line{
+        width: calc(100% - 2rem);
         display: flex;
         flex-flow: column;
         margin: 1rem;
-        width: calc(100% - 2rem);
-
-        .chatbox-watson {
+        .hook{
+          display: inline-flex;
+          padding: 1rem;
+          background-color: $watsonbox;
+          border-radius: 1rem;
+          position: relative;
+          width: 3rem;
+          color: $white;
+          margin-top: 0.5rem;
+        }
+        .chatbox-watson{
           @include chatbubble($watsonbox);
           align-self: flex-start;
           border-bottom-left-radius: 0;
           margin-left: 1rem;
-
-          &::before {
-            border-bottom: 1rem solid $watsonbox;
-            width: 0;
+          color: #fff;
+          &:before{
             content: '';
+            width: 0;
             height: 0;
+            border-bottom: 1rem solid $watsonbox;
             border-left: 1rem solid transparent;
             position: absolute;
             left: -0.75rem;
             bottom: 0;
           }
         }
-
-        .chatbox-user {
+        .chatbox-user{
           @include chatbubble($userbox);
           align-self: flex-end;
           border-bottom-right-radius: 0;
           margin-right: 1rem;
-
-          &::after {
+          &:after{
             content: '';
             width: 0;
             height: 0;
@@ -95,27 +157,41 @@ $userbox: #E6E6E6;
             bottom: 0;
           }
         }
+        .chatbox-yn-question{
+          align-self: flex-start;
+          margin-left: 1rem;
+          .option {
+            @include chatbubble($userbox);
+            min-width: 5rem;
+            justify-content: center;
+            margin: 0 0.5rem;
+            &:first-child{
+              margin-left: 0;
+            }
+            &:last-child{
+              margin-right: 0;
+            }
+          }
+        }
       }
     }
-
     .chatbox-footer {
-      background-color: #E6E6E6;
       display: flex;
       flex: 1 1 10%;
       min-height: 4rem;
       max-height: 4rem;
+      background-color: #E6E6E6;
       margin: 1rem;
       padding: 1rem;
       justify-content: space-between;
       width: calc(100% - 2rem);
-
-      .chat-input {
+      .chat-input{
+        width: 100%;
         background-color: #fff;
-        height: 2rem;
-        line-height: 1.2rem;
         margin-right: 1rem;
         padding: 0.5rem;
-        width: 100%;
+        line-height: 1.2rem;
+        height: 2rem;
       }
     }
   }

@@ -1,0 +1,27 @@
+$purple: #845bab;
+
+.facaparte {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+
+  h1 {
+    color: white;
+    max-width: 367px;
+    height: auto;
+    font-size: 48px;
+    text-align: center;
+    width: 90%;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .facacallout {
+    height: 133px;
+    background-color: $purple;
+
+    &.lastone {
+      margin-left: -8px;
+    }
+  }
+}

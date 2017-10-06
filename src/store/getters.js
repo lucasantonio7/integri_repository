@@ -5,6 +5,9 @@ export default {
   getTrends: state => {
     return state.trends
   },
+  getRelevant: state => {
+    return state.relevant
+  },
   displayLabel: state => {
     return state.displayLabel
   },

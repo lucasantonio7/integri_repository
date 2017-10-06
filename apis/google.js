@@ -1,29 +1,13 @@
 // All things related to Google like Youtube API goes here
 const google = require('googleapis');
 const express = require('express');
-
-function reflect(promise) {
-  return promise.then(function (v) {
-      return {
-        v: v,
-        status: "resolved"
-      }
-    },
-    function (e) {
-      return {
-        e: e,
-        status: "rejected"
-      }
-    });
-}
-
+const utils = require('../utils/promiseHandler');
 module.exports = function (apiKey, dbHandler) {
   // Start a instance of youtube API
   const youtube = google.youtube({
     version: 'v3',
     auth: apiKey
   });
-
   let helper = {
     // Search in some channels by the content extracted from
     videosSources(query) {
@@ -62,7 +46,7 @@ module.exports = function (apiKey, dbHandler) {
                 })
               })
             })
-            Promise.all(channelsPromises.map(reflect)).then(videos => {
+            Promise.all(channelsPromises.map(utils.reflect)).then(videos => {
               let sucess = videos.filter(item => item.status === 'resolved');
               resolve(sucess);
             }).catch(err => {
@@ -128,7 +112,7 @@ module.exports = function (apiKey, dbHandler) {
                 });
               })
             });
-            Promise.all(videosPromises.map(reflect)).then(videos => {
+            Promise.all(videosPromises.map(utils.reflect)).then(videos => {
               let sucess = videos.filter(item => item.status === 'resolved');
               let response = sucess.map(video => {
                 return video.v
