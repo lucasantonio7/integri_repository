@@ -13,10 +13,43 @@
     <div class="chatbox-messages">
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index">
-          <div class="chatbox-watson" v-if="message.sender === 'watson'">{{ message.message }}</div>
+          <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
+          <v-layout class="chatbox-yn-question" v-if="message.sender === 'question_yn' && message.active">
+            <v-dialog v-model="displayLogin" persistent content-class="show-overflow">
+              <v-flex xs12 s6 md3 slot="activator" class="option">Sim</v-flex>
+              <form class="login-dialog-wrapper">
+                <div class="login-dialog-title">
+                  <div class="login-feather-detail">
+                    <img :src="require('@/assets/svg/login/integri_login.svg')" alt="">
+                  </div>
+                </div>
+                <div class="login-form">
+                  <div class="input-addon">
+                    <i class="fa fa-user-o" aria-hidden="true"></i>
+                    <input type="text" v-model="newUser.name" placeholder="Nome" required>
+                  </div>
+                  <div class="input-addon">
+                    <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                    <input type="email" v-model="newUser.email" placeholder="E-mail" required>
+                  </div>
+                  <div class="input-addon">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                    <input type="password" v-model="newUser.pwd" placeholder="Senha" required>
+                  </div>
+                  <div class="input-addon">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                    <input type="password" v-model="newUser._pwdConf" placeholder="Confirme sua senha" required>
+                  </div>
+                </div>
+                <v-btn class="blue--text darken-1 login-cancel" flat @click.native="displayLogin = false">Cancelar</v-btn>
+                <v-btn class="blue--text darken-1 login-submit" type="submit" flat @click.native="saveProfile">Enviar</v-btn>
+              </form>
+            </v-dialog>
+            <v-flex xs12 s6 md3 class="option" @click="message.active = false">Não</v-flex>
+          </v-layout>
         </div>
-        <div class="chatbox-typing" v-if="isTyping">
+        <div class="chatbox-typing" >
           <div class="dot"></div>
           <div class="dot"></div>
           <div class="dot"></div>
@@ -47,12 +80,6 @@ export default {
     }
   },
   watch: {
-    isDenied (newVal) {
-      // if (newVal) {
-      console.log('Watcher')
-      console.log(newVal)
-      // }
-    },
     chat (newVal) {
       if (newVal) {
         let lastMsg = newVal[newVal.length - 1]
@@ -65,13 +92,22 @@ export default {
         let scrollTo = elements[elements.length - 1]
         setTimeout(() => {
           scrollTo.parentElement.parentElement.scrollTop = scrollTo.offsetTop
-        }, 500)
+        }, 350)
       }
     }
   },
   data () {
     return {
-      message: ''
+      message: '',
+      displayLogin: false,
+      newUser: {
+        name: '',
+        email: '',
+        pwd: '',
+        _pwdConf: '',
+        like: []
+      },
+      valid: false
     }
   },
   methods: {
@@ -85,10 +121,12 @@ export default {
         sender: 'user',
         message: data.text
       })
+      this.$store.commit('TOGGLE_TYPING')
       this.message = ''
       axios.get('/api/conversation/message', {
         params: data
       }).then(response => {
+        this.$store.commit('TOGGLE_TYPING')
         this.$store.commit('SET_CONTEXT', response.data.context)
         response.data.output.text.forEach(text => {
           this.$store.commit('ADD_TEXT', {
@@ -96,6 +134,20 @@ export default {
             message: text
           })
         })
+        console.log(response.data)
+        if (response.data.context.video) {
+          this.$store.commit('SET_RELEVANT', response.data.context.video)
+        }
+        if (response.data.context.user) {
+          this.newUser._id = response.data.context.user._id
+          this.newUser.like = response.data.context.user.analysis
+        }
+        if (response.data.context.question_type === 'save_profile') {
+          this.$store.commit('ADD_TEXT', {
+            sender: 'question_yn',
+            active: true
+          })
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -103,27 +155,12 @@ export default {
     close () {
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
     },
-    notifyChatDeniedProfile () {
-      let data = {
-        text: 'sem acesso',
-        context: this.$store.getters.getContext,
-        trackingProfile: true
-      }
-      axios.get('/api/conversation/message', {
-        params: data
-      }).then(response => {
-        response.data.output.text.forEach(text => {
-          this.$store.commit('ADD_TEXT', {
-            sender: 'watson',
-            message: text
-          })
-        })
-      })
-    },
     initChat () {
       return new Promise((resolve, reject) => {
         if (!this.$store.getters.getContext) {
+          this.$store.commit('TOGGLE_TYPING')
           axios.get('/api/conversation/init').then(response => {
+            this.$store.commit('TOGGLE_TYPING')
             this.$store.commit('SET_CONTEXT', response.data.context)
             response.data.output.text.forEach(text => {
               this.$store.commit('ADD_TEXT', {
@@ -138,6 +175,39 @@ export default {
         } else {
           reject(false)
         }
+      })
+    },
+    notifyChatDeniedProfile () {
+      let data = {
+        text: 'sem acesso',
+        context: this.$store.getters.getContext,
+        trackingProfile: true
+      }
+      this.$store.commit('TOGGLE_TYPING')
+      axios.get('/api/conversation/message', {
+        params: data
+      }).then(response => {
+        this.$store.commit('TOGGLE_TYPING')
+        response.data.output.text.forEach(text => {
+          this.$store.commit('ADD_TEXT', {
+            sender: 'watson',
+            message: text
+          })
+        })
+      })
+    },
+    saveProfile () {
+      let user = {
+        name: this.newUser.name,
+        email: this.newUser.email,
+        pwd: this.newUser.pwd
+      }
+      axios.post('/api/profile/save', user).then(resp => {
+        console.log(resp)
+        this.displayLogin = false
+      }).catch(err => {
+        console.log(err)
+        this.displayLogin = false
       })
     }
   },

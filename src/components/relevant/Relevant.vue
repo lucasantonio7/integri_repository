@@ -5,6 +5,9 @@
         <v-flex xs12>
           <h6 class="relevant-title">Relevantes para você</h6>
         </v-flex>
+        <v-flex xs12 md4 lg3 v-for="(video, index) in videos" :key="index">
+          <youtube :video-id="video" class="responsive-yt"></youtube>
+        </v-flex>
       </v-layout>
     </v-container>
     <v-layout row wrap>
@@ -24,6 +27,11 @@ export default {
   components: {
     LoginTwitter,
     Chat
+  },
+  computed: {
+    videos () {
+      return this.$store.getters.getRelevant
+    }
   }
 }
 </script>

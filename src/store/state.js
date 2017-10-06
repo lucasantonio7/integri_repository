@@ -5,6 +5,7 @@ export default {
     access_denied: false
   },
   trends: [],
+  relevant: [],
   displayChat: {
     isNotificationActive: false,
     askingProfile: false,

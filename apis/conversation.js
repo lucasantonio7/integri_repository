@@ -1,5 +1,7 @@
 const express = require('express');
-module.exports = function (appEnv) {
+const utils = require('../utils/promiseHandler');
+const youtube = require('./youtube');
+module.exports = function (appEnv, dbHandler, googleAPIKey) {
   const api = express.Router();
   const ConversationV1 = require('watson-developer-cloud/conversation/v1');
   let conversationCredentials = appEnv.services['conversation'][0].credentials
@@ -9,7 +11,8 @@ module.exports = function (appEnv) {
     version_date: ConversationV1.VERSION_DATE_2017_05_26
   });
   let workspace_id = '4757feda-62f4-4e59-8c50-c1f42a05926c';
-
+  const watson = require('./watson')(appEnv);
+  const youtubeInstance = new youtube.Youtube(googleAPIKey, dbHandler);
   api.get('/init', (req, res) => {
     let text = req.params.text || '';
     conversation.message({
@@ -40,8 +43,78 @@ module.exports = function (appEnv) {
         console.error(err);
       } else {
         // Get the context and help with profile
-        console.log(response.intents)
-        res.json(response)
+        // console.log(response.intents)
+        // console.log(response.output)
+        if (response.context.gettingProfile) {
+          switch (response.context.gettingProfile) {
+            case 'started':
+              req.session.newProfile = {
+                _id: new Date().getTime().toString(),
+                _status: response.context.gettingProfile
+              }
+              console.log('Starting to get profile')
+              res.json(response)
+              break;
+            case 'finished':
+              console.log('All questions were made')
+              req.session.newProfile._status = 'finished';
+              if (req.session.newProfile.analysis) {
+                let videoQueue = req.session.newProfile.analysis.map(category => {
+                  console.log('Category ', category)
+                  return new Promise((resolve, reject) => {
+                    youtubeInstance.videosSources(category).then(resp => {
+                      console.log('Success Videos:')
+                      resolve(resp)
+                    }).catch(err => {
+                      console.log("Error videos")
+                      reject(err)
+                    })
+                  })
+                })
+                Promise.all(videoQueue.map(utils.reflect)).then(videos => {
+                  console.log(videos)
+                  let sucess = videos.filter(item => item.status === 'resolved');
+                  let filtered = sucess.map(videoList => {
+                    videoList.v = videoList.v.filter(item => item.status === 'resolved');
+                    return videoList.v.map(video => {
+                      return video.v
+                    })
+                  });
+                  response.context.video = [].concat.apply([], filtered);
+                  response.context.user = req.session.newProfile;
+                  res.json(response)
+                })
+              } else {
+                res.json(response)
+              }
+              break;
+            case 'question':
+              watson.translate(response.input.text).then(translation => {
+                watson.analyze(translation).then(analysis => {
+                  if (!req.session.newProfile.analysis) {
+                    req.session.newProfile.analysis = []
+                  }
+                  analysis.categories.forEach(cat => {
+                    let query = cat.label.split('/');
+                    query = query.forEach(val => {
+                      if (val) {
+                        req.session.newProfile.analysis.push(val)
+                        console.log(req.session.newProfile)
+                      }
+                    })
+                  })
+                  res.json(response)
+                }).catch(err => {
+                  res.json(response)
+                })
+              }).catch(err => {
+                console.log(err)
+              })
+              break;
+          }
+        } else {
+          res.json(response)
+        }
       }
     });
   })

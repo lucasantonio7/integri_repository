@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression');
 const app = express();
 const Twit = require('twit');
 const passport = require('passport');
@@ -18,6 +19,7 @@ const userModel = require('./models/user')(myModel);
 // API Call
 const watson = require('./apis/watson')(appEnv);
 const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler);
+const profile = require('./apis/profile')(userModel);
 
 let _secret = "projetointegri2017";
 
@@ -109,11 +111,12 @@ app.get('/', (req, res) => {
 })
 
 const twitter = require('./apis/twitter.js')(passport);
-const conversation = require('./apis/conversation')(appEnv);
+const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars.youtubeAPIKey);
 
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
 app.use('/api/conversation', conversation)
+app.use('/api/profile', profile)
 
 app.listen(port, () => {
   console.log('running on port: ', port)

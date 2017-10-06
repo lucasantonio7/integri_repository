@@ -5,8 +5,14 @@ export default {
   SET_TRENDS (state, payload) {
     state.trends = payload
   },
+  SET_RELEVANT (state, payload) {
+    state.relevant = payload
+  },
   TOGGLE_CHAT_VISIBILITY (state, payload) {
     state.displayChat.active = !state.displayChat.active
+  },
+  TOGGLE_TYPING (state) {
+    state.typing = !state.typing
   },
   SHOW_CHAT_NOTIFICATION (state, payload) {
     state.displayChat.isNotificationActive = true
