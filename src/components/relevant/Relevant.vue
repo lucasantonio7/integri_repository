@@ -11,9 +11,6 @@
         <v-flex xs12 class="text-xs-right">
           <a @click="showMore" v-if="display < allVideos">Ver mais</a>
         </v-flex>
-        <v-flex>
-          <button @click="loadVideos">La bicicleta</button>
-        </v-flex>
       </v-layout>
     </v-container>
     <v-layout row wrap>
@@ -57,6 +54,18 @@ export default {
     getUser (newValue) {
       console.log(newValue)
       if (newValue.user_data.like) {
+        axios.get('/api/profile/videos', {
+          params: {
+            cat: newValue.user_data.like
+          }
+        }).then(resp => {
+          console.log('/api/profile/videos response: ')
+          console.log(resp.data)
+          this.$store.commit('SET_RELEVANT', resp.data)
+        }).catch(err => {
+          console.log('/api/profile/videos Error: ')
+          console.log(err)
+        })
       }
     }
   },
@@ -68,21 +77,6 @@ export default {
   methods: {
     showMore () {
       this.display += 4
-    },
-    loadVideos () {
-      axios.get('/api/profile/videos', {
-        params: {
-          cat: this.getUser.user_data.like
-        },
-        timeout: 60000
-      }).then(resp => {
-        console.log('/api/profile/videos response: ')
-        console.log(resp.data)
-        this.$store.commit('SET_RELEVANT', resp.data)
-      }).catch(err => {
-        console.log('/api/profile/videos Error: ')
-        console.log(err)
-      })
     }
   }
 }

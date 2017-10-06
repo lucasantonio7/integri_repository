@@ -52,8 +52,6 @@ module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
 
   router.get('/videos', (req, res) => {
     let analysis = req.query.cat;
-    // JUST FOR TESTING
-    analysis = [analysis[0],analysis[1],analysis[2]];
     if (analysis) {
       dbHandler.view('sources', 'getYoutubeSource', (err, body) => {
         console.log('Youtube source from DB');

@@ -51,7 +51,7 @@ passport.use(new Strategy({
     access_token_secret: tokenSecret
   })
   dbHandler.view('profiles', 'getTwitterUsers', {keys:[profile.id]}, (err, body) => {
-    if (!err) {
+    if (!err && body.rows.length > 0) {
       let user = body.rows[0].value;
       return cb(null, user);
     } else {
@@ -78,13 +78,19 @@ passport.use(new Strategy({
               // console.log(sample.categories)
               // console.log('Keywords')
               // console.log(sample.keywords)
+              sample.categories = sample.categories.filter(cat => {
+                if (cat.score > 0.3){
+                  return true;
+                }
+              })
               sample.categories.forEach(cat => {
                 let query = cat.label.split('/');
-                query = query.forEach(val => {
-                  if (val) {
-                    like.push(val)
-                  }
-                })
+                like.push(query[query.length - 1])
+                // query = query.forEach(val => {
+                //   if (val) {
+                //     like.push(val)
+                //   }
+                // })
               })
             });
             let user = userModel;
