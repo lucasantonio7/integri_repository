@@ -42,7 +42,7 @@ let serverLocation = "localhost"
 passport.use(new Strategy({
   consumerKey: envVars.twitterConsumerKey,
   consumerSecret: envVars.twitterConsumerSecret,
-  callbackURL: "http://" + serverLocation + ":" + 8080 + "/api/twitter/return"
+  callbackURL: envVars.callbackURL
 }, function (token, tokenSecret, profile, cb) {
   let T = new Twit({
     consumer_key: envVars.twitterConsumerKey,
