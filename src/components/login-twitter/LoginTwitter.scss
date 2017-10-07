@@ -1,25 +1,43 @@
-.jorney-btn{
-  background-color: #A275BA;
+$purple: #7F59A3;
+$b_purple: #a275ba;
+$white: #fff;
+
+.jorney-btn {
+  background-color: $purple;
   display: inline-flex;
   padding: 0.75rem;
   width: 100%;
-  .fa{
-    color: #fff;
+
+  .fa {
+    color: $white;
     font-size: 1.8rem;
     min-width: 40px;
     text-align: center;
+
+    &::before {
+      border-right: 1px solid $b_purple;
+      display: inline-block;
+      font-size: 40px;
+      margin-left: 23px;
+      margin-top: 5px;
+      padding-right: 11px;
+      vertical-align: text-bottom;
+    }
   }
-  .img-piece{
-    width: 40px;
+
+  .img-piece {
+    display: inline-block;
     padding: 0.5rem;
-    display: inline-block;
+    width: 40px;
   }
-  .text-piece{
+
+  .text-piece {
+    color: $white;
     display: inline-block;
-    text-decoration: none;
+    font-size: 1.5rem!important;
+    line-height: 3rem!important;
     padding: 0.5rem 1rem;
-    font-size: 1rem!important;
-    line-height: 1rem!important;
-    color: #fff;
+    text-decoration: none;
+    vertical-align: top;
   }
 }

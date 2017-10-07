@@ -1,42 +1,56 @@
 <template>
   <div class="facaparte">
     <v-card-media :src="require('@/assets/png/facaparte/integri.png')" height="553px">
-      <v-container fill-height fluid>
+      <v-container grid-list-md fill-height fluid>
         <v-layout align-center justify-center>
           <h1>Toda <strong>colaboração</strong> é <strong>bem-vinda</strong></h1>
         </v-layout>
       </v-container>
     </v-card-media>
-    <v-layout row wrap>
-      <v-flex xs12 lg4 class="facacallout mr-1">
-        <h6>Compartilhe Conteúdo</h6>
-      </v-flex>
-      <v-flex xs12 lg4 class="facacallout mr-1">
-        <h6>Aporte Conhecimento Técnico</h6>
-      </v-flex>
-      <v-flex xs12 lg4 class="facacallout lastone">
-        <h6>Indique Organizações Sociais</h6>
-      </v-flex>
-    </v-layout>
-    <v-container>
+    <v-container fluid grid-list-xs>
       <v-layout row wrap>
-        <v-flex xs12>
-          <div class="input-block">
-            <label for="Nome">Nome</label>
-            <input type="text" class="name-input">
-          </div>
-          <div class="input-block">
-            <label for="email">Email</label>
-            <input type="email" class="email-input">
-          </div>
-          <div class="textarea-input-block">
-            <label for="whyto">Como gostaria de Colaborar</label>
-            <textarea row="" cols=""></textarea>
-          </div>
-          <v-btn light>Enviar</v-btn>
-      </v-flex>
-    </v-layout>
-  </v-container>
+        <v-flex xs4>
+           <v-card dark>
+             <v-card-text class="px-0 text-xs-center faca--card">Compartilhe <br />Conteúdo</v-card-text>
+           </v-card>
+        </v-flex>
+        <v-flex xs4>
+          <v-card dark>
+             <v-card-text class="px-0 text-xs-center faca--card">Aporte Conhecimento<br /> Técnico</v-card-text>
+           </v-card>
+        </v-flex>
+        <v-flex xs4>
+          <v-card dark>
+             <v-card-text class="px-0 text-xs-center faca--card">Indique Organizações<br /> Sociais</v-card-text>
+           </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+    <v-container grid-list-lg class="form-faca-parte">
+      <form @submit.prevent="validateForm">
+        <v-layout row wrap>
+          <v-flex lg6 md6 xs12>
+            <div class="input-block">
+              <label class="input-label" for="Nome">Nome</label>
+              <input type="text" class="input-text">
+            </div>
+          </v-flex>
+          <v-flex lg6 md6 xs12>
+            <div class="input-block">
+              <label class="input-label" for="email">Email</label>
+              <input type="email" class="input-text">
+            </div>
+          </v-flex>
+          <v-flex lg12 xs12>
+            <div class="input-block">
+              <label class="input-label" for="whyto">Como gostaria de Colaborar</label>
+              <textarea row="" cols="" name="whyto" class="input-textarea"></textarea>
+            </div>
+            <v-btn right class="btn-enviar">Enviar</v-btn>
+          </v-flex>
+        </v-layout>
+      </form>
+    </v-container>
   </div>
 </template>
 <script>

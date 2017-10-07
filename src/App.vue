@@ -3,10 +3,12 @@
     <!-- vuetifyjs requires this v-app directive to work properly -->
     <v-app>
       <main>
-        <toolbar></toolbar>
-        <router-view></router-view>
-        <share-social></share-social>
-        <sponsors></sponsors>
+        <v-content>
+          <toolbar></toolbar>
+          <router-view></router-view>
+          <share-social></share-social>
+          <sponsors></sponsors>
+        </v-content>
       </main>
     </v-app>
   </div>

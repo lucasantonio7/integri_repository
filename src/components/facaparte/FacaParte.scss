@@ -1,4 +1,6 @@
 $purple: #845bab;
+$dark-gray:#999;
+$pink: #c93680;
 
 .facaparte {
   padding: 0;
@@ -14,6 +16,53 @@ $purple: #845bab;
     width: 90%;
     display: block;
     margin: 0 auto;
+  }
+
+  .btn-enviar {
+    background-color: $pink!important;
+    color: white!important;
+    font-size: 12px;
+    float: right;
+    margin-top: 40px;
+  }
+
+  .form-faca-parte {
+    max-width: 80%;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+
+  .input-block {
+    margin-top: 10px;
+    padding-right: 30px;
+  }
+
+  .input-text,
+  .input-textarea {
+    border: 2px solid $dark-gray;
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    vertical-align: top;
+  }
+
+  .input-textarea {
+    height: 228px;
+  }
+
+  .input-label {
+    font-size: 14px;
+    color: $dark-gray;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .faca--card {
+    background-color: $purple;
+    line-height: 26px;
+    font-size: 24px;
+    height: 133px;
+    padding-top: 40px;
   }
 
   .facacallout {
