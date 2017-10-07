@@ -1,6 +1,12 @@
 <template>
   <v-toolbar dark>
     <v-toolbar-title></v-toolbar-title>
+    <div class="logo">
+      <!-- <img class="integri-logo" :src="require('@/assets/svg/logo/integri_logo.svg')" alt="Integri Logo">
+      <img class="integri-text" :src="require('@/assets/svg/logo/integri.svg')" alt="Integri"> -->
+
+      <img class="integri-text" :src="require('@/assets/png/logo/integri_logo_nome.png')" alt="Integri">
+    </div>
     <v-spacer></v-spacer>
     <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
     <v-toolbar-items class="hidden-sm-and-down">
