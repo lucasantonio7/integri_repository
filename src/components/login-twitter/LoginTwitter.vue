@@ -15,6 +15,7 @@ export default {
   mounted () {
     axios.get('/api/twitter/user').then(response => {
       this.$store.commit('SET_USER', {login: response.data.login, user_data: response.data.user, access_denied: response.data.denied})
+      // let categories = response.data.user.like
     }).catch(err => {
       this.$store.commit('SET_USER', {login: err.data.login, user_data: null, access_denied: err.data.denied})
     })

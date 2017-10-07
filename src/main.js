@@ -7,6 +7,7 @@ import('../node_modules/vuetify/dist/vuetify.min.css')
 import Vuex from 'vuex'
 import VueYouTubeEmbed from 'vue-youtube-embed'
 import VueRouter from 'vue-router'
+import VeeValidate from 'vee-validate'
 import { routes } from './routes'
 import store from './store/store'
 
@@ -15,6 +16,7 @@ Vue.use(Vuetify)
 Vue.use(Vuex)
 Vue.use(VueYouTubeEmbed)
 Vue.use(VueRouter)
+Vue.use(VeeValidate)
 /* eslint-disable no-new */
 
 const router = new VueRouter({

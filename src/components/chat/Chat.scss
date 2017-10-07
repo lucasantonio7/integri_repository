@@ -65,7 +65,10 @@ $white: #fff;
   .login-submit {
     background: $background!important;
     color: $white!important;
-    margin-right:0!important; 
+    margin-right:0!important;
+    &.btn--disabled{
+      background: #999!important
+    }
   }
 }
 
@@ -111,6 +114,16 @@ $white: #fff;
         display: flex;
         flex-flow: column;
         margin: 1rem;
+        .hook{
+          display: inline-flex;
+          padding: 1rem;
+          background-color: $watsonbox;
+          border-radius: 1rem;
+          position: relative;
+          width: 3rem;
+          color: $white;
+          margin-top: 0.5rem;
+        }
         .chatbox-watson{
           @include chatbubble($watsonbox);
           align-self: flex-start;

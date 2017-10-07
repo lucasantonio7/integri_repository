@@ -5,8 +5,11 @@
         <v-flex xs12>
           <h6 class="relevant-title">Relevantes para você</h6>
         </v-flex>
-        <v-flex xs12 md4 lg3 v-for="(video, index) in videos" :key="index">
+        <v-flex xs12 md4 lg3 v-for="(video, index) in relevantVideos" :key="index">
           <youtube :video-id="video" class="responsive-yt"></youtube>
+        </v-flex>
+        <v-flex xs12 class="text-xs-right">
+          <a @click="showMore" v-if="display < allVideos">Ver mais</a>
         </v-flex>
       </v-layout>
     </v-container>
@@ -23,14 +26,57 @@
 <script>
 import LoginTwitter from '../login-twitter/LoginTwitter'
 import Chat from '../chattoggle/ChatToggle'
+import axios from 'axios'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     LoginTwitter,
     Chat
   },
   computed: {
-    videos () {
-      return this.$store.getters.getRelevant
+    allVideos () {
+      return this.$store.getters.getRelevant.length
+    },
+    relevantVideos () {
+      let count = 0
+      return this.$store.getters.getRelevant.filter(relevant => {
+        if (count < this.display) {
+          count += 1
+          return true
+        }
+      })
+    },
+    ...mapGetters([
+      'getUser'
+    ])
+  },
+  watch: {
+    getUser (newValue) {
+      console.log(newValue)
+      if (newValue.user_data.like) {
+        axios.get('/api/profile/videos', {
+          params: {
+            cat: newValue.user_data.like
+          }
+        }).then(resp => {
+          console.log('/api/profile/videos response: ')
+          console.log(resp.data)
+          this.$store.commit('SET_RELEVANT', resp.data)
+        }).catch(err => {
+          console.log('/api/profile/videos Error: ')
+          console.log(err)
+        })
+      }
+    }
+  },
+  data () {
+    return {
+      display: 4
+    }
+  },
+  methods: {
+    showMore () {
+      this.display += 4
     }
   }
 }

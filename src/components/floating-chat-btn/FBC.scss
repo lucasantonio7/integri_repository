@@ -8,6 +8,7 @@
   bottom: 1.5rem;
   padding: 1rem;
   display: table;
+  cursor: pointer;
   &.notify-user{
     &::after{
       content: '!';

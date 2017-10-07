@@ -10,22 +10,22 @@
     <v-spacer></v-spacer>
     <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn flat :to="{ path: '/plataforma' }">Plataforma</v-btn>
+      <v-btn flat :to="{ path: '/' }">Plataforma</v-btn>
       <v-btn flat :to="{ path: '/conteudo' }">Conteúdo</v-btn>
       <v-btn flat :to="{ path: '/facaparte' }">Faça Parte</v-btn>
       <v-menu offset-x :close-on-content-click="false" :nudge-width="200" v-model="menu" v-if="user.login">
         <v-avatar class="logged-profile-avatar" slot="activator">
-          <img :src="user.user_data._json.profile_image_url" alt="Usuário">
+          <img :src="user.user_data.profile_image" alt="Usuário">
         </v-avatar>
         <v-card>
           <v-list>
             <v-list-tile avatar>
               <v-list-tile-avatar>
-                <img :src="user.user_data._json.profile_image_url" alt="Usuário">
+                <img :src="user.user_data.profile_image" alt="Usuário">
               </v-list-tile-avatar>
               <v-list-tile-content>
                 <v-list-tile-title>
-                  {{ user.user_data.displayName }}
+                  {{ user.user_data.name }}
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
