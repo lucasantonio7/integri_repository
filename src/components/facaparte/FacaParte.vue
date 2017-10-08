@@ -32,19 +32,26 @@
           <v-flex lg6 md6 xs12>
             <div class="input-block">
               <label class="input-label" for="Nome">Nome</label>
-              <input type="text" class="input-text">
+              <input type="text" class="input-text" v-model="name">
+              <span class="input-error"></span>
             </div>
           </v-flex>
           <v-flex lg6 md6 xs12>
             <div class="input-block">
               <label class="input-label" for="email">Email</label>
-              <input type="email" class="input-text">
+              <input type="email"
+                     name="email"
+                     class="input-text"
+                     v-validate="'required|email'"
+                     v-model="email">
+              <span class="input-error" v-show="errors.has('email')">{{ errors.first('email') }}</span>
             </div>
           </v-flex>
           <v-flex lg12 xs12>
             <div class="input-block">
-              <label class="input-label" for="whyto">Como gostaria de Colaborar</label>
-              <textarea row="" cols="" name="whyto" class="input-textarea"></textarea>
+              <label class="input-label" for="howtocolaborate">Como gostaria de Colaborar</label>
+              <textarea row="" cols="" name="howtocolaborate" v-model="howtocolaborate" class="input-textarea"></textarea>
+              <span class="input-error"></span>
             </div>
             <v-btn right class="btn-enviar">Enviar</v-btn>
           </v-flex>
@@ -54,9 +61,16 @@
   </div>
 </template>
 <script>
+
 export default {
   components: {
-  }
+  },
+  data: () => ({
+    email: '',
+    name: '',
+    howtocolaborate: '',
+    locale: 'pt'
+  })
 }
 </script>
 <style lang="sass">
