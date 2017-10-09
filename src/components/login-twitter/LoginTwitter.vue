@@ -1,5 +1,5 @@
 <template>
-  <div v-show="!user.login" class="jorney-btn" @click="startLogin">
+  <div v-show="!user.login" class="jorney-btn" :to="{ path:'/login' }">
     <i class="fa fa-user-o" aria-hidden="true"></i>
     <span class="text-piece">Inicie sua jornada!</span>
   </div>

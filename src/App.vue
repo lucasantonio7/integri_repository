@@ -5,8 +5,10 @@
       <main>
         <toolbar></toolbar>
         <router-view></router-view>
-        <share-social></share-social>
-        <sponsors></sponsors>
+        <router-view name="share"></router-view>
+        <router-view name="sponsors"></router-view>
+        <!-- <share-social></share-social> -->
+        <!-- <sponsors></sponsors> -->
       </main>
     </v-app>
   </div>
@@ -14,15 +16,11 @@
 
 <script>
   import Toolbar from './components/toolbar/Toolbar'
-  import ShareSocial from './components/share/ShareSocial'
-  import Sponsors from './components/sponsors/Sponsors'
 
   export default {
     name: 'app',
     components: {
-      Toolbar,
-      ShareSocial,
-      Sponsors
+      Toolbar
     }
   }
 

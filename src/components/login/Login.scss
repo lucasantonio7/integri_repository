@@ -1,0 +1,94 @@
+$background1: #4D0D47;
+$background2: #63225D;
+$background3: #7A3773;
+$white: #fff;
+
+.login {
+  background: $background3;
+  background-image: linear-gradient(to top, $background1, $background2 20%, $background3 43.92%);
+  height: calc(100vh - 64px);
+  .login-box{
+    background: $white;
+    padding: 1.5rem;
+    margin: 5.57rem;
+    .login-box-title {
+      .login-feather-detail{
+        text-align: center;
+        position: relative;
+        &:before{
+          content: '';
+          position: absolute;
+          min-height: 7.125rem;
+          min-width: 7.125rem;
+          max-height: 7.125rem;
+          max-width: 7.125rem;
+          top: -5.45rem;
+          background: $white;
+          left: 50%;
+          margin-left: -3.5625rem;
+          border-radius: 50%;
+        }
+        img{
+          max-height: 7.125rem;
+          max-width: 7.125rem;
+          position: absolute;
+          top: -5.8125rem;
+          left: 50%;
+          margin-left: -3.5625rem;
+        }
+      }
+    }
+    .login-form{
+      padding: 1.5rem;
+      .input-addon{
+        border: 1px solid #999;
+        margin: 1rem 0rem;
+        padding: 0.5rem;
+        .fa {
+          border-right: 1px solid #999;
+          padding: 0.25rem;
+          margin-right: 0.25rem;
+          min-width: 1.67rem;
+          box-sizing: border-box;
+        }
+      }
+      .login-form-action{
+        display: flex;
+        justify-content: flex-end;
+        .login-submit {
+          background: #C93680!important;
+          color: $white!important;
+          margin-right:0!important;
+          &.btn--disabled{
+            background: #999!important
+          }
+        }
+      }
+    }
+  }
+}
+
+.social-media-btns{
+  padding: 0 1.5rem;
+  .social-twitter{
+    width: 100%;
+    background-color: #1DA1F2;
+    color: $white;
+    padding: 0.75rem;
+    line-height: 1.75rem!important;
+    .text-piece{
+      line-height: 1.75rem!important; 
+      vertical-align: text-bottom;
+    }
+    .fa{
+      &::before {
+        border-right: 1px solid $white;
+        display: inline-block;
+        padding: 0 0.5rem;
+        font-size: 1.5rem;
+        vertical-align: text-bottom;
+      }
+    }
+  }
+}
+
