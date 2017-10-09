@@ -1,12 +1,7 @@
 <template>
   <v-toolbar dark>
     <v-toolbar-title></v-toolbar-title>
-    <div class="logo">
-      <!-- <img class="integri-logo" :src="require('@/assets/svg/logo/integri_logo.svg')" alt="Integri Logo">
-      <img class="integri-text" :src="require('@/assets/svg/logo/integri.svg')" alt="Integri"> -->
-
-      <img class="integri-text" :src="require('@/assets/png/logo/integri_logo_nome.png')" alt="Integri">
-    </div>
+    <logo v-show="$route.path==='/facaparte' || $route.path==='/conteudo' ? true : false"></logo>
     <v-spacer></v-spacer>
     <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
     <v-toolbar-items class="hidden-sm-and-down">
@@ -39,25 +34,30 @@
     </v-toolbar-items>
   </v-toolbar>
 </template>
+
 <script>
-  export default {
-    computed: {
-      user () {
-        console.log(this.$store.getters.getUser)
-        return this.$store.getters.getUser
-      }
-    },
-    methods: {
-      logout () {
-        window.location.href = '/api/twitter/logout'
-      }
-    },
-    data () {
-      return {
-        menu: false
-      }
+import Logo from '../logo/Logo'
+export default {
+  components: {
+    Logo
+  },
+  computed: {
+    user () {
+      console.log(this.$store.getters.getUser)
+      return this.$store.getters.getUser
+    }
+  },
+  methods: {
+    logout () {
+      window.location.href = '/api/twitter/logout'
+    }
+  },
+  data () {
+    return {
+      menu: false
     }
   }
+}
 </script>
 <style lang="sass">
  @import 'Toolbar.scss'

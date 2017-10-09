@@ -11,6 +11,6 @@ export const routes = [
   {path: '/facaparte', components: {default: FacaParte, share: ShareSocial, sponsors: Sponsors}},
   {path: '/plataforma', component: Plataforma},
   {path: '/conteudo', component: Conteudo},
-  {path: '/home', component: Home},
+  {path: '/home', components: {default: Home, share: ShareSocial, sponsors: Sponsors}},
   {path: '/login', component: Login}
 ]

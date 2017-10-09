@@ -1,6 +1,7 @@
 $purple: #845bab;
 $dark-gray:#999;
 $pink: #c93680;
+$red: #ff3860;
 
 .facaparte {
   padding: 0;
@@ -44,6 +45,10 @@ $pink: #c93680;
     width: 100%;
     padding: 10px;
     vertical-align: top;
+
+    &.is-danger {
+      border: 2px solid $red;
+    }
   }
 
   .input-textarea {
@@ -63,6 +68,11 @@ $pink: #c93680;
     font-size: 24px;
     height: 133px;
     padding-top: 40px;
+  }
+
+  .input-error {
+    color: $red;
+    font-size: 12px;
   }
 
   .facacallout {

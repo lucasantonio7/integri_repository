@@ -9,17 +9,17 @@
     </v-card-media>
     <v-container fluid grid-list-xs>
       <v-layout row wrap>
-        <v-flex xs4>
+        <v-flex md4 xs12>
            <v-card dark>
              <v-card-text class="px-0 text-xs-center faca--card">Compartilhe <br />Conteúdo</v-card-text>
            </v-card>
         </v-flex>
-        <v-flex xs4>
+        <v-flex md4 xs12>
           <v-card dark>
              <v-card-text class="px-0 text-xs-center faca--card">Aporte Conhecimento<br /> Técnico</v-card-text>
            </v-card>
         </v-flex>
-        <v-flex xs4>
+        <v-flex md4 xs12>
           <v-card dark>
              <v-card-text class="px-0 text-xs-center faca--card">Indique Organizações<br /> Sociais</v-card-text>
            </v-card>
@@ -27,13 +27,17 @@
       </v-layout>
     </v-container>
     <v-container grid-list-lg class="form-faca-parte">
-      <form @submit.prevent="validateForm">
+      <form @submit.prevent="validateBeforeSubmit">
         <v-layout row wrap>
           <v-flex lg6 md6 xs12>
             <div class="input-block">
               <label class="input-label" for="Nome">Nome</label>
-              <input type="text" class="input-text" v-model="name">
-              <span class="input-error"></span>
+              <input type="text"
+                    name="nome"
+                    :class="{'input-text': true, 'is-danger': errors.has('nome') }"
+                    v-validate="'required|alpha'"
+                    v-model="name">
+              <span class="input-error" v-show="errors.has('nome')">{{ errors.first('nome') }}</span>
             </div>
           </v-flex>
           <v-flex lg6 md6 xs12>
@@ -41,7 +45,7 @@
               <label class="input-label" for="email">Email</label>
               <input type="email"
                      name="email"
-                     class="input-text"
+                     :class="{'input-text': true, 'is-danger': errors.has('email') }"
                      v-validate="'required|email'"
                      v-model="email">
               <span class="input-error" v-show="errors.has('email')">{{ errors.first('email') }}</span>
@@ -50,10 +54,16 @@
           <v-flex lg12 xs12>
             <div class="input-block">
               <label class="input-label" for="howtocolaborate">Como gostaria de Colaborar</label>
-              <textarea row="" cols="" name="howtocolaborate" v-model="howtocolaborate" class="input-textarea"></textarea>
-              <span class="input-error"></span>
+              <textarea
+                      row=""
+                      cols=""
+                      name="colaborar"
+                      :class="{'input-textarea': true, 'is-danger': errors.has('colaborar') }"
+                      v-validate="'required|alpha'"
+                      v-model="howtocolaborate"></textarea>
+              <span class="input-error" v-show="errors.has('colaborar')">{{ errors.first('colaborar') }}</span>
             </div>
-            <v-btn right class="btn-enviar">Enviar</v-btn>
+            <v-btn right class="btn-enviar" type="submit">Enviar</v-btn>
           </v-flex>
         </v-layout>
       </form>
@@ -68,9 +78,20 @@ export default {
   data: () => ({
     email: '',
     name: '',
-    howtocolaborate: '',
+    colaborar: '',
     locale: 'pt'
-  })
+  }),
+  methods: {
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          // eslint-disable-next-line
+          alert('From Submitted!');
+          return
+        }
+      })
+    }
+  }
 }
 </script>
 <style lang="sass">
