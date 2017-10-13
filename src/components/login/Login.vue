@@ -1,8 +1,8 @@
 <template>
   <div class="login">
     <v-container>
-      <v-layout>
-        <v-flex class="login-box" xs12 md8>
+      <v-layout align-center justify-center>
+        <v-flex class="login-box" xs12 md8 lg5>
           <div class="login-box-title">
             <div class="login-feather-detail">
               <img :src="require('@/assets/svg/login/integri_login.svg')" alt="">
@@ -22,10 +22,7 @@
             </div>
           </form>
           <div class="social-media-btns">
-            <div class="social-twitter">
-              <i class="fa fa-twitter" aria-hidden="true"></i>
-              <span class="text-piece">Conecte-se com Twitter</span>
-            </div>
+            <login-twitter></login-twitter>
           </div>
         </v-flex>
       </v-layout>
@@ -33,8 +30,11 @@
   </div>
 </template>
 <script>
-// import axios from 'axios'
+import LoginTwitter from '../login-twitter/LoginTwitter'
 export default {
+  components: {
+    LoginTwitter
+  },
   data () {
     return {
       user: {

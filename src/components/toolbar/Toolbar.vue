@@ -1,7 +1,7 @@
 <template>
   <v-toolbar dark>
     <v-toolbar-title></v-toolbar-title>
-    <logo v-show="$route.path==='/facaparte' || $route.path==='/conteudo' ? true : false"></logo>
+    <logo v-show="$route.path==='/' ? false : true"></logo>
     <v-spacer></v-spacer>
     <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
     <v-toolbar-items class="hidden-sm-and-down">

@@ -14,9 +14,9 @@
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index">
           <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
-          <div class="hook" v-if="message.hook" @click="gotohook(message.hook)">
-            <i class="fa fa-anchor" aria-hidden="true"></i>
-          </div>
+          <a class="hook" v-if="message.hook" @click="gotohook(message.hook)">
+            <span>Mostre-me os videos!</span>
+          </a>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-layout class="chatbox-yn-question" v-if="message.sender === 'question_yn' && message.active">
             <v-dialog v-model="displayLogin" persistent content-class="show-overflow">

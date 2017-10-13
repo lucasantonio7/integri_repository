@@ -5,7 +5,7 @@
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4 justify-center class="home-middle-container">
             <img :src="require('@/assets/svg/home/Integri_circle.svg')" alt="">
-            <login-twitter class="home-middle-btn" v-ripple></login-twitter>
+            <jorney class="home-middle-btn" v-ripple></jorney>
           </v-flex>
           <fcb></fcb>
         </v-layout>
@@ -18,14 +18,14 @@
 </template>
 
 <script>
-import LoginTwitter from '../login-twitter/LoginTwitter'
+import Jorney from '../jorney/Jorney'
 import Integri from '../integri/Integri'
 import Trends from '../trends/Trends'
 import Relevant from '../relevant/Relevant'
 import fcb from '../floating-chat-btn/FCB'
 export default {
   components: {
-    LoginTwitter,
+    Jorney,
     Integri,
     Trends,
     Relevant,

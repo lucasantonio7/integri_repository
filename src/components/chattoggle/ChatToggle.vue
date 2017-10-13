@@ -3,7 +3,8 @@
     <div class="chat-btn" @click="toggle">
       <span v-if="displayLabel">
         <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="">
-        <span class="text-piece">Conte-nos sobre você!</span>
+        <span v-if="!user.login" class="text-piece">Conte-nos sobre você!</span>
+        <span v-if="user.login" class="text-piece">Dúvidas? Fale conosco!</span>
       </span>
     </div>
     <div class="chat-toggle" v-if="displayChat">
@@ -24,6 +25,9 @@ export default {
     },
     displayLabel () {
       return this.$store.getters.displayLabel.active
+    },
+    user () {
+      return this.$store.getters.getUser
     }
   },
   methods: {

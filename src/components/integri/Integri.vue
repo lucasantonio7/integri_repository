@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <v-flex xs12>
           <h4 class="white--text">Bem vindo!</h4>
-          <p class="subheading white--text pr-5 pl-5">O Integri conecta indivíduos a práticas do bem através de uma vasta rede de conteúdo e oportunidade</p>
+          <p class="title white--text pr-5 pl-5">O Integri conecta indivíduos a práticas do bem através de uma vasta rede de conteúdo e oportunidade</p>
         </v-flex>
         <v-flex xs12 md4>
           <img class="pa-3 pr-5 pl-5 full-img" :src="require('@/assets/svg/home/faixa_tempo.svg')" alt="">

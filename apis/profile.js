@@ -12,8 +12,18 @@ module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
       name: req.body.name,
       email: req.body.email
     }
-    model.findOneByID(user, (err, result) => {
-      if (err) {
+    dbHandler.view('profiles', 'getUsers', (err, body) => {
+      if (body.rows[0].value) {
+        result.like = user.like;
+        result.last_change = Date.now();
+        result.save((err) => {
+          if (err) {
+            res.status(500).json(err)
+          } else {
+            res.json('User successfully saved')
+          }
+        })
+      } else {
         let salt = bcrypt.genSaltSync(10);
         let hashPwd = bcrypt.hashSync(user.pwd, salt)
         let newUser = userModel;
@@ -30,16 +40,6 @@ module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
             }
           }
         newUser.save((err) => {
-          if (err) {
-            res.status(500).json(err)
-          } else {
-            res.json('User successfully saved')
-          }
-        })
-      } else {
-        result.like = user.like;
-        result.last_change = Date.now();
-        result.save((err) => {
           if (err) {
             res.status(500).json(err)
           } else {
@@ -91,7 +91,7 @@ module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
             console.log(err)
             res.status(500).json('Any video spotted')
           })
-        }else{
+        } else {
           res.status(404).json('Unable to get channels')
         }
       })

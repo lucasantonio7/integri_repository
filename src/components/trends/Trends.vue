@@ -2,7 +2,7 @@
   <v-container grid-list-md class="no-fixed-height">
     <v-layout row wrap>
       <v-flex xs12>
-        <h6 class="trends-title">Em alta</h6>
+        <h6 class="trends-title">Veja alguns vídeos que estão sendo assistidos</h6>
       </v-flex>
       <v-flex xs6 md3 v-for="video in videosTrends" :key="video.id">
         <youtube :video-id="video.id" player-width="215" player-height="146" class="responsive-yt"></youtube>
@@ -15,7 +15,7 @@
           </v-list-tile>
         </v-list>
       </v-flex>
-      <v-flex xs12 class="text-xs-right">
+      <v-flex xs12 class="text-xs-right load-new">
         <a @click="showMore" v-if="display < allTrends">Ver mais</a>
       </v-flex>
     </v-layout>
