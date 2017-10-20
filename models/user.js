@@ -16,6 +16,11 @@ module.exports = (model) => {
     created_at: null,
     last_change: null,
     last_login: null,
+    unsuccessfull_attempts: null,
+    blocked: {
+      permanently: false,
+      block_time: null,
+    },
     type: 'profile'
   })
   return influencer

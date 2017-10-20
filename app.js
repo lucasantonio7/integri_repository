@@ -6,6 +6,7 @@ const passport = require('passport');
 const Strategy = require('passport-twitter').Strategy;
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const cfenv = require('./cfenv-wrapper');
 var appEnv = cfenv.getAppEnv();
@@ -14,7 +15,9 @@ const envVars = appEnv.getEnvVars();
 const nano = require('nano')(appEnv.services['cloudantNoSQLDB'][0].credentials.url);
 const dbHandler = nano.use('integri');
 const couchDBModel = require('couchdb-model');
-const myModel = couchDBModel(dbHandler);
+const myModel = couchDBModel(dbHandler, {
+  views: ['_design/profiles/_view/getUsers']
+});
 const userModel = require('./models/user')(myModel);
 // API Call
 const watson = require('./apis/watson')(appEnv);
@@ -29,12 +32,16 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
 }));
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+const access = require('./apis/access')(dbHandler, envVars, userModel, myModel)
+const auth = require('./utils/auth')(passport, userModel, envVars, cookieParser)
 
 // This piece of code should be changed
 let port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
@@ -50,7 +57,9 @@ passport.use(new Strategy({
     access_token: token,
     access_token_secret: tokenSecret
   })
-  dbHandler.view('profiles', 'getTwitterUsers', {keys:[profile.id]}, (err, body) => {
+  dbHandler.view('profiles', 'getTwitterUsers', {
+    keys: [profile.id]
+  }, (err, body) => {
     if (!err && body.rows.length > 0) {
       let user = body.rows[0].value;
       return cb(null, user);
@@ -72,25 +81,14 @@ passport.use(new Strategy({
           })
           Promise.all(analysisQueue).then(analysis => {
             analysis.forEach(sample => {
-              // console.log('Concepts')
-              // console.log(sample.concepts)
-              // console.log('Categories')
-              // console.log(sample.categories)
-              // console.log('Keywords')
-              // console.log(sample.keywords)
               sample.categories = sample.categories.filter(cat => {
-                if (cat.score > 0.3){
+                if (cat.score > 0.3) {
                   return true;
                 }
               })
               sample.categories.forEach(cat => {
                 let query = cat.label.split('/');
                 like.push(query[query.length - 1])
-                // query = query.forEach(val => {
-                //   if (val) {
-                //     like.push(val)
-                //   }
-                // })
               })
             });
             let user = userModel;
@@ -137,13 +135,23 @@ app.get('/', (req, res) => {
   })
 })
 
-const twitter = require('./apis/twitter.js')(passport);
+const twitter = require('./apis/twitter.js')(passport, cookieParser, envVars);
 const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars.youtubeAPIKey);
 
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
 app.use('/api/conversation', conversation)
 app.use('/api/profile', profile)
+app.post('/api/access_denied', (req, res) => {
+  try {
+    let status = req.body.access_status
+    req.session.denied = status;
+  } catch (ex) {
+    req.session.denied = false;
+  }
+  res.end();
+})
+app.use(access)
 
 app.listen(port, () => {
   console.log('running on port: ', port)

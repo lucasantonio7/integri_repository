@@ -10,19 +10,35 @@ module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
       _id: req.body.id,
       pwd: req.body.pwd,
       name: req.body.name,
-      email: req.body.email
+      email: req.body.email,
+      like: req.body.like
     }
-    dbHandler.view('profiles', 'getUsers', (err, body) => {
-      if (body.rows[0].value) {
-        result.like = user.like;
-        result.last_change = Date.now();
-        result.save((err) => {
-          if (err) {
-            res.status(500).json(err)
-          } else {
-            res.json('User successfully saved')
-          }
-        })
+    dbHandler.view('profiles', 'getUsers', {keys: [user.email]}, (err, body) => {
+      console.log(body)
+      if (body.rows.length > 0) {
+        // body.rows[0].value.like = user.like;
+        // body.rows[0].value.last_change = Date.now();
+        // let newUser = userModel;
+        // newUser._id = user._id,
+        // newUser.name = user.name,
+        // newUser.like = user.like,
+        // newUser.created_at = Date.now(),
+        // newUser.last_change = Date.now(),
+        // newUser.last_login = Date.now(),
+        // newUser.medias = {
+        //   integri: {
+        //     email: user.email,
+        //     pwd: hashPwd
+        //   }
+        // }
+        // result.save((err) => {
+        //   if (err) {
+        //     res.status(500).json(err)
+        //   } else {
+        //     res.json('User successfully saved')
+        //   }
+        // })
+        res.status(403).json(err)
       } else {
         let salt = bcrypt.genSaltSync(10);
         let hashPwd = bcrypt.hashSync(user.pwd, salt)

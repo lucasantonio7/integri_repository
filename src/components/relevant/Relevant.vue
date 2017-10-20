@@ -35,6 +35,9 @@ export default {
     Chat
   },
   computed: {
+    display () {
+      return this.getUser.login ? 8 : 4
+    },
     allVideos () {
       return this.$store.getters.getRelevant.length
     },
@@ -63,6 +66,9 @@ export default {
           console.log('/api/profile/videos response: ')
           console.log(resp.data)
           this.$store.commit('SET_RELEVANT', resp.data)
+          document.querySelector('.relevant-title').scrollIntoView({
+            behavior: 'smooth'
+          })
         }).catch(err => {
           console.log('/api/profile/videos Error: ')
           console.log(err)
@@ -72,7 +78,7 @@ export default {
   },
   data () {
     return {
-      display: 4
+      // display: 4
     }
   },
   methods: {

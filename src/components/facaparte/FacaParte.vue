@@ -10,32 +10,24 @@
     <v-container fluid grid-list-xs>
       <v-layout row wrap>
         <v-flex md4 xs12>
-           <v-card dark>
-             <v-card-text class="px-0 text-xs-center faca--card">Compartilhe <br />Conteúdo</v-card-text>
-           </v-card>
+          <v-btn class="faca--card" block @click="selectOption('share')">Compartilhe Conteúdo</v-btn>
         </v-flex>
         <v-flex md4 xs12>
-          <v-card dark>
-             <v-card-text class="px-0 text-xs-center faca--card">Aporte Conhecimento<br /> Técnico</v-card-text>
-           </v-card>
+          <v-btn class="faca--card" block @click="selectOption('')">Seja um voluntário</v-btn>
         </v-flex>
         <v-flex md4 xs12>
-          <v-card dark>
-             <v-card-text class="px-0 text-xs-center faca--card">Indique Organizações<br /> Sociais</v-card-text>
-           </v-card>
+          <v-btn class="faca--card" block @click="selectOption('referral')">Indique Organizações Sociais</v-btn>
         </v-flex>
       </v-layout>
     </v-container>
-    <v-container grid-list-lg class="form-faca-parte">
+    <v-container grid-list-lg class="form-faca-parte" v-if="displayForm">
       <form @submit.prevent="validateBeforeSubmit">
         <v-layout row wrap>
           <v-flex lg6 md6 xs12>
             <div class="input-block">
               <label class="input-label" for="Nome">Nome</label>
-              <input type="text"
-                    name="nome"
+              <input type="text" name="nome" v-validate="'required|alpha'"
                     :class="{'input-text': true, 'is-danger': errors.has('nome') }"
-                    v-validate="'required|alpha'"
                     v-model="name">
               <span class="input-error" v-show="errors.has('nome')">{{ errors.first('nome') }}</span>
             </div>
@@ -54,10 +46,7 @@
           <v-flex lg12 xs12>
             <div class="input-block">
               <label class="input-label" for="howtocolaborate">Como gostaria de Colaborar</label>
-              <textarea
-                      row=""
-                      cols=""
-                      name="colaborar"
+              <textarea name="colaborar"
                       :class="{'input-textarea': true, 'is-danger': errors.has('colaborar') }"
                       v-validate="'required|alpha'"
                       v-model="howtocolaborate"></textarea>
@@ -79,7 +68,8 @@ export default {
     email: '',
     name: '',
     colaborar: '',
-    locale: 'pt'
+    locale: 'pt',
+    displayForm: null
   }),
   methods: {
     validateBeforeSubmit () {
@@ -90,6 +80,9 @@ export default {
           return
         }
       })
+    },
+    selectOption (value) {
+      this.displayForm = value
     }
   }
 }

@@ -11,7 +11,7 @@
         </v-layout>
       </v-container>
     </v-card-media>
-    <integri></integri>
+    <integri v-if="!getUser.login"></integri>
     <trends></trends>
     <relevant></relevant>
   </div>
@@ -23,6 +23,7 @@ import Integri from '../integri/Integri'
 import Trends from '../trends/Trends'
 import Relevant from '../relevant/Relevant'
 import fcb from '../floating-chat-btn/FCB'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     Jorney,
@@ -30,6 +31,11 @@ export default {
     Trends,
     Relevant,
     fcb
+  },
+  computed: {
+    ...mapGetters([
+      'getUser'
+    ])
   }
 }
 </script>

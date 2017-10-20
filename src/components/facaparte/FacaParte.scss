@@ -63,11 +63,19 @@ $red: #ff3860;
   }
 
   .faca--card {
-    background-color: $purple;
-    line-height: 26px;
-    font-size: 24px;
-    height: 133px;
-    padding-top: 40px;
+    background-color: $purple!important;
+    color: white!important;
+    line-height: 2rem;
+    font-size: 1.5rem;
+    height: 9.5rem;
+    padding: 2.5rem;
+    white-space: normal;
+    margin: 0;
+    text-transform: capitalize;
+    .btn__content{
+      width: 100%;
+      white-space: normal;
+    }
   }
 
   .input-error {

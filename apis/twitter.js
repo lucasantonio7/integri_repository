@@ -1,5 +1,6 @@
 const express = require('express');
-module.exports = function (passport) {
+let jsonWT = require('jsonwebtoken');
+module.exports = function (passport, cookieParser, env) {
   let api = express.Router();
   api.get('/login', passport.authenticate('twitter'));
   // After user's authorization
@@ -16,11 +17,32 @@ module.exports = function (passport) {
   // Will retrieve user's data
   api.get('/user', (req, res) => {
     console.log(req.session.denied)
+    var cookie = null;
+    if (req.cookies) {
+      cookie = cookieParser.JSONCookies(req.cookies);
+    }
     if (req.user) {
       res.json({
         login: true,
         user: req.user,
         denied: false
+      })
+    } else if (cookie && cookie['integri']) {
+      jsonWT.verify(cookie['integri'], env.global_secret, (err, decoded) => {
+        console.log('Decoded cookie:')
+        console.log(decoded)
+        if (!err) {
+          res.json({
+            login: true,
+            user: decoded,
+            denied: false
+          })
+        } else {
+          res.json({
+            login: false,
+            denied: req.session.denied
+          })
+        }
       })
     } else {
       res.json({
@@ -31,7 +53,12 @@ module.exports = function (passport) {
   });
 
   api.get('/logout', (req, res) => {
-    req.logout();
+    let cookie = cookieParser.JSONCookies(req.cookies);
+    if (cookie && cookie['integri']) {
+      res.clearCookie('integri');
+    } else {
+      req.logout();
+    }
     res.redirect('/');
   })
   return api;

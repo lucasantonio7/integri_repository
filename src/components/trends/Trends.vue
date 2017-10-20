@@ -24,11 +24,6 @@
 <script>
 import axios from 'axios'
 export default {
-  data () {
-    return {
-      display: 4
-    }
-  },
   mounted () {
     axios.get('/api/google/trends').then(response => {
       this.$store.commit('SET_TRENDS', response.data)
@@ -37,6 +32,9 @@ export default {
     })
   },
   computed: {
+    display () {
+      return this.$store.getters.getUser.login ? 8 : 4
+    },
     videosTrends () {
       let count = 0
       return this.$store.getters.getTrends.filter(trend => {
@@ -60,4 +58,3 @@ export default {
 <style lang="sass">
   @import './Trends.scss'
 </style>
-

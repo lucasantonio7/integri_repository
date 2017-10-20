@@ -184,6 +184,9 @@ export default {
                 message: text
               })
             })
+            axios.post('/api/access_denied', {
+              access_status: false
+            })
             resolve(true)
           }).catch(err => {
             reject(err)
