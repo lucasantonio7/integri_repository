@@ -72,6 +72,10 @@ $red: #ff3860;
     white-space: normal;
     margin: 0;
     text-transform: capitalize;
+    *{
+      text-decoration: none;
+      color: white!important
+    }
     .btn__content{
       width: 100%;
       white-space: normal;

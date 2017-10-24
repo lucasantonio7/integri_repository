@@ -13,7 +13,7 @@
           <v-btn class="faca--card" block @click="selectOption('share')">Compartilhe Conteúdo</v-btn>
         </v-flex>
         <v-flex md4 xs12>
-          <v-btn class="faca--card" block @click="selectOption('')">Seja um voluntário</v-btn>
+          <v-btn class="faca--card" block @click="selectOption('volunteer')">Seja um voluntário</v-btn>
         </v-flex>
         <v-flex md4 xs12>
           <v-btn class="faca--card" block @click="selectOption('referral')">Indique Organizações Sociais</v-btn>
@@ -82,7 +82,12 @@ export default {
       })
     },
     selectOption (value) {
-      this.displayForm = value
+      if (value === 'volunteer') {
+        window.open('https://beta.parceirosvoluntarios.atados.com.br/', '_blank')
+        this.displayForm = false
+      } else {
+        this.displayForm = value
+      }
     }
   }
 }
