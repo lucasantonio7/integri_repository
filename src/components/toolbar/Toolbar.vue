@@ -17,8 +17,8 @@
           <v-list>
             <v-list-tile avatar>
               <v-list-tile-avatar>
-                <i class="fa fa-user-circle-o logout-fallback" aria-hidden="true" slot="activator"></i>
-                <!-- <img :src="user.user_data.profile_image" alt="Usuário"> -->
+                <i class="fa fa-user-circle-o logout-fallback" v-if="!user.user_data.profile_image" aria-hidden="true" slot="activator"></i>
+                <img :src="user.user_data.profile_image" v-if="user.user_data.profile_image" alt="Usuário">
               </v-list-tile-avatar>
               
               <v-list-tile-content>

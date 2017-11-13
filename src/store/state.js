@@ -17,5 +17,6 @@ export default {
   },
   context: null,
   chat: [],
-  typing: false
+  typing: false,
+  FB: null
 }

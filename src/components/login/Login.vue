@@ -26,7 +26,7 @@
           </form>
           <div class="social-media-btns">
             <login-twitter></login-twitter>
-            <span class="split">Ou</span>
+            <fbl></fbl>
             <link-to-chat></link-to-chat>
           </div>
         </v-flex>
@@ -37,11 +37,13 @@
 <script>
 import LoginTwitter from '../login-twitter/LoginTwitter'
 import LinkToChat from '../chat-link/ChatLink'
+import fbl from '../facebook-login/FacebookLogin'
 import axios from 'axios'
 export default {
   components: {
     LoginTwitter,
-    LinkToChat
+    LinkToChat,
+    fbl
   },
   data () {
     return {

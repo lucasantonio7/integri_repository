@@ -9,5 +9,6 @@ export const routes = [
   {path: '', alias: '/home', components: {default: Home, share: ShareSocial, sponsors: Sponsors}},
   {path: '/facaparte', components: {default: FacaParte, share: ShareSocial, sponsors: Sponsors}},
   {path: '/conteudo', component: Conteudo},
-  {path: '/login', component: Login}
+  {path: '/login', component: Login},
+  {path: '/_=_', redirect: '/home'}
 ]

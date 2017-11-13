@@ -40,6 +40,19 @@ app.use(bodyParser.urlencoded({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Enable reverse proxy support in Express. This causes the
+// the "X-Forwarded-Proto" header field to be trusted so its
+// value can be used to determine the protocol. See
+// http://expressjs.com/api#app-settings for more details.
+app.enable('trust proxy');
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST, GET");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 const access = require('./apis/access')(dbHandler, envVars, userModel, myModel)
 const auth = require('./utils/auth')(passport, userModel, envVars, cookieParser)
 
@@ -136,12 +149,14 @@ app.get('/', (req, res) => {
 })
 
 const twitter = require('./apis/twitter.js')(passport, cookieParser, envVars);
+const facebook = require('./apis/facebook')(watson, dbHandler, userModel, passport, envVars);
 const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars.youtubeAPIKey);
 
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
 app.use('/api/conversation', conversation)
 app.use('/api/profile', profile)
+app.use('/api/facebook', facebook)
 app.post('/api/access_denied', (req, res) => {
   try {
     let status = req.body.access_status
