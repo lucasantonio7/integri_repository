@@ -151,7 +151,8 @@ app.get('/', (req, res) => {
 const twitter = require('./apis/twitter.js')(passport, cookieParser, envVars);
 const facebook = require('./apis/facebook')(watson, dbHandler, userModel, passport, envVars);
 const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars.youtubeAPIKey);
-
+const sources = require('./apis/sources')(dbHandler);
+app.use('/api/sources', sources)
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
 app.use('/api/conversation', conversation)

@@ -18,5 +18,6 @@ export default {
   context: null,
   chat: [],
   typing: false,
-  FB: null
+  policy: null,
+  usage_terms: null
 }

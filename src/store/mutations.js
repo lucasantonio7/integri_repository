@@ -26,6 +26,12 @@ export default {
   SET_CONTEXT (state, payload) {
     state.context = payload
   },
+  SET_POLICY (state, payload) {
+    state.policy = payload
+  },
+  SET_USAGE_TERMS (state, payload) {
+    state.usage_terms = payload
+  },
   TOGGLE_CHAT_VISIBILITY (state, payload) {
     state.displayChat.active = !state.displayChat.active
   },

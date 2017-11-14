@@ -5,7 +5,7 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 
 
 module.exports = function (watson, dbHandler, userModel, passport, env) {
-  let analyzePosts = function(posts) {
+  let analyzePosts = function (posts) {
     return new Promise((resolve, reject) => {
       let translationList = posts.map(post => {
         return watson.translate(post.message)
@@ -48,17 +48,12 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
       dbHandler.view('profiles', 'getFacebookUsers', {
         keys: [profile.id]
       }, (err, body) => {
-        console.log(body)
         if (body.rows.length > 0) {
           let user = body.rows[0].value;
           return cb(null, user);
         } else {
-          console.log('PROFILE.:')
-          console.log(profile)
-          console.log('Graph - get')
           graph.get(profile.id + '?fields=id,name,posts,location,picture', (err, res) => {
             if (!err) {
-              console.log(res)
               let userObj = {
                 id: res.id,
                 name: res.name,
@@ -130,7 +125,6 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
     function (req, res) {
       res.redirect('/');
     });
-
 
   return api
 }

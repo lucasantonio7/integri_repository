@@ -20,6 +20,12 @@ export default {
   getChat: state => {
     return state.chat
   },
+  getPolicy: state => {
+    return state.policy
+  },
+  getUsageTerms: state => {
+    return state.usage_terms
+  },
   isTyping: state => {
     return state.typing
   }

@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar dark>
+  <v-toolbar dark :fixed="fixed">
     <v-toolbar-title></v-toolbar-title>
     <logo v-show="$route.path==='/' ? false : true"></logo>
     <v-spacer></v-spacer>
@@ -53,11 +53,15 @@ export default {
   methods: {
     logout () {
       window.location.href = '/api/twitter/logout'
+    },
+    toggleFixed () {
+      this.fixed = !this.fixed
     }
   },
   data () {
     return {
-      menu: false
+      menu: false,
+      fixed: false
     }
   }
 }

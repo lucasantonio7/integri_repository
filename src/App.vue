@@ -8,7 +8,7 @@
         <router-view name="share"></router-view>
         <router-view name="sponsors"></router-view>
         <!-- <share-social></share-social> -->
-        <!-- <sponsors></sponsors> -->
+        <FooterBar></FooterBar>
       </main>
     </v-app>
   </div>
@@ -16,11 +16,12 @@
 
 <script>
   import Toolbar from './components/toolbar/Toolbar'
-
+  import FooterBar from './components/footer/FooterBar'
   export default {
     name: 'app',
     components: {
-      Toolbar
+      Toolbar,
+      FooterBar
     }
   }
 
