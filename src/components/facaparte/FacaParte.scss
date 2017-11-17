@@ -96,3 +96,13 @@ $red: #ff3860;
     }
   }
 }
+
+.facaparte-mask{
+  .card__media__background::after{
+    background: rgba(126, 89, 163, 0.4);
+    width: 100%;
+    height: 100%;
+    content: '';
+    position: absolute;
+  }
+}

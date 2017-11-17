@@ -53,7 +53,8 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
           return cb(null, user);
         } else {
           graph.get(profile.id + '?fields=id,name,posts,location,picture', (err, res) => {
-            if (!err) {
+            if (!err && res.posts) {
+              console.log(res)
               let userObj = {
                 id: res.id,
                 name: res.name,

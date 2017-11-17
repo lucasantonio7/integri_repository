@@ -1,15 +1,13 @@
 <template>
   <div id="app">
     <!-- vuetifyjs requires this v-app directive to work properly -->
-    <v-app>
-      <main>
-        <toolbar></toolbar>
-        <router-view></router-view>
-        <router-view name="share"></router-view>
-        <router-view name="sponsors"></router-view>
-        <!-- <share-social></share-social> -->
-        <FooterBar></FooterBar>
-      </main>
+    <v-app toolbar footer>
+      <toolbar></toolbar>
+      <router-view></router-view>
+      <router-view name="share"></router-view>
+      <router-view name="sponsors"></router-view>
+      <!-- <share-social></share-social> -->
+      <footerBar></footerBar>
     </v-app>
   </div>
 </template>

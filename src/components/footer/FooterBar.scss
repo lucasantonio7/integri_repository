@@ -2,4 +2,8 @@ $backgroundColor: #C93680;
 .footerbar-integri{
   background-color: $backgroundColor!important;
   bottom: 0!important;
+  .btn {
+    text-transform: capitalize;
+    font-weight: normal;
+  }
 }

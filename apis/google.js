@@ -130,5 +130,47 @@ module.exports = function (apiKey, dbHandler) {
     })
   })
 
+  api.get('/videocontent', (req, res) => {
+    let tags = req.params.tags;
+    dbHandler.view('sources', 'getVideoContent', (err, body) => {
+      if (!err) {
+        let videos = body.rows[0].value;
+        let videosIDs = videos.videos_sources.reduce((prev, next) => {
+          if (prev.id) {
+            return prev.id + "," + next.id
+          } else {
+            return prev + "," + next.id
+          }
+        });
+        console.log(videosIDs)
+        youtube.videos.list({
+          part: 'snippet,contentDetails,statistics',
+          id: videosIDs
+        }, (err, resp) => {
+          if (err) {
+            console.log(err)
+            res.status(500).json(err);
+          } else {
+            // resp.items.forEach(item => {
+            //   // get video views and order by views
+            // })
+            // Max 50 videos
+            let relevantContent = resp.items.map(item => {
+              return {
+                title: item.snippet.title,
+                channel: item.snippet.channelTitle,
+                thumbnail: item.snippet.thumbnails.standard,
+                views: item.statistics.viewCount
+              }
+            })
+            res.send(relevantContent)
+          }
+        })
+      } else {
+        res.status(500).json(err)
+      }
+    })
+  })
+
   return api;
 }
