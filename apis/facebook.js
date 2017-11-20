@@ -40,7 +40,6 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
       clientID: env.facebookClientID,
       clientSecret: env.facebookClientSecret,
       callbackURL: env.facebookCallbackURL,
-      profileFields: ['id', 'name', 'posts', 'likes.limit(50)', 'location', 'picture'],
       enableProof: true
     },
     function (accessToken, refreshToken, profile, cb) {
@@ -63,7 +62,7 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
                     return true
                   }
                 }),
-                profile_image: res.picture.data.url,
+                profile_image: res.picture.data.is_silhouette ? '' : res.picture.data.url,
                 location: res.location.name,
                 like: []
               }
@@ -97,6 +96,17 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
                   }
                 })
               })
+            } else {
+              // This user has no posts
+              console.log(res)
+              let userObj = {
+                id: res.id,
+                name: res.name,
+                profile_image: res.picture.data.is_silhouette ? '' : res.picture.data.url,
+                location: res.location ? res.location.name : '',
+                like: []
+              }
+              return cb(null, userObj);
             }
           })
         }
@@ -116,7 +126,7 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
 
   api.get('/authenticate',
     passport.authenticate('facebook', {
-      scope: ['user_posts', 'user_hometown', 'user_location', 'email']
+      scope: ['user_posts', 'user_location', 'email']
     }));
 
   api.get('/login/return',
