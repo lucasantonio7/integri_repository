@@ -104,7 +104,8 @@ module.exports = function (apiKey, dbHandler) {
                       videosList.push({
                         id: video.snippet.resourceId.videoId,
                         title: video.snippet.title,
-                        channel: video.snippet.channelTitle
+                        channel: video.snippet.channelTitle,
+                        thumbnail: video.snippet.thumbnails.standard || video.snippet.thumbnails.default
                       })
                     });
                     resolve(videosList);

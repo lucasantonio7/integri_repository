@@ -4,8 +4,10 @@
       <v-flex xs12>
         <h6 class="trends-title">Veja alguns vídeos que estão sendo assistidos</h6>
       </v-flex>
-      <v-flex xs6 md3 v-for="video in videosTrends" :key="video.id">
-        <youtube :video-id="video.id" player-width="215" player-height="146" class="responsive-yt"></youtube>
+      <v-flex xs6 md3 v-for="video in videosTrends" :key="video.id" @click="showModal(video)">
+        <div class="thumbnail">
+          <img :src="video.thumbnail.url" :alt="video.title">
+        </div>
         <v-list two-line subheader>
           <v-list-tile avatar>
             <v-list-tile-content>
@@ -15,6 +17,12 @@
           </v-list-tile>
         </v-list>
       </v-flex>
+      <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
+        <div class="floating-video">
+          <span class="close-btn" @click="closeModal"><i class="fa fa-chevron-left" aria-hidden="true"></i>Voltar</span>
+          <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideo.thumbnail.width" :player-height="currentVideo.thumbnail.height" class="responsive-yt" @ready="ready" @playing="playing"></youtube>
+        </div>
+      </v-dialog>
       <v-flex xs12 class="text-xs-right load-new">
         <a @click="showMore" v-if="display < allTrends">Ver mais</a>
       </v-flex>
@@ -24,6 +32,20 @@
 <script>
 import axios from 'axios'
 export default {
+  data () {
+    return {
+      currentVideo: {
+        active: false,
+        id: '',
+        thumbnail: {
+          width: '',
+          height: '',
+          url: ''
+        }
+      },
+      showVideo: false
+    }
+  },
   mounted () {
     axios.get('/api/google/trends').then(response => {
       this.$store.commit('SET_TRENDS', response.data)
@@ -49,8 +71,23 @@ export default {
     }
   },
   methods: {
+    ready (player) {
+      this.player = player
+    },
+    playing (player) {
+      // The player is playing a video.
+    },
     showMore () {
       this.display += 4
+    },
+    showModal (video) {
+      this.currentVideo = video
+      this.showVideo = true
+    },
+    closeModal () {
+      this.player.stopVideo()
+      this.showVideo = false
+      console.log('Oi')
     }
   }
 }

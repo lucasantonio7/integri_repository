@@ -15,8 +15,9 @@
   }
 }
 
-.home-mask{
-  .card__media__background::after{
+.home-mask {
+  height: calc(100vh - 64px)!important;
+  .card__media__background::after {
     background: rgba(126, 89, 163, 0.4);
     width: 100%;
     height: 100%;
