@@ -63,21 +63,14 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
                   }
                 }),
                 profile_image: res.picture.data.is_silhouette ? '' : res.picture.data.url,
-                location: res.location.name,
+                location: res.location ? res.location.name : '',
                 like: []
               }
               let analysis = analyzePosts(userObj.posts)
               analysis.then(res => {
                 res.forEach(sample => {
-                  sample.categories = sample.categories.filter(cat => {
-                    if (cat.score > 0.3) {
-                      return true;
-                    }
-                  })
-                  sample.categories.forEach(cat => {
-                    let query = cat.label.split('/');
-                    userObj.like.push(query[query.length - 1])
-                  })
+                  console.log(sample)
+                  userObj.like.push(sample)
                 });
                 let user = userModel;
                 user.like = userObj.like;

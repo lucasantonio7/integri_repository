@@ -59,8 +59,14 @@
         </div>
       </div>
       <div class="chatbox-footer">
-        <input type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit">
-        <v-icon :disabled="!message.length > 0" @click="submit">send</v-icon>
+        <input type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit" v-if="!select1.active && !select2.active">
+        <div class="selection-box" v-if="select1.active || select2.active">
+          <v-select v-bind:items="select1.items" return-object :no-data-text="select1.noData" item-text="nome" item-value="sigla" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
+        </div>
+        <div class="selection-box">
+          <v-select v-bind:items="select2.items" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :append-icon="select2.icon"></v-select>
+        </div>
+        <v-icon :disabled="!canSend" @click="submit">send</v-icon>
       </div>
     </div>
   </div>
@@ -80,6 +86,15 @@ export default {
     },
     askingProfile () {
       return this.$store.getters.displayChat.askingProfile
+    },
+    states () {
+      return this.$store.getters.getStatesCities
+    },
+    select1Model () {
+      return this.select1.model
+    },
+    canSend () {
+      return this.message.length > 0 || this.select1.active && this.select1.model && (this.select1.isParent && this.select2.model || !this.select1.isParent)
     }
   },
   watch: {
@@ -97,6 +112,13 @@ export default {
           scrollTo.parentElement.parentElement.scrollTop = scrollTo.offsetTop
         }, 350)
       }
+    },
+    select1Model () {
+      if (this.select1Model.cidades) {
+        this.select2.items = this.select1Model.cidades
+        this.select2.active = true
+        this.select2.icon = 'place'
+      }
     }
   },
   data () {
@@ -110,7 +132,22 @@ export default {
         _pwdConf: '',
         like: []
       },
-      valid: false
+      valid: false,
+      select1: {
+        icon: '',
+        isParent: false,
+        items: [],
+        model: '',
+        label: '',
+        active: false
+      },
+      select2: {
+        icon: '',
+        items: [],
+        model: '',
+        label: '',
+        active: false
+      }
     }
   },
   methods: {
@@ -125,10 +162,23 @@ export default {
       }
     },
     submit () {
-      if (this.message.length > 0) {
-        let data = {
-          text: this.message,
-          context: this.$store.getters.getContext
+      let data = null
+      if (this.canSend) {
+        if (this.select1.active) {
+          switch (this.select1.origin) {
+            case 'states':
+              data = {
+                text: this.select2.model + ', ' + this.select1.model.sigla,
+                context: this.$store.getters.getContext
+              }
+              this.select1.active = false
+              this.select2.active = false
+          }
+        } else {
+          data = {
+            text: this.message,
+            context: this.$store.getters.getContext
+          }
         }
         console.log(data)
         this.$store.commit('ADD_TEXT', {
@@ -162,6 +212,26 @@ export default {
               sender: 'question_yn',
               active: true
             })
+          }
+          switch (response.data.context.selection_question) {
+            case 'state-city': {
+              axios.get('/api/sources/places').then(resp => {
+                this.$store.commit('SET_STATES', resp.data)
+                this.select1.items = this.states.estados
+                this.select1.active = true
+                this.select1.noData = 'Selecione um estado'
+                this.select1.icon = 'map'
+                this.select1.isParent = true
+                this.select1.origin = 'states'
+              }).catch(err => {
+                console.log(err)
+              })
+              break
+            }
+            case 'skills':
+              break
+            case 'causes':
+              break
           }
         }).catch(err => {
           console.log(err)

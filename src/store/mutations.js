@@ -11,6 +11,9 @@ export default {
   SET_USER (state, payload) {
     state.user = payload
   },
+  SET_STATES (state, payload) {
+    state.states_cities = payload
+  },
   SET_TRENDS (state, payload) {
     state.trends = payload
   },
@@ -22,6 +25,12 @@ export default {
   },
   SHOW_CHAT_NOTIFICATION (state, payload) {
     state.displayChat.isNotificationActive = true
+  },
+  SET_CAUSES (state, payload) {
+    state.causes = payload
+  },
+  SET_SKILLS (state, payload) {
+    state.skills = payload
   },
   SET_CONTEXT (state, payload) {
     state.context = payload

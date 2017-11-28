@@ -28,5 +28,8 @@ export default {
   },
   isTyping: state => {
     return state.typing
+  },
+  getStatesCities: state => {
+    return state.states_cities
   }
 }

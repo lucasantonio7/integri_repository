@@ -19,5 +19,8 @@ export default {
   chat: [],
   typing: false,
   policy: null,
-  usage_terms: null
+  usage_terms: null,
+  states_cities: null,
+  causes: null,
+  skills: null
 }
