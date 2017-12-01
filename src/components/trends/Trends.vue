@@ -87,7 +87,6 @@ export default {
     closeModal () {
       this.player.stopVideo()
       this.showVideo = false
-      console.log('Oi')
     }
   }
 }

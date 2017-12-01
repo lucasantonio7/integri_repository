@@ -183,6 +183,13 @@ $purple: #7F59A3;
           }
         }
       }
+      .video-card {
+        cursor: pointer;
+        .video-thumbnail{
+          width: 100%!important;
+          max-width: 100%;
+        }
+      }
     }
     .chatbox-footer {
       display: flex;

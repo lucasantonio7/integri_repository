@@ -1,6 +1,6 @@
 <template>
   <div class="relevant-wrapper">
-    <v-container>
+    <!-- <v-container>
       <v-layout row wrap>
         <v-flex xs12>
           <h6 class="relevant-title" v-if="!getUser.login">Relevantes para você</h6>
@@ -13,7 +13,7 @@
           <a @click="showMore" v-if="display < allVideos">Ver mais</a>
         </v-flex>
       </v-layout>
-    </v-container>
+    </v-container> -->
     <v-layout row wrap>
       <v-flex xs12>
         <jorney></jorney>

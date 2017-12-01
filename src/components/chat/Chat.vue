@@ -14,9 +14,20 @@
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index">
           <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
-          <a class="hook" v-if="message.hook" @click="gotohook(message.hook)">
-            <span>Mostre-me os videos!</span>
-          </a>
+          <v-container grid-list-md text-xs-center>
+            <carousel v-if="message.videos" perPage="1" navigationEnabled="true" class="video-slider">
+              <slide v-for="(groups,i) in videosGroups" :key="i">
+                <v-layout row wrap>
+                  <v-flex class="video-card" d-flex xs6 sm3 v-for="(video,i) in groups" :key="i" @click="showModal(video)">
+                    <v-card>
+                      <img class="video-thumbnail" :src="video.snippet.thumbnails.medium.url" alt="">
+                      <v-card-text>{{ video.snippet.title }}</v-card-text>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+              </slide>
+            </carousel>
+          </v-container>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-layout class="chatbox-yn-question" v-if="message.sender === 'question_yn' && message.active">
             <v-dialog v-model="displayLogin" persistent content-class="show-overflow">
@@ -61,20 +72,29 @@
       <div class="chatbox-footer">
         <input type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit" v-if="!select1.active && !select2.active">
         <div class="selection-box" v-if="select1.active || select2.active">
-          <v-select v-bind:items="select1.items" return-object :no-data-text="select1.noData" item-text="nome" item-value="sigla" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
+          <v-select v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
         </div>
         <div class="selection-box">
-          <v-select v-bind:items="select2.items" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :append-icon="select2.icon"></v-select>
+          <v-select v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :append-icon="select2.icon"></v-select>
         </div>
         <v-icon :disabled="!canSend" @click="submit">send</v-icon>
       </div>
     </div>
+    <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
+      <div class="floating-video">
+        <span class="close-btn" @click="closeModal"><i class="fa fa-chevron-left" aria-hidden="true"></i>Voltar</span>
+        <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideo.thumbnail.width" :player-height="currentVideo.thumbnail.height" class="responsive-yt" @ready="ready" @playing="playing"></youtube>
+      </div>
+    </v-dialog>
   </div>
 </template>
 <script>
 import axios from 'axios'
 export default {
   computed: {
+    causes () {
+      return this.$store.getters.getCauses
+    },
     chat () {
       return this.$store.getters.getChat
     },
@@ -90,11 +110,35 @@ export default {
     states () {
       return this.$store.getters.getStatesCities
     },
+    skills () {
+      return this.$store.getters.getSkills
+    },
     select1Model () {
       return this.select1.model
     },
     canSend () {
       return this.message.length > 0 || this.select1.active && this.select1.model && (this.select1.isParent && this.select2.model || !this.select1.isParent)
+    },
+    returnedVideos () {
+      return this.$store.getters.getRelevant
+    },
+    videosGroups () {
+      let groups = []
+      let index = 0
+      this.returnedVideos.forEach(vid => {
+        console.log(vid)
+        if (groups.length < 1) {
+          groups.push([])
+        }
+        if (groups[index].length < 4) {
+          groups[index].push(vid)
+        } else {
+          index++
+          groups.push([])
+          groups[index].push(vid)
+        }
+      })
+      return groups
     }
   },
   watch: {
@@ -123,6 +167,15 @@ export default {
   },
   data () {
     return {
+      currentVideo: {
+        active: false,
+        id: '',
+        thumbnail: {
+          width: '',
+          height: '',
+          url: ''
+        }
+      },
       message: '',
       displayLogin: false,
       newUser: {
@@ -132,6 +185,7 @@ export default {
         _pwdConf: '',
         like: []
       },
+      video_group: [],
       valid: false,
       select1: {
         icon: '',
@@ -139,18 +193,45 @@ export default {
         items: [],
         model: '',
         label: '',
-        active: false
+        active: false,
+        multi: false,
+        item_value: '',
+        item_text: ''
       },
       select2: {
         icon: '',
         items: [],
         model: '',
         label: '',
-        active: false
-      }
+        active: false,
+        multi: false,
+        item_value: '',
+        item_text: ''
+      },
+      showVideo: false
     }
   },
   methods: {
+    ready (player) {
+      this.player = player
+    },
+    showMore () {
+      this.display += 4
+    },
+    showModal (video) {
+      this.currentVideo.thumbnail = video.snippet.thumbnails.high
+      this.currentVideo.id = video.id
+      this.showVideo = true
+    },
+    closeModal () {
+      this.player.stopVideo()
+      this.showVideo = false
+    },
+    setSelect (target, payload) {
+      for (let prop in payload) {
+        target[prop] = payload[prop]
+      }
+    },
     gotohook (hook) {
       console.log(hook)
       switch (hook) {
@@ -173,6 +254,21 @@ export default {
               }
               this.select1.active = false
               this.select2.active = false
+              break
+            case 'skills':
+              data = {
+                text: this.select1.model.map(item => item.name).join(', '),
+                context: this.$store.getters.getContext
+              }
+              this.select1.active = false
+              break
+            case 'causes':
+              data = {
+                text: this.select1.model.map(item => item.name).join(', '),
+                context: this.$store.getters.getContext
+              }
+              this.select1.active = false
+              break
           }
         } else {
           data = {
@@ -196,11 +292,12 @@ export default {
             this.$store.commit('ADD_TEXT', {
               sender: 'watson',
               message: text,
-              hook: response.data.context.hook === 'relevant' && index < 1 ? response.data.context.hook : null
+              videos: response.data.context.display === 'videos' && index < 1 ? true : null
             })
           })
           console.log(response.data)
           if (response.data.context.video) {
+            console.log(response.data.context.video)
             this.$store.commit('SET_RELEVANT', response.data.context.video)
           }
           if (response.data.context.user) {
@@ -223,14 +320,68 @@ export default {
                 this.select1.icon = 'map'
                 this.select1.isParent = true
                 this.select1.origin = 'states'
+                this.select1.item_value = 'sigla'
+                this.select1.item_text = 'nome'
+                this.select1.multi = false
               }).catch(err => {
                 console.log(err)
               })
               break
             }
             case 'skills':
+              if (!this.skills) {
+                axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
+                  console.log(resp)
+                  this.$store.commit('SET_SKILLS', resp.data.skills)
+                  this.select1.items = this.skills
+                  this.select1.active = true
+                  this.select1.noData = 'Selecione uma ou mais habilidades'
+                  this.select1.icon = 'map'
+                  this.select1.isParent = false
+                  this.select1.origin = 'skills'
+                  this.select1.multi = true
+                  this.select1.model = []
+                  this.select1.item_value = 'name'
+                  this.select1.item_text = 'name'
+                  if (resp.data.causes) {
+                    this.$store.commit('SET_CAUSES', resp.data.causes)
+                  }
+                }).catch(err => {
+                  console.log(err)
+                })
+              } else {
+                this.setSelect(this.select1, {items: this.skills,
+                  active: true,
+                  noData: 'Selecione uma ou mais habilidades',
+                  icon: 'map',
+                  isParent: false,
+                  origin: 'skills',
+                  multi: true,
+                  model: [],
+                  item_value: 'name',
+                  item_text: 'name'})
+              }
               break
             case 'causes':
+              axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
+                console.log(resp)
+                this.$store.commit('SET_CAUSES', resp.data.causes)
+                this.select1.items = this.causes
+                this.select1.active = true
+                this.select1.noData = 'Selecione uma ou mais causes'
+                this.select1.icon = 'map'
+                this.select1.isParent = false
+                this.select1.origin = 'causes'
+                this.select1.multi = true
+                this.select1.model = []
+                this.select1.item_value = 'name'
+                this.select1.item_text = 'name'
+                if (resp.data.skills) {
+                  this.$store.commit('SET_SKILLS', resp.data.skills)
+                }
+              }).catch(err => {
+                console.log(err)
+              })
               break
           }
         }).catch(err => {
@@ -315,7 +466,6 @@ export default {
     })
   }
 }
-
 </script>
 <style lang="sass">
   @import 'Chat'

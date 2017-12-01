@@ -13,7 +13,7 @@ import pt_BR from 'vee-validate/dist/locale/pt_BR'
 import VeeValidate, { Validator } from 'vee-validate'
 import { routes } from './routes'
 import store from './store/store'
-// import vuefb from './plugins/fb-sdk'
+import VueCarousel from 'vue-carousel'
 
 Vue.config.productionTip = false
 Vue.use(Vuetify)
@@ -21,6 +21,7 @@ Vue.use(Vuex)
 Vue.use(VueYouTubeEmbed)
 Vue.use(VueRouter)
 Vue.use(VeeValidate, {locale: 'pt_BR'})
+Vue.use(VueCarousel)
 Validator.addLocale(pt_BR)
 VeeValidate.Validator.setLocale('pt_BR')
 // Vue.use(vuefb)

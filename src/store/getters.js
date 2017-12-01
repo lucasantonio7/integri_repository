@@ -31,5 +31,11 @@ export default {
   },
   getStatesCities: state => {
     return state.states_cities
+  },
+  getCauses: state => {
+    return state.causes
+  },
+  getSkills: state => {
+    return state.skills
   }
 }

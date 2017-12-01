@@ -26,7 +26,7 @@ class Youtube {
               if (videos.pageInfo.totalResults > 0) {
                 videos.items.forEach(video => {
                   if (video.id.videoId) {
-                    resolve(video.id.videoId)
+                    resolve(video)
                   } else {
                     reject({
                       message: 'This object is not a video'

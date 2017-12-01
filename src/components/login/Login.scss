@@ -10,6 +10,11 @@ $white: #fff;
     background: $white;
     padding: 1.5rem;
     margin: 5.57rem;
+    @media (max-width: 600px) {
+      margin: 2.785rem;
+      margin-right: 0;
+      margin-left: 0;
+    }
     .login-box-title {
       .login-feather-detail {
         text-align: center;
@@ -39,6 +44,9 @@ $white: #fff;
     }
     .login-form {
       padding: 1.5rem;
+      @media (max-width: 600px) {
+        padding: 1.5rem 0;
+      }
       .input-addon {
         margin: 1rem 0rem;
         position: relative;
@@ -91,6 +99,9 @@ $white: #fff;
 
 .social-media-btns {
   padding: 0 1.5rem;
+  @media (max-width: 600px) {
+    padding: 0;
+  }
 }
 
 .error-text {
