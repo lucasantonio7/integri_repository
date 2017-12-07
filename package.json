@@ -41,6 +41,7 @@
     "vee-validate": "^2.0.0-rc.18",
     "vue": "^2.5.9",
     "vue-carousel": "^0.6.5",
+    "vue-template-compiler": "^2.5.9",
     "vue-youtube-embed": "^2.1.2",
     "vuetify": "^1.0.0-alpha.1",
     "vuex": "^2.4.0",

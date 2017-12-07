@@ -8,15 +8,15 @@
         </v-flex>
         <v-flex xs12 md4>
           <img class="pa-3 pr-5 pl-5 full-img" :src="require('@/assets/svg/home/faixa_tempo.svg')" alt="">
-          <h5 class="white--text pr-5 pl-5">No seu tempo</h5>
+          <h5 class="white--text pr-5 pl-5 title">No seu tempo</h5>
         </v-flex>
         <v-flex xs12 md4>
           <img class="pa-3 pr-5 pl-5 full-img" :src="require('@/assets/svg/home/faixa_proposito.svg')" alt="">
-          <h5 class="white--text pr-5 pl-5">De acordo com o seu propósito</h5>
+          <h5 class="white--text pr-5 pl-5 title">De acordo com o seu propósito</h5>
         </v-flex>
         <v-flex xs12 md4>
           <img class="pa-3 pr-5 pl-5 full-img" :src="require('@/assets/svg/home/faixa_forma.svg')" alt="">
-          <h5 class="white--text pr-5 pl-5">Da melhor forma para você</h5>
+          <h5 class="white--text pr-5 pl-5 title">Da melhor forma para você</h5>
         </v-flex>
       </v-layout>
     </v-container>

@@ -46,14 +46,14 @@ $white: #fff;
 
     > h6 {
       color: $white;
-      font-weight: 400;
+      font-weight: 400!important;
       padding: 2.5rem 0 0 1rem;
     }
 
     .btn.btn--raised.theme--light {
       background-color: $gray;
       border-radius: 0;
-      color: $purple;
+      color: $purple!important;
     }
 
     .input-block{
@@ -72,7 +72,7 @@ $white: #fff;
     padding: 2rem 3rem;
 
     > h6 {
-      color: $purple;
+      color: $purple!important;
       font-weight: 400;
       padding: 2.5rem 0 0 1rem;
     }
@@ -80,13 +80,13 @@ $white: #fff;
     .social-btns {
       padding: 0rem 1rem;
 
-      .btn.btn--icon.btn--raised{
-        border: 2px solid $purple;
-        border-radius: 0;
-        padding: 0.25rem;
+      .btn.btn--icon{
+        border: 2px solid $purple!important;
+        border-radius: 0!important;
+        padding: 0.25rem!important;
 
         .fa {
-          color: $purple;
+          color: $purple!important;
         }
       }
     }
