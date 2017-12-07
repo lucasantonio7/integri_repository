@@ -119,7 +119,41 @@ module.exports = function (appEnv, dbHandler, googleAPIKey) {
               break;
           }
         } else {
-          res.json(response)
+          if (response.context.video_query) {
+            dbHandler.view('sources', 'getYoutubeSource', (err, body) => {
+              console.log('Youtube source from DB');
+              if (!err) {
+                let channels = body.rows[0].value;
+                let videoQueue = response.context.video_query.map(category => {
+                  console.log('Category ', category)
+                  return new Promise((resolve, reject) => {
+                    youtubeInstance.videosSources(category, channels).then(resp => {
+                      console.log('Success Videos:')
+                      resolve(resp)
+                    }).catch(err => {
+                      console.log("Error videos")
+                      reject(err)
+                    })
+                  })
+                })
+                Promise.all(videoQueue.map(utils.reflect)).then(videos => {
+                  console.log(videos)
+                  let sucess = videos.filter(item => item.status === 'resolved');
+                  let filtered = sucess.map(videoList => {
+                    videoList.v = videoList.v.filter(item => item.status === 'resolved');
+                    return videoList.v.map(video => {
+                      return video.v
+                    })
+                  });
+                  response.context.video = [].concat.apply([], filtered);
+                  response.context.user = req.session.newProfile;
+                  res.json(response)
+                })
+              }
+            })
+          } else {
+            res.json(response)
+          }
         }
       }
     });

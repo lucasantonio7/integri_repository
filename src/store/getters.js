@@ -37,5 +37,8 @@ export default {
   },
   getSkills: state => {
     return state.skills
+  },
+  getAccessSource: state => {
+    return state.access_source
   }
 }

@@ -22,5 +22,6 @@ export default {
   usage_terms: null,
   states_cities: null,
   causes: null,
-  skills: null
+  skills: null,
+  access_source: null
 }

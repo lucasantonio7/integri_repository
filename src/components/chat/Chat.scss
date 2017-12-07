@@ -166,14 +166,17 @@ $purple: #7F59A3;
           }
         }
         .chatbox-yn-question{
-          align-self: flex-start;
+          align-self: flex-end;
           margin-left: 1rem;
           color: $watsonbox;
           .option {
             @include chatbubble($userbox);
-            min-width: 5rem;
+            min-width: 7.25rem;
             justify-content: center;
-            margin: 0 0.5rem;
+            margin: 0 0.75rem;
+            cursor: pointer;
+            border: 2px solid $watsonbox;
+            letter-spacing: 0.1rem;
             &:first-child{
               margin-left: 0;
             }

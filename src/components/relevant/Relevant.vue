@@ -27,7 +27,6 @@
 <script>
 import Jorney from '../jorney/Jorney'
 import Chat from '../chattoggle/ChatToggle'
-import axios from 'axios'
 import { mapGetters } from 'vuex'
 export default {
   components: {
@@ -57,23 +56,23 @@ export default {
   watch: {
     getUser (newValue) {
       console.log(newValue)
-      if (newValue.user_data.like) {
-        axios.get('/api/profile/videos', {
-          params: {
-            cat: newValue.user_data.like
-          }
-        }).then(resp => {
-          console.log('/api/profile/videos response: ')
-          console.log(resp.data)
-          this.$store.commit('SET_RELEVANT', resp.data)
-          document.querySelector('.relevant-title').scrollIntoView({
-            behavior: 'smooth'
-          })
-        }).catch(err => {
-          console.log('/api/profile/videos Error: ')
-          console.log(err)
-        })
-      }
+      // if (newValue.user_data.like) {
+      //   axios.get('/api/profile/videos', {
+      //     params: {
+      //       cat: newValue.user_data.like
+      //     }
+      //   }).then(resp => {
+      //     console.log('/api/profile/videos response: ')
+      //     console.log(resp.data)
+      //     this.$store.commit('SET_RELEVANT', resp.data)
+      //     document.querySelector('.relevant-title').scrollIntoView({
+      //       behavior: 'smooth'
+      //     })
+      //   }).catch(err => {
+      //     console.log('/api/profile/videos Error: ')
+      //     console.log(err)
+      //   })
+      // }
     }
   },
   data () {

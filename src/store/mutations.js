@@ -41,6 +41,9 @@ export default {
   SET_USAGE_TERMS (state, payload) {
     state.usage_terms = payload
   },
+  SET_ACCESS_SOURCE (state, payload) {
+    state.access_source = payload
+  },
   TOGGLE_CHAT_VISIBILITY (state, payload) {
     state.displayChat.active = !state.displayChat.active
   },

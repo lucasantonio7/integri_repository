@@ -15,7 +15,7 @@
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index">
           <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
           <v-container grid-list-md text-xs-center>
-            <carousel v-if="message.videos" perPage="1" navigationEnabled="true" class="video-slider">
+            <carousel v-if="message.videos" :perPage="1" :navigationEnabled="true" class="video-slider">
               <slide v-for="(groups,i) in videosGroups" :key="i">
                 <v-layout row wrap>
                   <v-flex class="video-card" d-flex xs6 sm3 v-for="(video,i) in groups" :key="i" @click="showModal(video)">
@@ -29,38 +29,9 @@
             </carousel>
           </v-container>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
-          <v-layout class="chatbox-yn-question" v-if="message.sender === 'question_yn' && message.active">
-            <v-dialog v-model="displayLogin" persistent content-class="show-overflow">
-              <v-flex xs12 s6 md3 slot="activator" class="option">Sim</v-flex>
-              <form class="login-dialog-wrapper">
-                <div class="login-dialog-title">
-                  <div class="login-feather-detail">
-                    <img :src="require('@/assets/svg/login/integri_login.svg')" alt="">
-                  </div>
-                </div>
-                <div class="login-form">
-                  <div class="input-addon">
-                    <i class="fa fa-user-o" aria-hidden="true"></i>
-                    <input type="text" v-model="newUser.name" placeholder="Nome" required>
-                  </div>
-                  <div class="input-addon">
-                    <i class="fa fa-envelope-o" aria-hidden="true"></i>
-                    <input type="email" v-model="newUser.email" placeholder="E-mail" required>
-                  </div>
-                  <div class="input-addon">
-                    <i class="fa fa-lock" aria-hidden="true"></i>
-                    <input type="password" v-model="newUser.pwd" placeholder="Senha" required>
-                  </div>
-                  <div class="input-addon">
-                    <i class="fa fa-lock" aria-hidden="true"></i>
-                    <input type="password" v-model="newUser._pwdConf" placeholder="Confirme sua senha" required>
-                  </div>
-                </div>
-                <v-btn class="blue--text darken-1 login-cancel" flat @click.native="displayLogin = false">Cancelar</v-btn>
-                <v-btn class="blue--text darken-1 login-submit" type="button" :disabled="!(newUser.pwd === newUser._pwdConf && newUser.pwd.length > 0)" flat @click.native="saveProfile">Enviar</v-btn>
-              </form>
-            </v-dialog>
-            <v-flex xs12 s6 md3 class="option" @click="message.active = false">Não</v-flex>
+          <v-layout class="chatbox-yn-question" v-if="message.type === 'yn_question' && message.active">
+            <v-flex xs12 s6 md3 class="option" @click="YNSelector(true, message)">Sim</v-flex>
+            <v-flex xs12 s6 md3 class="option" @click="YNSelector(false, message)">Não</v-flex>
           </v-layout>
         </div>
         <div class="chatbox-typing" >
@@ -68,6 +39,35 @@
           <div class="dot"></div>
           <div class="dot"></div>
         </div>
+        <v-dialog v-model="displayLoginBox" persistent content-class="show-overflow">
+          <form class="login-dialog-wrapper">
+            <div class="login-dialog-title">
+              <div class="login-feather-detail">
+                <img :src="require('@/assets/svg/login/integri_login.svg')" alt="">
+              </div>
+            </div>
+            <div class="login-form">
+              <div class="input-addon">
+                <i class="fa fa-user-o" aria-hidden="true"></i>
+                <input type="text" v-model="newUser.name" placeholder="Nome" required>
+              </div>
+              <div class="input-addon">
+                <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                <input type="email" v-model="newUser.email" placeholder="E-mail" required>
+              </div>
+              <div class="input-addon">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+                <input type="password" v-model="newUser.pwd" placeholder="Senha" required>
+              </div>
+              <div class="input-addon">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+                <input type="password" v-model="newUser._pwdConf" placeholder="Confirme sua senha" required>
+              </div>
+            </div>
+            <v-btn class="blue--text darken-1 login-cancel" flat @click.native="displayLoginBox = false">Cancelar</v-btn>
+            <v-btn class="blue--text darken-1 login-submit" type="button" :disabled="!(newUser.pwd === newUser._pwdConf && newUser.pwd.length > 0)" flat @click.native="saveProfile">Enviar</v-btn>
+          </form>
+        </v-dialog>
       </div>
       <div class="chatbox-footer">
         <input type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit" v-if="!select1.active && !select2.active">
@@ -83,7 +83,7 @@
     <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
       <div class="floating-video">
         <span class="close-btn" @click="closeModal"><i class="fa fa-chevron-left" aria-hidden="true"></i>Voltar</span>
-        <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideo.thumbnail.width" :player-height="currentVideo.thumbnail.height" class="responsive-yt" @ready="ready" @playing="playing"></youtube>
+        <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideo.thumbnail.width" :player-height="currentVideo.thumbnail.height" class="responsive-yt" @ready="ready"></youtube>
       </div>
     </v-dialog>
   </div>
@@ -126,7 +126,6 @@ export default {
       let groups = []
       let index = 0
       this.returnedVideos.forEach(vid => {
-        console.log(vid)
         if (groups.length < 1) {
           groups.push([])
         }
@@ -177,7 +176,7 @@ export default {
         }
       },
       message: '',
-      displayLogin: false,
+      displayLoginBox: false,
       newUser: {
         name: '',
         email: '',
@@ -242,6 +241,24 @@ export default {
           break
       }
     },
+    YNSelector (payload, message) {
+      message.active = false
+      if (payload) {
+        if (message.action === 'save_profile') {
+          this.displayLoginBox = true
+        } else {
+          this.message = 'Sim'
+          this.$nextTick().then(() => {
+            this.submit()
+          })
+        }
+      } else {
+        this.message = 'Não'
+        this.$nextTick().then(() => {
+          this.submit()
+        })
+      }
+    },
     submit () {
       let data = null
       if (this.canSend) {
@@ -288,6 +305,7 @@ export default {
         }).then(response => {
           this.$store.commit('TOGGLE_TYPING')
           this.$store.commit('SET_CONTEXT', response.data.context)
+          console.log(response.data.context)
           response.data.output.text.forEach((text, index) => {
             this.$store.commit('ADD_TEXT', {
               sender: 'watson',
@@ -304,10 +322,13 @@ export default {
             this.newUser._id = response.data.context.user._id
             this.newUser.like = response.data.context.user.analysis
           }
-          if (response.data.context.question_type === 'save_profile') {
-            this.$store.commit('ADD_TEXT', {
-              sender: 'question_yn',
-              active: true
+          if (response.data.context.question_type === 'yn_question') {
+            this.$nextTick().then(() => {
+              this.$store.commit('ADD_TEXT', {
+                type: 'yn_question',
+                action: response.data.context.action,
+                active: true
+              })
             })
           }
           switch (response.data.context.selection_question) {
@@ -331,12 +352,11 @@ export default {
             case 'skills':
               if (!this.skills) {
                 axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
-                  console.log(resp)
                   this.$store.commit('SET_SKILLS', resp.data.skills)
                   this.select1.items = this.skills
                   this.select1.active = true
                   this.select1.noData = 'Selecione uma ou mais habilidades'
-                  this.select1.icon = 'map'
+                  this.select1.icon = 'playlist_add'
                   this.select1.isParent = false
                   this.select1.origin = 'skills'
                   this.select1.multi = true
@@ -353,7 +373,7 @@ export default {
                 this.setSelect(this.select1, {items: this.skills,
                   active: true,
                   noData: 'Selecione uma ou mais habilidades',
-                  icon: 'map',
+                  icon: 'playlist_add',
                   isParent: false,
                   origin: 'skills',
                   multi: true,
@@ -368,7 +388,7 @@ export default {
                 this.$store.commit('SET_CAUSES', resp.data.causes)
                 this.select1.items = this.causes
                 this.select1.active = true
-                this.select1.noData = 'Selecione uma ou mais causes'
+                this.select1.noData = 'Selecione uma ou mais causas'
                 this.select1.icon = 'map'
                 this.select1.isParent = false
                 this.select1.origin = 'causes'
@@ -382,6 +402,10 @@ export default {
               }).catch(err => {
                 console.log(err)
               })
+              break
+            default:
+              this.select1.active = false
+              this.select2.active = false
               break
           }
         }).catch(err => {
@@ -436,6 +460,36 @@ export default {
         })
       })
     },
+    notifySocialMedia () {
+      let data = {
+        text: this.$store.getters.getAccessSource + ' Access',
+        context: Object.assign(this.$store.getters.getContext, {video_query: this.$store.getters.getUser.user_data.like}),
+        trackingProfile: true
+      }
+      console.log(data)
+      this.$store.commit('TOGGLE_TYPING')
+      axios.get('/api/conversation/message', {
+        params: data
+      }).then(response => {
+        this.$store.commit('TOGGLE_TYPING')
+        if (response.data.context.video) {
+          console.log(response.data.context.video)
+          this.$store.commit('SET_RELEVANT', response.data.context.video)
+          this.$nextTick().then(() => {
+            response.data.output.text.forEach((text, index) => {
+              text = text.replace('user_name', this.$store.getters.getUser.user_data.name)
+              text = text.replace('social_media', this.$store.getters.getAccessSource)
+              this.$store.commit('ADD_TEXT', {
+                sender: 'watson',
+                message: text,
+                videos: response.data.context.display === 'videos' ? true : null
+              })
+              console.log(response.data.context.display)
+            })
+          })
+        }
+      })
+    },
     saveProfile () {
       let user = {
         name: this.newUser.name,
@@ -445,10 +499,10 @@ export default {
       }
       axios.post('/api/profile/save', user).then(resp => {
         console.log(resp)
-        this.displayLogin = false
+        this.displayLoginBox = false
       }).catch(err => {
         console.log(err)
-        this.displayLogin = false
+        this.displayLoginBox = false
       })
     }
   },
@@ -457,9 +511,10 @@ export default {
       behavior: 'smooth'
     })
     this.initChat().then(res => {
-      console.log(this.isDenied)
       if (this.isDenied) {
         this.notifyChatDeniedProfile()
+      } else {
+        this.notifySocialMedia()
       }
     }).catch(err => {
       console.log(err)
