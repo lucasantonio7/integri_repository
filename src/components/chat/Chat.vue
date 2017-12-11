@@ -12,10 +12,10 @@
     </div>
     <div class="chatbox-messages">
       <div class="chatbox-messages-wrapper">
-        <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index">
+        <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
           <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
-          <v-container grid-list-md text-xs-center>
-            <carousel v-if="message.videos" :perPage="1" :navigationEnabled="true" class="video-slider">
+          <v-container grid-list-md text-xs-center v-if="message.videos">
+            <carousel :perPage="1" :navigationEnabled="true" class="video-slider">
               <slide v-for="(groups,i) in videosGroups" :key="i">
                 <v-layout row wrap>
                   <v-flex class="video-card" d-flex xs6 sm3 v-for="(video,i) in groups" :key="i" @click="showModal(video)">
@@ -29,10 +29,16 @@
             </carousel>
           </v-container>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
-          <v-layout class="chatbox-yn-question" v-if="message.type === 'yn_question' && message.active">
-            <v-flex xs12 s6 md3 class="option" @click="YNSelector(true, message)">Sim</v-flex>
-            <v-flex xs12 s6 md3 class="option" @click="YNSelector(false, message)">Não</v-flex>
-          </v-layout>
+          <v-container grid-list-md v-if="message.type === 'yn_question' && message.active">
+            <v-layout row class="chatbox-yn-question" >
+              <v-flex xs12 s5 md3 class="option" @click="YNSelector(true, message)">
+                {{ message.options.yes }}
+              </v-flex>
+              <v-flex xs12 s5 md3 class="option" @click="YNSelector(false, message)">
+                {{ message.options.no }}
+              </v-flex>
+            </v-layout>
+          </v-container>
         </div>
         <div class="chatbox-typing" >
           <div class="dot"></div>
@@ -70,7 +76,7 @@
         </v-dialog>
       </div>
       <div class="chatbox-footer">
-        <input type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit" v-if="!select1.active && !select2.active">
+        <input ref="inputbox" type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit" v-if="inputboxactive">
         <div class="selection-box" v-if="select1.active || select2.active">
           <v-select v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
         </div>
@@ -138,6 +144,9 @@ export default {
         }
       })
       return groups
+    },
+    inputboxactive () {
+      return !this.select1.active && !this.select2.active
     }
   },
   watch: {
@@ -247,13 +256,13 @@ export default {
         if (message.action === 'save_profile') {
           this.displayLoginBox = true
         } else {
-          this.message = 'Sim'
+          this.message = message.options.yes
           this.$nextTick().then(() => {
             this.submit()
           })
         }
       } else {
-        this.message = 'Não'
+        this.message = message.options.no
         this.$nextTick().then(() => {
           this.submit()
         })
@@ -304,6 +313,13 @@ export default {
           params: data
         }).then(response => {
           this.$store.commit('TOGGLE_TYPING')
+          switch (response.data.context.hook) {
+            case 'login':
+              delete response.data.context.hook
+              this.$store.commit('SET_CONTEXT', response.data.context)
+              this.$router.push('login')
+              break
+          }
           this.$store.commit('SET_CONTEXT', response.data.context)
           console.log(response.data.context)
           response.data.output.text.forEach((text, index) => {
@@ -322,14 +338,17 @@ export default {
             this.newUser._id = response.data.context.user._id
             this.newUser.like = response.data.context.user.analysis
           }
-          if (response.data.context.question_type === 'yn_question') {
-            this.$nextTick().then(() => {
-              this.$store.commit('ADD_TEXT', {
-                type: 'yn_question',
-                action: response.data.context.action,
-                active: true
+          if (response.data.context.question) {
+            if (response.data.context.question.type === 'yn_question') {
+              this.$nextTick().then(() => {
+                this.$store.commit('ADD_TEXT', {
+                  type: 'yn_question',
+                  action: response.data.context.question.action,
+                  active: true,
+                  options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
+                })
               })
-            })
+            }
           }
           switch (response.data.context.selection_question) {
             case 'state-city': {
@@ -444,14 +463,14 @@ export default {
     notifyChatDeniedProfile () {
       let data = {
         text: 'sem acesso',
-        context: this.$store.getters.getContext,
-        trackingProfile: true
+        context: this.$store.getters.getContext
       }
       this.$store.commit('TOGGLE_TYPING')
       axios.get('/api/conversation/message', {
         params: data
       }).then(response => {
         this.$store.commit('TOGGLE_TYPING')
+        this.$store.commit('SET_CONTEXT', response.data.context)
         response.data.output.text.forEach(text => {
           this.$store.commit('ADD_TEXT', {
             sender: 'watson',
@@ -463,8 +482,7 @@ export default {
     notifySocialMedia () {
       let data = {
         text: this.$store.getters.getAccessSource + ' Access',
-        context: Object.assign(this.$store.getters.getContext, {video_query: this.$store.getters.getUser.user_data.like}),
-        trackingProfile: true
+        context: Object.assign(this.$store.getters.getContext, {video_query: this.$store.getters.getUser.user_data.like})
       }
       console.log(data)
       this.$store.commit('TOGGLE_TYPING')
@@ -472,6 +490,7 @@ export default {
         params: data
       }).then(response => {
         this.$store.commit('TOGGLE_TYPING')
+        this.$store.commit('SET_CONTEXT', response.data.context)
         if (response.data.context.video) {
           console.log(response.data.context.video)
           this.$store.commit('SET_RELEVANT', response.data.context.video)
@@ -484,10 +503,37 @@ export default {
                 message: text,
                 videos: response.data.context.display === 'videos' ? true : null
               })
-              console.log(response.data.context.display)
             })
           })
         }
+      })
+    },
+    notifyFirstAccess () {
+      let data = {
+        text: 'Primeiro acesso',
+        context: this.$store.getters.getContext
+      }
+      this.$store.commit('TOGGLE_TYPING')
+      axios.get('/api/conversation/message', {
+        params: data
+      }).then(response => {
+        this.$store.commit('TOGGLE_TYPING')
+        response.data.output.text.forEach((text, index) => {
+          this.$store.commit('ADD_TEXT', {
+            sender: 'watson',
+            message: text
+          })
+        })
+        this.$store.commit('ADD_TEXT', {
+          type: 'yn_question',
+          action: response.data.context.question.action,
+          active: true,
+          options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
+        })
+        this.$nextTick(function () {
+          response.data.context.question = null
+          this.$store.commit('SET_CONTEXT', response.data.context)
+        })
       })
     },
     saveProfile () {
@@ -507,17 +553,23 @@ export default {
     }
   },
   mounted () {
-    document.querySelector('.chat-wrapper').scrollIntoView({
-      behavior: 'smooth'
-    })
-    this.initChat().then(res => {
-      if (this.isDenied) {
-        this.notifyChatDeniedProfile()
-      } else {
-        this.notifySocialMedia()
-      }
-    }).catch(err => {
-      console.log(err)
+    this.$nextTick().then(() => {
+      document.querySelector('.chat-wrapper').scrollIntoView({
+        behavior: 'smooth'
+      })
+      this.initChat().then(res => {
+        if (this.$store.getters.getUser.login) {
+          if (this.isDenied) {
+            this.notifyChatDeniedProfile()
+          } else {
+            this.notifySocialMedia()
+          }
+        } else {
+          this.notifyFirstAccess()
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     })
   }
 }

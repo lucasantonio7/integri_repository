@@ -70,21 +70,17 @@ $white: #fff;
   .social-medias-block {
     background-color: $gray;
     padding: 2rem 3rem;
-
     > h6 {
       color: $purple!important;
       font-weight: 400;
       padding: 2.5rem 0 0 1rem;
     }
-
     .social-btns {
       padding: 0rem 1rem;
-
       .btn.btn--icon{
         border: 2px solid $purple!important;
         border-radius: 0!important;
         padding: 0.25rem!important;
-
         .fa {
           color: $purple!important;
         }

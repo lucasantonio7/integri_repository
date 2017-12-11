@@ -109,12 +109,16 @@ $purple: #7F59A3;
       align-items: flex-end;
       align-content: flex-start;
       justify-content: flex-end;
-      overflow: auto;
+      overflow-y: auto;
+      max-height: calc(100vh - 10.5rem - 48px);
       .chatbox-dialog-line{
         width: calc(100% - 2rem);
         display: flex;
         flex-flow: column;
         margin: 1rem;
+        &.deactivated{
+          margin: 0rem;
+        }        
         .hook{
           display: inline-block;
           padding: 1rem;
@@ -166,17 +170,20 @@ $purple: #7F59A3;
           }
         }
         .chatbox-yn-question{
-          align-self: flex-end;
+          align-self: flex-end!important;
           margin-left: 1rem;
-          color: $watsonbox;
+          width: 100%;
           .option {
             @include chatbubble($userbox);
             min-width: 7.25rem;
+            max-width: 20rem;
             justify-content: center;
             margin: 0 0.75rem;
             cursor: pointer;
-            border: 2px solid $watsonbox;
+            border: 2px solid white;
+            color: white;
             letter-spacing: 0.1rem;
+            background: transparent;
             &:first-child{
               margin-left: 0;
             }

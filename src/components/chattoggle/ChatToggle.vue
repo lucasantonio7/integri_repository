@@ -49,7 +49,6 @@ export default {
   },
   methods: {
     toggle () {
-      console.log('Toggle chamado')
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
       if (this.displayChat) {
         this.$store.commit('HIDE_CHAT_NOTIFICATION')
