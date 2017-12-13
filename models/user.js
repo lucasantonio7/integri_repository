@@ -9,7 +9,8 @@ module.exports = (model) => {
       }
     },
     like: [],
-    // dislike: [],
+    skills: [],
+    causes: [],
     location: '',
     name: '',
     profile_image: null,

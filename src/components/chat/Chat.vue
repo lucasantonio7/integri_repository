@@ -268,6 +268,130 @@ export default {
         })
       }
     },
+    processMessage (response) {
+      this.$store.commit('TOGGLE_TYPING')
+      switch (response.data.context.hook) {
+        case 'login':
+          delete response.data.context.hook
+          this.$store.commit('SET_CONTEXT', response.data.context)
+          this.$router.push('login')
+          break
+      }
+      this.$store.commit('SET_CONTEXT', response.data.context)
+      console.log(response.data.context)
+      response.data.output.text.forEach((text, index) => {
+        if (text.includes('user_name')) {
+          text = text.replace('user_name', this.$store.getters.getUser.user_data.name)
+        }
+        if (text.includes('social_media')) {
+          text = text.replace('social_media', this.$store.getters.getAccessSource)
+        }
+        this.$store.commit('ADD_TEXT', {
+          sender: 'watson',
+          message: text,
+          videos: response.data.context.display === 'videos' ? true : null
+        })
+        if (response.data.context.video) {
+          console.log(response.data.context.video)
+          this.$store.commit('SET_RELEVANT', response.data.context.video)
+          delete response.data.context.display
+          this.$store.commit('SET_CONTEXT', response.data.context)
+        }
+      })
+      if (response.data.context.user) {
+        this.newUser._id = response.data.context.user._id
+        this.newUser.like = response.data.context.user.analysis
+      }
+      if (response.data.context.question) {
+        if (response.data.context.question.type === 'yn_question') {
+          this.$nextTick().then(() => {
+            this.$store.commit('ADD_TEXT', {
+              type: 'yn_question',
+              action: response.data.context.question.action,
+              active: true,
+              options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
+            })
+          })
+        }
+      }
+      switch (response.data.context.selection_question) {
+        case 'state-city': {
+          axios.get('/api/sources/places').then(resp => {
+            this.$store.commit('SET_STATES', resp.data)
+            this.select1.items = this.states.estados
+            this.select1.active = true
+            this.select1.noData = 'Selecione um estado'
+            this.select1.icon = 'map'
+            this.select1.isParent = true
+            this.select1.origin = 'states'
+            this.select1.item_value = 'sigla'
+            this.select1.item_text = 'nome'
+            this.select1.multi = false
+          }).catch(err => {
+            console.log(err)
+          })
+          break
+        }
+        case 'skills':
+          if (!this.skills) {
+            axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
+              this.$store.commit('SET_SKILLS', resp.data.skills)
+              this.select1.items = this.skills
+              this.select1.active = true
+              this.select1.noData = 'Selecione uma ou mais habilidades'
+              this.select1.icon = 'playlist_add'
+              this.select1.isParent = false
+              this.select1.origin = 'skills'
+              this.select1.multi = true
+              this.select1.model = []
+              this.select1.item_value = 'name'
+              this.select1.item_text = 'name'
+              if (resp.data.causes) {
+                this.$store.commit('SET_CAUSES', resp.data.causes)
+              }
+            }).catch(err => {
+              console.log(err)
+            })
+          } else {
+            this.setSelect(this.select1, {items: this.skills,
+              active: true,
+              noData: 'Selecione uma ou mais habilidades',
+              icon: 'playlist_add',
+              isParent: false,
+              origin: 'skills',
+              multi: true,
+              model: [],
+              item_value: 'name',
+              item_text: 'name'})
+          }
+          break
+        case 'causes':
+          axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
+            console.log(resp)
+            this.$store.commit('SET_CAUSES', resp.data.causes)
+            this.select1.items = this.causes
+            this.select1.active = true
+            this.select1.noData = 'Selecione uma ou mais causas'
+            this.select1.icon = 'map'
+            this.select1.isParent = false
+            this.select1.origin = 'causes'
+            this.select1.multi = true
+            this.select1.model = []
+            this.select1.item_value = 'name'
+            this.select1.item_text = 'name'
+            if (resp.data.skills) {
+              this.$store.commit('SET_SKILLS', resp.data.skills)
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+          break
+        default:
+          this.select1.active = false
+          this.select2.active = false
+          break
+      }
+    },
     submit () {
       let data = null
       if (this.canSend) {
@@ -312,121 +436,7 @@ export default {
         axios.get('/api/conversation/message', {
           params: data
         }).then(response => {
-          this.$store.commit('TOGGLE_TYPING')
-          switch (response.data.context.hook) {
-            case 'login':
-              delete response.data.context.hook
-              this.$store.commit('SET_CONTEXT', response.data.context)
-              this.$router.push('login')
-              break
-          }
-          this.$store.commit('SET_CONTEXT', response.data.context)
-          console.log(response.data.context)
-          response.data.output.text.forEach((text, index) => {
-            this.$store.commit('ADD_TEXT', {
-              sender: 'watson',
-              message: text,
-              videos: response.data.context.display === 'videos' && index < 1 ? true : null
-            })
-          })
-          console.log(response.data)
-          if (response.data.context.video) {
-            console.log(response.data.context.video)
-            this.$store.commit('SET_RELEVANT', response.data.context.video)
-          }
-          if (response.data.context.user) {
-            this.newUser._id = response.data.context.user._id
-            this.newUser.like = response.data.context.user.analysis
-          }
-          if (response.data.context.question) {
-            if (response.data.context.question.type === 'yn_question') {
-              this.$nextTick().then(() => {
-                this.$store.commit('ADD_TEXT', {
-                  type: 'yn_question',
-                  action: response.data.context.question.action,
-                  active: true,
-                  options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
-                })
-              })
-            }
-          }
-          switch (response.data.context.selection_question) {
-            case 'state-city': {
-              axios.get('/api/sources/places').then(resp => {
-                this.$store.commit('SET_STATES', resp.data)
-                this.select1.items = this.states.estados
-                this.select1.active = true
-                this.select1.noData = 'Selecione um estado'
-                this.select1.icon = 'map'
-                this.select1.isParent = true
-                this.select1.origin = 'states'
-                this.select1.item_value = 'sigla'
-                this.select1.item_text = 'nome'
-                this.select1.multi = false
-              }).catch(err => {
-                console.log(err)
-              })
-              break
-            }
-            case 'skills':
-              if (!this.skills) {
-                axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
-                  this.$store.commit('SET_SKILLS', resp.data.skills)
-                  this.select1.items = this.skills
-                  this.select1.active = true
-                  this.select1.noData = 'Selecione uma ou mais habilidades'
-                  this.select1.icon = 'playlist_add'
-                  this.select1.isParent = false
-                  this.select1.origin = 'skills'
-                  this.select1.multi = true
-                  this.select1.model = []
-                  this.select1.item_value = 'name'
-                  this.select1.item_text = 'name'
-                  if (resp.data.causes) {
-                    this.$store.commit('SET_CAUSES', resp.data.causes)
-                  }
-                }).catch(err => {
-                  console.log(err)
-                })
-              } else {
-                this.setSelect(this.select1, {items: this.skills,
-                  active: true,
-                  noData: 'Selecione uma ou mais habilidades',
-                  icon: 'playlist_add',
-                  isParent: false,
-                  origin: 'skills',
-                  multi: true,
-                  model: [],
-                  item_value: 'name',
-                  item_text: 'name'})
-              }
-              break
-            case 'causes':
-              axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
-                console.log(resp)
-                this.$store.commit('SET_CAUSES', resp.data.causes)
-                this.select1.items = this.causes
-                this.select1.active = true
-                this.select1.noData = 'Selecione uma ou mais causas'
-                this.select1.icon = 'map'
-                this.select1.isParent = false
-                this.select1.origin = 'causes'
-                this.select1.multi = true
-                this.select1.model = []
-                this.select1.item_value = 'name'
-                this.select1.item_text = 'name'
-                if (resp.data.skills) {
-                  this.$store.commit('SET_SKILLS', resp.data.skills)
-                }
-              }).catch(err => {
-                console.log(err)
-              })
-              break
-            default:
-              this.select1.active = false
-              this.select2.active = false
-              break
-          }
+          this.processMessage(response)
         }).catch(err => {
           console.log(err)
         })
@@ -490,22 +500,7 @@ export default {
         params: data
       }).then(response => {
         this.$store.commit('TOGGLE_TYPING')
-        this.$store.commit('SET_CONTEXT', response.data.context)
-        if (response.data.context.video) {
-          console.log(response.data.context.video)
-          this.$store.commit('SET_RELEVANT', response.data.context.video)
-          this.$nextTick().then(() => {
-            response.data.output.text.forEach((text, index) => {
-              text = text.replace('user_name', this.$store.getters.getUser.user_data.name)
-              text = text.replace('social_media', this.$store.getters.getAccessSource)
-              this.$store.commit('ADD_TEXT', {
-                sender: 'watson',
-                message: text,
-                videos: response.data.context.display === 'videos' ? true : null
-              })
-            })
-          })
-        }
+        this.processMessage(response)
       })
     },
     notifyFirstAccess () {

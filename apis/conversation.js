@@ -29,22 +29,19 @@ module.exports = function (appEnv, dbHandler, googleAPIKey) {
     });
   })
 
-  api.get('/message', (req, res) => {
-    let _text = req.query.text;
-    let _context = JSON.parse(req.query.context);
+  let processConversationMessage = function (res, req, conversationObj) {
     conversation.message({
-      context: _context,
+      context: conversationObj._context,
       input: {
-        text: _text,
+        text: conversationObj._text,
       },
       workspace_id: workspace_id
     }, function (err, response) {
       if (err) {
         console.error(err);
+        res.status(500).json(err)
       } else {
         // Get the context and help with profile
-        // console.log(response.intents)
-        // console.log(response.output)
         if (response.context.gettingProfile) {
           switch (response.context.gettingProfile) {
             case 'started':
@@ -119,44 +116,62 @@ module.exports = function (appEnv, dbHandler, googleAPIKey) {
               break;
           }
         } else {
-          if (response.context.video_query) {
-            dbHandler.view('sources', 'getYoutubeSource', (err, body) => {
-              console.log('Youtube source from DB');
-              if (!err) {
-                let channels = body.rows[0].value;
-                let videoQueue = response.context.video_query.map(category => {
-                  console.log('Category ', category)
-                  return new Promise((resolve, reject) => {
-                    youtubeInstance.videosSources(category, channels).then(resp => {
-                      console.log('Success Videos:')
-                      resolve(resp)
-                    }).catch(err => {
-                      console.log("Error videos")
-                      reject(err)
-                    })
-                  })
-                })
-                Promise.all(videoQueue.map(utils.reflect)).then(videos => {
-                  console.log(videos)
-                  let sucess = videos.filter(item => item.status === 'resolved');
-                  let filtered = sucess.map(videoList => {
-                    videoList.v = videoList.v.filter(item => item.status === 'resolved');
-                    return videoList.v.map(video => {
-                      return video.v
-                    })
-                  });
-                  response.context.video = [].concat.apply([], filtered);
-                  response.context.user = req.session.newProfile;
-                  res.json(response)
-                })
-              }
-            })
-          } else {
-            res.json(response)
+          if (conversationObj._videosList) {
+            response.context.video = conversationObj._videosList
           }
+          res.json(response)
         }
       }
     });
+  }
+
+  api.get('/message', (req, res) => {
+    let conversationInput = {
+      _text : req.query.text,
+      _context : JSON.parse(req.query.context),
+      _videosList: null
+    }
+    let videosList;
+    if (conversationInput._context.video_query) {
+      dbHandler.view('sources', 'getYoutubeSource', (err, body) => {
+        console.log('Youtube source from DB');
+        if (!err) {
+          let channels = body.rows[0].value;
+          let videoQueue = conversationInput._context.video_query.map(category => {
+            console.log('Category ', category)
+            return new Promise((resolve, reject) => {
+              youtubeInstance.videosSources(category, channels).then(resp => {
+                console.log('Success Videos:')
+                resolve(resp)
+              }).catch(err => {
+                console.log("Error videos")
+                reject(err)
+              })
+            })
+          })
+          Promise.all(videoQueue.map(utils.reflect)).then(videos => {
+            console.log(videos)
+            let sucess = videos.filter(item => item.status === 'resolved');
+            let filtered = sucess.map(videoList => {
+              videoList.v = videoList.v.filter(item => item.status === 'resolved');
+              return videoList.v.map(video => {
+                return video.v
+              })
+            });
+            if (filtered.length) {
+              conversationInput._videosList = [].concat.apply([], filtered);
+              processConversationMessage(res, req, conversationInput)
+            } else {
+              conversationInput._text = 'No video'
+              delete conversationInput._context.video_query
+              processConversationMessage(res, req, conversationInput)
+            }
+          })
+        }
+      })
+    } else {
+      processConversationMessage(res, req, conversationInput)
+    }
   })
 
   return api;
