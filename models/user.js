@@ -3,6 +3,7 @@ module.exports = (model) => {
     _id: null,
     medias: {
       twitter: null,
+      facebook:null,
       integri: {
         email: '',
         pwd: ''

@@ -1,6 +1,7 @@
 const express = require('express');
 const utils = require('../utils/promiseHandler');
 const youtube = require('./youtube');
+const axios = require('axios');
 module.exports = function (appEnv, dbHandler, googleAPIKey) {
   const api = express.Router();
   const ConversationV1 = require('watson-developer-cloud/conversation/v1');
@@ -42,7 +43,33 @@ module.exports = function (appEnv, dbHandler, googleAPIKey) {
         res.status(500).json(err)
       } else {
         // Get the context and help with profile
-        if (response.context.gettingProfile) {
+        if (conversationObj._context.skills) {
+          req.session.skills = conversationObj._context.skills
+          console.log(req.session.skills)
+        }
+        if (conversationObj._context.causes) {
+          req.session.causes = conversationObj._context.causes
+          console.log(req.session.causes)
+        }
+        if (response.context.opportunity_analysis === 'finished') {
+          axios.get('https://api.atados.com.br/search/projects', {
+            headers: {'X-ovp-channel': 'default'},
+            params: {
+              cause: req.session.causes.map(item => item.id).join(', '),
+              skill: req.session.skills.map(item => item.id).join(', '),
+            }
+          }).then(res => {
+            console.log(res)
+            if (res.data.count) {
+              response.context.opportunities = res.data.results
+            } else {
+              response.context.opportunities = null
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+        if (response.context.gettingProfile && !response.context.skipNLU) {
           switch (response.context.gettingProfile) {
             case 'started':
               req.session.newProfile = {

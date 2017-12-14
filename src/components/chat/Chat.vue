@@ -334,7 +334,7 @@ export default {
         }
         case 'skills':
           if (!this.skills) {
-            axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
+            axios.get('https://api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
               this.$store.commit('SET_SKILLS', resp.data.skills)
               this.select1.items = this.skills
               this.select1.active = true
@@ -366,7 +366,7 @@ export default {
           }
           break
         case 'causes':
-          axios.get('https://api.beta.atados.com.br/startup/', {headers: {'X-ovp-channel': 'pv'}}).then(resp => {
+          axios.get('https://api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
             console.log(resp)
             this.$store.commit('SET_CAUSES', resp.data.causes)
             this.select1.items = this.causes
@@ -406,6 +406,7 @@ export default {
               this.select2.active = false
               break
             case 'skills':
+              this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {skills: this.select1.model}))
               data = {
                 text: this.select1.model.map(item => item.name).join(', '),
                 context: this.$store.getters.getContext
@@ -413,6 +414,7 @@ export default {
               this.select1.active = false
               break
             case 'causes':
+              this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {causes: this.select1.model}))
               data = {
                 text: this.select1.model.map(item => item.name).join(', '),
                 context: this.$store.getters.getContext

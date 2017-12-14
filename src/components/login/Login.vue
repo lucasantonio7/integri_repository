@@ -71,6 +71,7 @@ export default {
           this.error.message = 'Usuário ou senha incorretos!'
         }
       }).catch(err => {
+        console.log(err)
         this.error.status = true
         if (err.response.status === 404) {
           this.error.message = 'Usuário não cadastrado em nossa base de dados!'

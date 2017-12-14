@@ -13,6 +13,7 @@ module.exports = function (dbHandler, env, userModel) {
     })
     if (params && params.email && params.password) {
       dbHandler.view('profiles', 'getUsers', {key:params.email}, (err, body) => {
+        console.log(body.rows)
         if (body.rows.length > 0 && body.rows[0].value) {
           if (body.rows[0].value.unsuccessfull_attempts >= 3) {
             res.status(403).send(false)
@@ -24,9 +25,11 @@ module.exports = function (dbHandler, env, userModel) {
                   id : body.rows[0].value._id,
                   name: body.rows[0].value.name,
                   email: body.rows[0].value.medias.integri.email,
+                  location: body.rows[0].value.location,
+                  medias: body.rows[0].value.medias,
                   like: body.rows[0].value.like
                 }
-  
+
                 let token = jsonWT.sign(payload, env.global_secret, {
                   algorithm: env.hash_algorithm,
                   expiresIn: env.token_expiration
