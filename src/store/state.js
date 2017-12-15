@@ -23,5 +23,6 @@ export default {
   states_cities: null,
   causes: null,
   skills: null,
-  access_source: null
+  access_source: null,
+  opportunities: []
 }

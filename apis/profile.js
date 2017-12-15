@@ -2,59 +2,46 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const youtube = require('./youtube');
 const utils = require('../utils/promiseHandler');
+
 module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
   const youtubeInstance = new youtube.Youtube(youtubeAPIKey, dbHandler);
+  const profileHandler = require('../utils/profileHandler')(model, userModel, dbHandler)
   router.post('/save', (req, res) => {
-    console.log(req.body)
     let user = {
       _id: req.body.id,
       pwd: req.body.pwd,
       name: req.body.name,
       email: req.body.email,
-      like: req.body.like
+      like: req.body.like,
+      skills: req.body.skills,
+      causes: req.body.causes,
+      location: req.body.location
     }
-    dbHandler.view('profiles', 'getUsers', {keys: [user.email]}, (err, body) => {
+    dbHandler.view('profiles', 'getUsers', {
+      keys: [user.email]
+    }, (err, body) => {
       console.log(body)
       if (body.rows.length > 0) {
-        // body.rows[0].value.like = user.like;
-        // body.rows[0].value.last_change = Date.now();
-        // let newUser = userModel;
-        // newUser._id = user._id,
-        // newUser.name = user.name,
-        // newUser.like = user.like,
-        // newUser.created_at = Date.now(),
-        // newUser.last_change = Date.now(),
-        // newUser.last_login = Date.now(),
-        // newUser.medias = {
-        //   integri: {
-        //     email: user.email,
-        //     pwd: hashPwd
-        //   }
-        // }
-        // result.save((err) => {
-        //   if (err) {
-        //     res.status(500).json(err)
-        //   } else {
-        //     res.json('User successfully saved')
-        //   }
-        // })
         res.status(403).json(err)
       } else {
         let salt = bcrypt.genSaltSync(10);
         let hashPwd = bcrypt.hashSync(user.pwd, salt)
         let newUser = userModel;
-        newUser._id = user._id,
-          newUser.name = user.name,
-          newUser.like = user.like,
-          newUser.created_at = Date.now(),
-          newUser.last_change = Date.now(),
-          newUser.last_login = Date.now(),
-          newUser.medias = {
-            integri: {
-              email: user.email,
-              pwd: hashPwd
-            }
+        newUser._id = user._id;
+        newUser.name = user.name;
+        newUser.like = user.like;
+        newUser.skills = user.skills;
+        newUser.causes = user.causes;
+        newUser.created_at = Date.now();
+        newUser.last_change = Date.now();
+        newUser.last_login = Date.now();
+        newUser.medias = {
+          integri: {
+            email: user.email,
+            pwd: hashPwd
           }
+        }
+        newUser.location = user.location
         newUser.save((err) => {
           if (err) {
             res.status(500).json(err)
@@ -65,6 +52,11 @@ module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
       }
     })
   });
+
+  router.post('/update', (req, res) => {
+    console.log(req.body)
+    profileHandler.updateProfile(req.body)
+  })
 
   router.get('/videos', (req, res) => {
     let analysis = req.query.cat;

@@ -28,6 +28,20 @@
               </slide>
             </carousel>
           </v-container>
+          <v-container grid-list-md text-xs-center v-if="message.opportunities">
+            <carousel :perPage="1" :navigationEnabled="true" class="video-slider">
+              <slide v-for="(groups,i) in opptyGroups" :key="i">
+                <v-layout row wrap>
+                  <v-flex class="video-card" d-flex xs6 sm3 v-for="(oppty,i) in groups" :key="i" @click="goToOppty(oppty)">
+                    <v-card>
+                      <img class="video-thumbnail" :src="oppty.image.image_small_url" alt="">
+                      <v-card-text>{{ oppty.name }}</v-card-text>
+                    </v-card>
+                  </v-flex>
+                </v-layout>
+              </slide>
+            </carousel>
+          </v-container>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-container grid-list-md v-if="message.type === 'yn_question' && message.active">
             <v-layout row class="chatbox-yn-question" >
@@ -127,6 +141,26 @@ export default {
     },
     returnedVideos () {
       return this.$store.getters.getRelevant
+    },
+    returnedOppty () {
+      return this.$store.getters.getOpportunities
+    },
+    opptyGroups () {
+      let groups = []
+      let index = 0
+      this.returnedOppty.forEach(oppty => {
+        if (groups.length < 1) {
+          groups.push([])
+        }
+        if (groups[index].length < 4) {
+          groups[index].push(oppty)
+        } else {
+          index++
+          groups.push([])
+          groups[index].push(oppty)
+        }
+      })
+      return groups
     },
     videosGroups () {
       let groups = []
@@ -250,6 +284,9 @@ export default {
           break
       }
     },
+    goToOppty (oppty) {
+      window.open('https://atados.com.br/vaga/' + oppty.slug, '_blank')
+    },
     YNSelector (payload, message) {
       message.active = false
       if (payload) {
@@ -289,13 +326,18 @@ export default {
         this.$store.commit('ADD_TEXT', {
           sender: 'watson',
           message: text,
-          videos: response.data.context.display === 'videos' ? true : null
+          videos: response.data.context.display === 'videos' ? true : null,
+          opportunities: response.data.context.display === 'opportunity' ? true : null
         })
-        if (response.data.context.video) {
+        if (response.data.context.video && response.data.context.display) {
           console.log(response.data.context.video)
           this.$store.commit('SET_RELEVANT', response.data.context.video)
           delete response.data.context.display
           this.$store.commit('SET_CONTEXT', response.data.context)
+        }
+        if (response.data.context.opportunities) {
+          console.log(response.data.context.opportunities)
+          this.$store.commit('SET_OPPORTUNITIES', response.data.context.opportunities)
         }
       })
       if (response.data.context.user) {
@@ -324,7 +366,7 @@ export default {
             this.select1.icon = 'map'
             this.select1.isParent = true
             this.select1.origin = 'states'
-            this.select1.item_value = 'sigla'
+            this.select1.item_value = 'nome'
             this.select1.item_text = 'nome'
             this.select1.multi = false
           }).catch(err => {
@@ -402,13 +444,22 @@ export default {
                 text: this.select2.model + ', ' + this.select1.model.sigla,
                 context: this.$store.getters.getContext
               }
+              if (this.$store.getters.getUser.login) {
+                let userData = this.$store.getters.getUser
+                userData.user_data.location = this.select2.model + ', ' + this.select1.model.nome
+                this.$store.commit('SET_USER', userData)
+                this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: userData.user_data.location}))
+                // OBS: Salvar usuário
+              } else {
+                this.newUser.location = this.select2.model + ', ' + this.select1.model.nome
+              }
               this.select1.active = false
               this.select2.active = false
               break
             case 'skills':
               this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {skills: this.select1.model}))
               data = {
-                text: this.select1.model.map(item => item.name).join(', '),
+                text: 'Tenho experiência com ' + this.select1.model.map(item => item.name).join(', '),
                 context: this.$store.getters.getContext
               }
               this.select1.active = false
@@ -416,7 +467,7 @@ export default {
             case 'causes':
               this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {causes: this.select1.model}))
               data = {
-                text: this.select1.model.map(item => item.name).join(', '),
+                text: 'As causas que mais me identifico são as de ' + this.select1.model.map(item => item.name).join(', '),
                 context: this.$store.getters.getContext
               }
               this.select1.active = false
@@ -502,6 +553,7 @@ export default {
         params: data
       }).then(response => {
         this.$store.commit('TOGGLE_TYPING')
+        response.data.context.userLocation = this.$store.getters.getUser.user_data.location
         this.processMessage(response)
       })
     },
@@ -538,11 +590,24 @@ export default {
         name: this.newUser.name,
         email: this.newUser.email,
         pwd: this.newUser.pwd,
-        like: this.newUser.like
+        like: this.newUser.like,
+        location: this.newUser.location
       }
       axios.post('/api/profile/save', user).then(resp => {
         console.log(resp)
         this.displayLoginBox = false
+        let data = {
+          text: 'Perfil salvo',
+          context: this.$store.getters.getContext
+        }
+        console.log(data)
+        this.$store.commit('TOGGLE_TYPING')
+        axios.get('/api/conversation/message', {
+          params: data
+        }).then(response => {
+          this.$store.commit('TOGGLE_TYPING')
+          this.processMessage(response)
+        })
       }).catch(err => {
         console.log(err)
         this.displayLoginBox = false

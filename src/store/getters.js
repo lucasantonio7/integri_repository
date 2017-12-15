@@ -40,5 +40,8 @@ export default {
   },
   getAccessSource: state => {
     return state.access_source
+  },
+  getOpportunities: state => {
+    return state.opportunities
   }
 }

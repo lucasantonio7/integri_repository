@@ -20,6 +20,9 @@ export default {
   SET_RELEVANT (state, payload) {
     state.relevant = payload
   },
+  SET_OPPORTUNITIES (state, payload) {
+    state.opportunities = payload
+  },
   SET_CHAT_VISIBLE (state, payload) {
     state.displayChat.active = true
   },
