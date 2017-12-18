@@ -4,7 +4,7 @@ const app = express();
 const Twit = require('twit');
 const passport = require('passport');
 const Strategy = require('passport-twitter').Strategy;
-const session = require('express-session');
+const session = require('cookie-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
@@ -28,9 +28,9 @@ const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPI
 let _secret = "projetointegri2017";
 
 app.use(session({
+  name: "session",
   secret: _secret,
-  resave: false,
-  saveUninitialized: true,
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -39,7 +39,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
 // Enable reverse proxy support in Express. This causes the
 // the "X-Forwarded-Proto" header field to be trusted so its
 // value can be used to determine the protocol. See

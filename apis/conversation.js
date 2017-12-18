@@ -67,6 +67,7 @@ module.exports = function (appEnv, dbHandler, googleAPIKey, model) {
     }, function (err, response) {
       if (err) {
         console.error(err);
+        console.log(err)
         res.status(500).json(err)
       } else {
         // Get the context and help with profile
@@ -111,7 +112,7 @@ module.exports = function (appEnv, dbHandler, googleAPIKey, model) {
                       });
                       response.context.video = [].concat.apply([], filtered);
                       response.context.user = req.session.newProfile;
-                      req.session.newProfile.analysis = false
+                      req.session.newProfile = false
                       res.json(response)
                     })
                   }
@@ -159,11 +160,11 @@ module.exports = function (appEnv, dbHandler, googleAPIKey, model) {
               })
               break;
           }
-        } else if (response.context.search_oppty) {
-          console.log('Oppty')
+        } else if (response.context.search_oppty && !response.context.opportunities) {
           getOppty(response.context.userLocation, conversationObj).then(oppty => {
             response.context.opportunities = oppty
-            res.json(response)
+            conversationObj._context = response.context
+            processConversationMessage(res, req, conversationObj)
           }).catch(err => {
             console.log(err)
           })

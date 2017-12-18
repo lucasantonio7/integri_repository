@@ -491,7 +491,7 @@ export default {
         }).then(response => {
           this.processMessage(response)
         }).catch(err => {
-          console.log(err)
+          console.error(err)
         })
       }
     },
