@@ -2,7 +2,7 @@ const express = require('express');
 const utils = require('../utils/promiseHandler');
 const youtube = require('./youtube');
 const axios = require('axios');
-module.exports = function (appEnv, dbHandler, googleAPIKey, model) {
+module.exports = function (appEnv, dbHandler, envVars, model) {
   const api = express.Router();
   const ConversationV1 = require('watson-developer-cloud/conversation/v1');
   let conversationCredentials = appEnv.services['conversation'][0].credentials
@@ -12,9 +12,9 @@ module.exports = function (appEnv, dbHandler, googleAPIKey, model) {
     version_date: ConversationV1.VERSION_DATE_2017_05_26
   });
   // let workspace_id = '4757feda-62f4-4e59-8c50-c1f42a05926c';
-  let workspace_id = '6468a1fc-e783-4280-bbd1-8ca4f0839791';
+  let workspace_id = envVars.workspace_id;
   const watson = require('./watson')(appEnv);
-  const youtubeInstance = new youtube.Youtube(googleAPIKey, dbHandler);
+  const youtubeInstance = new youtube.Youtube(envVars.youtubeAPIKey, dbHandler);
   api.get('/init', (req, res) => {
     let text = req.params.text || '';
     conversation.message({
@@ -36,7 +36,7 @@ module.exports = function (appEnv, dbHandler, googleAPIKey, model) {
       let _address = location || ""
       _address = _address.replace('Brazil','')
       _address = _address.replace('Brasil','')
-      axios.get('https://api.atados.com.br/search/projects', {
+      axios.get('https://v2.api.atados.com.br/search/projects', {
         headers: {'X-ovp-channel': 'default'},
         params: {
           cause: conversationObj._context.causes.map(item => item.id).join(', '),
@@ -212,6 +212,7 @@ module.exports = function (appEnv, dbHandler, googleAPIKey, model) {
               })
             });
             if (filtered.length) {
+              console.log(filtered)
               delete conversationInput._context.video_query
               conversationInput._videosList = [].concat.apply([], filtered);
               processConversationMessage(res, req, conversationInput)

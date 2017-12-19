@@ -13,7 +13,10 @@ $purple: #7F59A3;
   position: relative;
   max-width: 85%;
 }
-
+@keyframes pulse {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
 .show-overflow{
   overflow: visible;
 }
@@ -89,6 +92,28 @@ $purple: #7F59A3;
     .text-part{
       height: 39px;
       padding: 0.2rem 1rem;
+    }
+  }
+  .chatbox-typing{
+    @include chatbubble($watsonbox);
+    align-self: flex-start;
+    margin-left: 1rem;
+    left: 0;
+    .dot{
+      width: 0.75rem;
+      height: 0.75rem;
+      background-color: $userbox;
+      border-radius: 50%;
+      margin: 0 0.25rem;
+      animation: pulse 0.5s infinite;
+      animation-direction: alternate;
+      animation-timing-function: ease-in-out; 
+      &:first-child{
+        animation-delay: 0.25s
+      }
+      &::last-child{
+        animation-delay: 0.15s
+      }
     }
   }
   .chatbox-messages {

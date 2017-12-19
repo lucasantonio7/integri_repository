@@ -54,10 +54,12 @@
             </v-layout>
           </v-container>
         </div>
-        <div class="chatbox-typing" >
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
+        <div class="chatbox-dialog-line" v-show="isTyping">
+          <div class="chatbox-typing">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
         </div>
         <v-dialog v-model="displayLoginBox" persistent content-class="show-overflow">
           <form class="login-dialog-wrapper">
@@ -306,7 +308,7 @@ export default {
       }
     },
     processMessage (response) {
-      this.$store.commit('TOGGLE_TYPING')
+      this.$store.commit('DEACTIVATE_TYPING')
       switch (response.data.context.hook) {
         case 'login':
           delete response.data.context.hook
@@ -376,7 +378,7 @@ export default {
         }
         case 'skills':
           if (!this.skills) {
-            axios.get('https://api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
+            axios.get('https://v2.api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
               this.$store.commit('SET_SKILLS', resp.data.skills)
               this.select1.items = this.skills
               this.select1.active = true
@@ -408,7 +410,7 @@ export default {
           }
           break
         case 'causes':
-          axios.get('https://api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
+          axios.get('https://v2.api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
             console.log(resp)
             this.$store.commit('SET_CAUSES', resp.data.causes)
             this.select1.items = this.causes
@@ -484,7 +486,7 @@ export default {
           sender: 'user',
           message: data.text
         })
-        this.$store.commit('TOGGLE_TYPING')
+        this.$store.commit('ACTIVATE_TYPING')
         this.message = ''
         axios.get('/api/conversation/message', {
           params: data
@@ -501,9 +503,9 @@ export default {
     initChat () {
       return new Promise((resolve, reject) => {
         if (!this.$store.getters.getContext) {
-          this.$store.commit('TOGGLE_TYPING')
+          this.$store.commit('ACTIVATE_TYPING')
           axios.get('/api/conversation/init').then(response => {
-            this.$store.commit('TOGGLE_TYPING')
+            this.$store.commit('DEACTIVATE_TYPING')
             this.$store.commit('SET_CONTEXT', response.data.context)
             response.data.output.text.forEach(text => {
               this.$store.commit('ADD_TEXT', {
@@ -528,11 +530,11 @@ export default {
         text: 'sem acesso',
         context: this.$store.getters.getContext
       }
-      this.$store.commit('TOGGLE_TYPING')
+      this.$store.commit('ACTIVATE_TYPING')
       axios.get('/api/conversation/message', {
         params: data
       }).then(response => {
-        this.$store.commit('TOGGLE_TYPING')
+        this.$store.commit('DEACTIVATE_TYPING')
         this.$store.commit('SET_CONTEXT', response.data.context)
         response.data.output.text.forEach(text => {
           this.$store.commit('ADD_TEXT', {
@@ -548,11 +550,11 @@ export default {
         context: Object.assign(this.$store.getters.getContext, {video_query: this.$store.getters.getUser.user_data.like})
       }
       console.log(data)
-      this.$store.commit('TOGGLE_TYPING')
+      this.$store.commit('ACTIVATE_TYPING')
       axios.get('/api/conversation/message', {
         params: data
       }).then(response => {
-        this.$store.commit('TOGGLE_TYPING')
+        this.$store.commit('DEACTIVATE_TYPING')
         response.data.context.userLocation = this.$store.getters.getUser.user_data.location
         this.processMessage(response)
       })
@@ -562,11 +564,11 @@ export default {
         text: 'Primeiro acesso',
         context: this.$store.getters.getContext
       }
-      this.$store.commit('TOGGLE_TYPING')
+      this.$store.commit('ACTIVATE_TYPING')
       axios.get('/api/conversation/message', {
         params: data
       }).then(response => {
-        this.$store.commit('TOGGLE_TYPING')
+        this.$store.commit('DEACTIVATE_TYPING')
         response.data.output.text.forEach((text, index) => {
           this.$store.commit('ADD_TEXT', {
             sender: 'watson',
@@ -601,11 +603,11 @@ export default {
           context: this.$store.getters.getContext
         }
         console.log(data)
-        this.$store.commit('TOGGLE_TYPING')
+        this.$store.commit('ACTIVATE_TYPING')
         axios.get('/api/conversation/message', {
           params: data
         }).then(response => {
-          this.$store.commit('TOGGLE_TYPING')
+          this.$store.commit('DEACTIVATE_TYPING')
           this.processMessage(response)
         })
       }).catch(err => {

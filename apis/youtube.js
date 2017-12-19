@@ -39,6 +39,7 @@ class Youtube {
                 })
               }
             } else {
+              console.error(err)
               reject(err)
             }
           })
@@ -46,7 +47,11 @@ class Youtube {
       })
       Promise.all(channelsPromises.map(utils.reflect)).then(videos => {
         let sucess = videos.filter(item => item.status === 'resolved');
-        resolve(sucess);
+        if (sucess.length) {
+          resolve(sucess);
+        } else {
+          reject(videos)
+        }
       }).catch(err => {
         reject(err)
       })
