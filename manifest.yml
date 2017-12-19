@@ -5,3 +5,16 @@ applications:
   path: .
   instances: 1
   memory: 1G
+  env:
+    HOSTALIASES: /home/vcap/app/host.aliases
+    callbackURL: http://integri.org/api/twitter/return
+    facebookCallbackURL: http://integri.org/api/facebook/login/return
+    facebookClientID: 295831967574885
+    facebookClientSecret: c73e7e7d0a21a83d88d508bc3e5aaed4
+    global_secret: projetointegri2017
+    hash_algorithm: HS512
+    token_expiration: 1h
+    twitterConsumerKey: D84L1JXbdFar3ATE3O7OEQDc0
+    twitterConsumerSecret: YJPXuS4C2sgf433oLJnRvszNIaeLDOvPU0N89FRevfXMXuXWfC
+    workspace_id: 8e3938bb-3786-4087-b644-b86ed8268b54
+    youtubeAPIKey: AIzaSyBqRPyiUPBpBNibrB3vEf0TfXx7ZQQexqY

@@ -2,6 +2,11 @@
 
 > Protal Integri
 
+## Uso no bluemix
+
+O arquivo manifest.yml deve ser criado para que o upload seja realizado por meio de cf push
+basta copiar o arquivo manifest_example.yml e substituir as credenciais 
+
 ## Build Setup
 
 ``` bash
