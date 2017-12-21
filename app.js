@@ -1,5 +1,3 @@
-const https = require('https');
-const fs = require('fs');
 const express = require('express');
 const compression = require('compression');
 const app = express();
@@ -28,8 +26,6 @@ const youtube = require('./apis/youtube');
 const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler);
 
 let _secret = "projetointegri2017";
-const _httpsOptions = {
-}
 
 app.use(session({
   name: "session",
@@ -55,6 +51,14 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
+app.use((req, res, next) => {
+  if (req.secure) {
+    next();
+  } else {
+    res.redirect('https://' + req.headers.host + req.url);
+  }
+})
 
 const access = require('./apis/access')(dbHandler, envVars, userModel, myModel)
 const auth = require('./utils/auth')(passport, userModel, envVars, cookieParser)
