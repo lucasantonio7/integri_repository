@@ -1,3 +1,5 @@
+const https = require('https');
+const fs = require('fs');
 const express = require('express');
 const compression = require('compression');
 const app = express();
@@ -26,6 +28,8 @@ const youtube = require('./apis/youtube');
 const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler);
 
 let _secret = "projetointegri2017";
+const _httpsOptions = {
+}
 
 app.use(session({
   name: "session",
