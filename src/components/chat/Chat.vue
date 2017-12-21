@@ -34,7 +34,9 @@
                 <v-layout row wrap>
                   <v-flex class="video-card" d-flex xs6 sm3 v-for="(oppty,i) in groups" :key="i" @click="goToOppty(oppty)">
                     <v-card>
-                      <img class="video-thumbnail" :src="oppty.image.image_small_url" alt="">
+                      <div class="thumbnail-opportunity">
+                        <img class="video-thumbnail" :src="oppty.image.image_small_url" alt="">
+                      </div>
                       <v-card-text>{{ oppty.name }}</v-card-text>
                     </v-card>
                   </v-flex>
@@ -614,20 +616,21 @@ export default {
         like: this.newUser.like,
         location: this.newUser.location
       }
-      axios.post('/api/profile/save', user).then(resp => {
-        console.log(resp)
-        this.displayLoginBox = false
-        let data = {
-          text: 'Perfil salvo',
-          context: this.$store.getters.getContext
-        }
-        console.log(data)
-        this.$store.commit('ACTIVATE_TYPING')
-        axios.get('/api/conversation/message', {
-          params: data
-        }).then(response => {
-          this.$store.commit('DEACTIVATE_TYPING')
-          this.processMessage(response)
+      axios.post('/api/profile/save', user).then(() => {
+        this.$store.dispatch('LOGIN').then(() => {
+          this.displayLoginBox = false
+          let data = {
+            text: 'Perfil salvo',
+            context: Object.assign(this.$store.getters.getContext, {userLocation: this.$store.getters.getUser.user_data.location})
+          }
+          console.log(data)
+          this.$store.commit('ACTIVATE_TYPING')
+          axios.get('/api/conversation/message', {
+            params: data
+          }).then(response => {
+            this.$store.commit('DEACTIVATE_TYPING')
+            this.processMessage(response)
+          })
         })
       }).catch(err => {
         console.log(err)

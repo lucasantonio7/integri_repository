@@ -23,7 +23,7 @@ const userModel = require('./models/user')(myModel);
 const watson = require('./apis/watson')(appEnv);
 const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler);
 const youtube = require('./apis/youtube');
-const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler);
+const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler, envVars);
 
 let _secret = "projetointegri2017";
 
@@ -52,13 +52,15 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use((req, res, next) => {
-  if (req.secure) {
-    next();
-  } else {
-    res.redirect('https://' + req.headers.host + req.url);
-  }
-})
+if (!appEnv.isLocal){
+  app.use((req, res, next) => {
+    if (req.secure) {
+      next();
+    } else {
+      res.redirect('https://' + req.headers.host + req.url);
+    }
+  })
+}
 
 const access = require('./apis/access')(dbHandler, envVars, userModel, myModel)
 const auth = require('./utils/auth')(passport, userModel, envVars, cookieParser)

@@ -94,6 +94,20 @@ $purple: #7F59A3;
       padding: 0.2rem 1rem;
     }
   }
+  .thumbnail-opportunity{
+    width: 100%;
+    padding-top: 56.25%;
+    overflow: hidden;
+    position: relative;
+    img {
+      width: 100%;
+      min-width: 100%;
+      height: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
   .chatbox-typing{
     @include chatbubble($watsonbox);
     align-self: flex-start;

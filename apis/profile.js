@@ -3,9 +3,9 @@ const bcrypt = require('bcryptjs');
 const youtube = require('./youtube');
 const utils = require('../utils/promiseHandler');
 
-module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
+module.exports = function (model, userModel, youtubeAPIKey, dbHandler, env) {
   const youtubeInstance = new youtube.Youtube(youtubeAPIKey, dbHandler);
-  const profileHandler = require('../utils/profileHandler')(model, userModel, dbHandler)
+  const profileHandler = require('../utils/profileHandler')(model, userModel, dbHandler, env)
   router.post('/save', (req, res) => {
     let user = {
       _id: req.body.id,
@@ -46,7 +46,19 @@ module.exports = function (model, userModel, youtubeAPIKey, dbHandler) {
           if (err) {
             res.status(500).json(err)
           } else {
-            res.json('User successfully saved')
+            let params = {
+              email: user.email,
+              password: user.pwd
+            }
+            profileHandler.signinUser(params).then(resp => {
+              res.cookie('integri', resp.token, {
+                maxAge: (60 * 60 * 1000)
+              })
+              delete resp.token
+              res.json('User successfully saved')
+            }).catch(err => {
+              res.status(err).send(false);
+            })
           }
         })
       }

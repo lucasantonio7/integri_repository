@@ -1,63 +1,22 @@
 let router = require('express').Router();
-const bcrypt = require('bcryptjs');
-let jsonWT = require('jsonwebtoken');
 
-module.exports = function (dbHandler, env, userModel) {
+module.exports = function (dbHandler, env, userModel, model) {
+  const profileHandler = require('../utils/profileHandler')(model, userModel, dbHandler, env)
   router.post('/signin', (req, res) => {
     let params = req.body;
-    console.log('Sign in')
-    console.log(params)
     userModel._model.findOneGetUsers(params.email, (err, body) => {
       console.log(err)
       console.log(body)
     })
-    if (params && params.email && params.password) {
-      dbHandler.view('profiles', 'getUsers', {key:params.email}, (err, body) => {
-        console.log(body.rows)
-        if (body.rows.length > 0 && body.rows[0].value) {
-          if (body.rows[0].value.unsuccessfull_attempts >= 3) {
-            res.status(403).send(false)
-          } else {
-            let isMatch = bcrypt.compareSync(params.password, body.rows[0].value.medias.integri.pwd);
-            if (isMatch) {
-              try {
-                let payload = {
-                  id : body.rows[0].value._id,
-                  name: body.rows[0].value.name,
-                  email: body.rows[0].value.medias.integri.email,
-                  location: body.rows[0].value.location,
-                  medias: body.rows[0].value.medias,
-                  like: body.rows[0].value.like
-                }
-
-                let token = jsonWT.sign(payload, env.global_secret, {
-                  algorithm: env.hash_algorithm,
-                  expiresIn: env.token_expiration
-                })
-  
-                res.cookie('integri', token, {
-                  maxAge: (60 * 60 * 1000)
-                })
-  
-                let resp = {
-                  authenticationStatus: true
-                }
-                res.json(resp)
-              } catch (err) {
-                console.log(err)
-                res.status(500).send(false)
-              }
-            } else {
-              res.status(401).send(false)
-            }
-          }
-        } else {
-          res.status(404).send(false)
-        }
+    profileHandler.signinUser(params).then(resp => {
+      res.cookie('integri', resp.token, {
+        maxAge: (60 * 60 * 1000)
       })
-    } else {
-      res.status(401).send(false)
-    }
+      delete resp.token
+      res.json(resp)
+    }).catch(err => {
+      res.status(err).send(false);
+    })
   })
 
   return router;

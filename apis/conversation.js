@@ -95,13 +95,10 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
                   if (!err) {
                     let channels = body.rows[0].value;
                     let videoQueue = req.session.newProfile.analysis.map(category => {
-                      console.log('Category ', category)
                       return new Promise((resolve, reject) => {
                         youtubeInstance.videosSources(category, channels).then(resp => {
-                          console.log('Success Videos:')
                           resolve(resp)
                         }).catch(err => {
-                          console.log("Error videos")
                           reject(err)
                         })
                       })
@@ -125,7 +122,13 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
                 console.log('Oppty')
                 getOppty(response.context.userLocation, conversationObj).then(oppty => {
                   response.context.opportunities = oppty
-                  res.json(response)
+                  delete response.context.search_oppty
+                  delete response.context.gettingProfile
+                  if (!oppty) {
+                    delete response.context.display
+                  }
+                  conversationObj._context = response.context
+                  processConversationMessage(res, req, conversationObj)
                 }).catch(err => {
                   if (err.response) {
                     console.log(err.response.data)
