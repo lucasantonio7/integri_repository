@@ -98,13 +98,15 @@
           </form>
         </v-dialog>
       </div>
-      <div class="chatbox-footer">
+      <div class="chatbox-footer" :class="{'box': select1.active || select2.active}">
         <input ref="inputbox" type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit" v-if="inputboxactive">
-        <div class="selection-box" v-if="select1.active || select2.active">
-          <v-select v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
-        </div>
-        <div class="selection-box">
-          <v-select v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :append-icon="select2.icon"></v-select>
+        <div class="selections" v-if="select1.active || select2.active">
+          <div class="selection-box">
+            <v-select solo v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
+          </div>
+          <div class="selection-box">
+            <v-select solo v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
+          </div>
         </div>
         <v-icon :disabled="!canSend" @click="submit">send</v-icon>
       </div>

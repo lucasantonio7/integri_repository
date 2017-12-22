@@ -245,12 +245,17 @@ $purple: #7F59A3;
       display: flex;
       flex: 1 1 10%;
       min-height: 4rem;
+      height: 4rem;
       max-height: 4rem;
       background-color: #E6E6E6;
       margin: 1rem;
       padding: 1rem;
       justify-content: space-between;
       width: calc(100% - 2rem);
+      &.box{
+        max-height: 6rem;
+        height: 5.5rem;
+      }
       .chat-input{
         width: 100%;
         background-color: #fff;
@@ -262,11 +267,15 @@ $purple: #7F59A3;
     }
   }
 }
-.selection-box{
-  .input-group{
-    padding: 0!important
+.selections{
+  display: flex;
+  .selection-box{
+    .input-group{
+      padding: 0!important
+    }
   }
 }
+
 .savebox-error-msg{
   color: #f00;
   font-weight: bold;
