@@ -87,6 +87,11 @@
                 <i class="fa fa-lock" aria-hidden="true"></i>
                 <input type="password" v-model="newUser._pwdConf" placeholder="Confirme sua senha" required>
               </div>
+              <v-layout>
+                <v-flex>
+                  <span class="savebox-error-msg animated pulse" v-if="error">{{ error.message }}</span>
+                </v-flex>
+              </v-layout>
             </div>
             <v-btn class="blue--text darken-1 login-cancel" flat @click.native="displayLoginBox = false">Cancelar</v-btn>
             <v-btn class="blue--text darken-1 login-submit" type="button" :disabled="!(newUser.pwd === newUser._pwdConf && newUser.pwd.length > 0)" flat @click.native="saveProfile">Enviar</v-btn>
@@ -254,7 +259,10 @@ export default {
         item_value: '',
         item_text: ''
       },
-      showVideo: false
+      showVideo: false,
+      error: {
+        message: ''
+      }
     }
   },
   methods: {
@@ -617,6 +625,7 @@ export default {
         location: this.newUser.location
       }
       axios.post('/api/profile/save', user).then(() => {
+        this.error = false
         this.$store.dispatch('LOGIN').then(() => {
           this.displayLoginBox = false
           let data = {
@@ -634,7 +643,18 @@ export default {
         })
       }).catch(err => {
         console.log(err)
-        this.displayLoginBox = false
+        if (err.response) {
+          console.log(err.response.data)
+          console.log(err.response.status)
+          console.log(err.response.headers)
+          if (err.response.status === 403) {
+            this.error.message = 'Email ja está em uso!'
+          }
+        } else if (err.request) {
+          console.log(err.request)
+        } else {
+          console.log('err', err.message)
+        }
       })
     }
   },
