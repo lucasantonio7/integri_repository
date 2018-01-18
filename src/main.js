@@ -14,6 +14,7 @@ import VeeValidate, { Validator } from 'vee-validate'
 import { routes } from './routes'
 import store from './store/store'
 import VueCarousel from 'vue-carousel'
+import VueClipboard from 'vue-clipboard'
 
 Vue.config.productionTip = false
 Vue.use(Vuetify)
@@ -22,11 +23,16 @@ Vue.use(VueYouTubeEmbed)
 Vue.use(VueRouter)
 Vue.use(VeeValidate, {locale: 'pt_BR'})
 Vue.use(VueCarousel)
+Vue.use(VueClipboard)
 Validator.addLocale(pt_BR)
 VeeValidate.Validator.setLocale('pt_BR')
+const moment = require('moment')
+require('moment/locale/pt-br')
+Vue.use(require('vue-moment'), {
+  moment
+})
 // Vue.use(vuefb)
 /* eslint-disable no-new */
-
 const router = new VueRouter({
   routes
 })

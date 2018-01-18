@@ -43,5 +43,8 @@ export default {
   },
   getOpportunities: state => {
     return state.opportunities
+  },
+  getCapturedDialog: state => {
+    return state.caputured_dialog
   }
 }

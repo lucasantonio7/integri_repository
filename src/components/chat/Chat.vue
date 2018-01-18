@@ -321,6 +321,23 @@ export default {
     },
     processMessage (response) {
       this.$store.commit('DEACTIVATE_TYPING')
+      switch (response.data.context.capture_user_feedback) {
+        case 'started':
+          let dialog = {
+            id: Date.now(),
+            captured: Date.now(),
+            message: []
+          }
+          this.$store.commit('SET_CAPTURED_DIALOG', dialog)
+          break
+        case 'finished':
+          axios.post('/api/conversation/savedialog', this.$store.getters.getCapturedDialog).then(resp => {
+            console.log(resp)
+          }).catch(err => {
+            console.log(err)
+          })
+          break
+      }
       switch (response.data.context.hook) {
         case 'login':
           delete response.data.context.hook

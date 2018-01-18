@@ -24,5 +24,6 @@ export default {
   causes: null,
   skills: null,
   access_source: null,
-  opportunities: []
+  opportunities: [],
+  caputured_dialog: null
 }

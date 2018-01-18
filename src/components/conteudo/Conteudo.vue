@@ -6,7 +6,7 @@
         </v-layout>
       </v-container>
     </v-card-media>
-    <h4>Seu conteudo</h4>
+    <h4>Coteúdo</h4>
   </div>
 </template>
 

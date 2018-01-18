@@ -3,6 +3,7 @@ const utils = require('../utils/promiseHandler');
 const youtube = require('./youtube');
 const axios = require('axios');
 module.exports = function (appEnv, dbHandler, envVars, model) {
+  const dialogModel = require('../models/dialog')(model);
   const api = express.Router();
   const ConversationV1 = require('watson-developer-cloud/conversation/v1');
   let conversationCredentials = appEnv.services['conversation'][0].credentials
@@ -75,6 +76,15 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.log("CONVERSATION ERROR! ", err);
         res.status(500).send(err);
       } else {
+        // Capture the dialog for posterior analysis when user reach "Duvidas" node
+        if (response.context.capture_user_feedback) {
+          req.session.captured_dialog = dialogModel;
+          req.session.captured_dialog.id = Date.now();
+        } else {
+          if (req.session.captured_dialog) {
+            // Process  the messages on Front
+          }
+        }
         // Get the context and help with profile
         if (response.context.gettingProfile && !response.context.skipNLU) {
           switch (response.context.gettingProfile) {
@@ -260,6 +270,10 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
     } catch (ex) {
       res.send(ex)
     }
+  })
+
+  api.get('/savedialog', (req, res) => {
+
   })
 
   return api;
