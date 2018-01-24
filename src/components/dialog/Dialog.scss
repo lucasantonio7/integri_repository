@@ -1,0 +1,78 @@
+$userbox: #E6E6E6;
+$purple: #7F59A3;
+$error: #f58888;
+@mixin chatbubble ($bgColor) {
+  display: block;
+  padding: 1rem;
+  background-color: $bgColor;
+  border-radius: 1rem;
+  position: relative;
+  max-width: 85%!important;
+  margin: 0.75rem;
+}
+
+@mixin dialog-line {
+  display: flex;
+  width: 100%;
+  .icon {
+    display: none;
+  }
+  &:hover {
+    .icon {
+      display: flex;
+    }
+  }
+}
+
+.watson-msg {
+  @include chatbubble($purple);
+  border-bottom-left-radius: 0;
+  color: white;
+  &:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-bottom: 1rem solid $purple;
+    border-left: 1rem solid transparent;
+    position: absolute;
+    left: -0.75rem;
+    bottom: 0;
+  }
+}
+
+.user-msg {
+  @include chatbubble($userbox);
+  border-bottom-right-radius: 0;
+  flex-flow: row-reverse;
+  &:after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-bottom: 1rem solid $userbox;
+    border-right: 1rem solid transparent;
+    position: absolute;
+    right: -0.75rem;
+    bottom: 0;
+  }
+}
+
+.dialog-line-watson {
+  @include dialog-line();
+}
+
+.dialog-line-user {
+  @include dialog-line();
+  flex-flow: row-reverse;
+}
+
+.interaction {
+  display: flex;
+  width: 100%;
+  flex-flow: row-reverse;
+}
+.wrong-feedback{
+  background-color: $error;
+  &:after {
+    border-bottom: 1rem solid $error;
+  }
+}

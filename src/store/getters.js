@@ -46,5 +46,17 @@ export default {
   },
   getCapturedDialog: state => {
     return state.caputured_dialog
+  },
+  getCurrentDialog: state => {
+    return state.current_dialog
+  },
+  getUnseenDialogs: state => {
+    return state.unseen_dialogs
+  },
+  getPendingDialogs: state => {
+    return state.pending_dialogs
+  },
+  getFinishedDialogs: state => {
+    return state.finished_dialogs
   }
 }

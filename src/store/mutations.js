@@ -61,5 +61,17 @@ export default {
   },
   SET_CAPTURED_DIALOG (state, payload) {
     state.caputured_dialog = payload
+  },
+  SET_CURRENT_DIALOG (state, payload) {
+    state.current_dialog = payload
+  },
+  SET_UNSEEN_DIALOGS (state, payload) {
+    state.unseen_dialogs = payload
+  },
+  SET_PENDING_DIALOGS (state, payload) {
+    state.pending_dialogs = payload
+  },
+  SET_FINISHED_DIALOGS (state, payload) {
+    state.finished_dialogs = payload
   }
 }

@@ -82,49 +82,53 @@ module.exports = function (apiKey, dbHandler) {
           if (err) {
             res.status(500).send(err);
           }
-          if (channelDetails.pageInfo.totalResults > 0) {
-            // For each list get the videos
-            let videosPromises = channelDetails.items.map(item => {
-              return new Promise((resolve, reject) => {
-                youtube.playlistItems.list({
-                  part: 'snippet',
-                  playlistId: item.contentDetails.relatedPlaylists.uploads,
-                  maxResults: 3
-                }, function (err, playlist) {
-                  // Loop through videos list
-                  if (err) {
-                    try {
-                      res.status(err.response.status).send(err)
-                    } catch (e) {
-                      res.status(404).send(err)
+          try {
+            if (channelDetails.pageInfo.totalResults > 0) {
+              // For each list get the videos
+              let videosPromises = channelDetails.items.map(item => {
+                return new Promise((resolve, reject) => {
+                  youtube.playlistItems.list({
+                    part: 'snippet',
+                    playlistId: item.contentDetails.relatedPlaylists.uploads,
+                    maxResults: 3
+                  }, function (err, playlist) {
+                    // Loop through videos list
+                    if (err) {
+                      try {
+                        res.status(err.response.status).send(err)
+                      } catch (e) {
+                        res.status(404).send(err)
+                      }
+                    } else {
+                      let videosList = []
+                      playlist.items.forEach(function (video) {
+                        videosList.push({
+                          id: video.snippet.resourceId.videoId,
+                          title: video.snippet.title,
+                          channel: video.snippet.channelTitle,
+                          thumbnail: video.snippet.thumbnails.standard || video.snippet.thumbnails.default
+                        })
+                      });
+                      resolve(videosList);
                     }
-                  } else {
-                    let videosList = []
-                    playlist.items.forEach(function (video) {
-                      videosList.push({
-                        id: video.snippet.resourceId.videoId,
-                        title: video.snippet.title,
-                        channel: video.snippet.channelTitle,
-                        thumbnail: video.snippet.thumbnails.standard || video.snippet.thumbnails.default
-                      })
-                    });
-                    resolve(videosList);
-                  }
-                });
+                  });
+                })
+              });
+              Promise.all(videosPromises.map(utils.reflect)).then(videos => {
+                let sucess = videos.filter(item => item.status === 'resolved');
+                let response = sucess.map(video => {
+                  return video.v
+                })
+                response = [].concat.apply([], response);
+                res.json(response);
+              }).catch(err => {
+                res.status(500).send(err);
               })
-            });
-            Promise.all(videosPromises.map(utils.reflect)).then(videos => {
-              let sucess = videos.filter(item => item.status === 'resolved');
-              let response = sucess.map(video => {
-                return video.v
-              })
-              response = [].concat.apply([], response);
-              res.json(response);
-            }).catch(err => {
-              res.status(500).send(err);
-            })
-          } else {
-            res.status(404).send('Resource not found');
+            } else {
+              res.status(404).send('Resource not found');
+            }
+          } catch (ex) {
+            res.status(500).send(ex);
           }
         });
       }

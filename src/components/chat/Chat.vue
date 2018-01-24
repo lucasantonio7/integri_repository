@@ -47,11 +47,17 @@
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-container grid-list-md v-if="message.type === 'yn_question' && message.active">
             <v-layout row class="chatbox-yn-question" >
-              <v-flex xs12 s5 md3 class="option" @click="YNSelector(true, message)">
-                {{ message.options.yes }}
+              <v-flex xs12 s5 md4 @click="YNSelector(true, message)">
+                <v-btn block flat large>
+                  {{ message.options.yes }}
+                  <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-up</v-icon>
+                </v-btn>
               </v-flex>
-              <v-flex xs12 s5 md3 class="option" @click="YNSelector(false, message)">
-                {{ message.options.no }}
+              <v-flex xs12 s5 md4 @click="YNSelector(false, message)">
+                <v-btn block flat large>
+                  {{ message.options.no }}
+                  <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-down</v-icon>
+                </v-btn>
               </v-flex>
             </v-layout>
           </v-container>
@@ -125,6 +131,9 @@ export default {
   computed: {
     causes () {
       return this.$store.getters.getCauses
+    },
+    capturedDialog () {
+      return this.$store.getters.getCapturedDialog
     },
     chat () {
       return this.$store.getters.getChat
@@ -238,6 +247,7 @@ export default {
         _pwdConf: '',
         like: []
       },
+      newDialog: null,
       video_group: [],
       valid: false,
       select1: {
@@ -264,7 +274,9 @@ export default {
       showVideo: false,
       error: {
         message: ''
-      }
+      },
+      feedback: null,
+      isFeedback: null
     }
   },
   methods: {
@@ -308,12 +320,18 @@ export default {
           this.displayLoginBox = true
         } else {
           this.message = message.options.yes
+          if (message.action === 'feedback') {
+            this.feedback = true
+          }
           this.$nextTick().then(() => {
             this.submit()
           })
         }
       } else {
         this.message = message.options.no
+        if (message.action === 'feedback') {
+          this.feedback = false
+        }
         this.$nextTick().then(() => {
           this.submit()
         })
@@ -321,21 +339,33 @@ export default {
     },
     processMessage (response) {
       this.$store.commit('DEACTIVATE_TYPING')
+      console.log(response)
       switch (response.data.context.capture_user_feedback) {
         case 'started':
-          let dialog = {
-            id: Date.now(),
-            captured: Date.now(),
-            message: []
+          if (!this.capturedDialog) {
+            this.newDialog = {
+              id: Date.now(),
+              captured: Date.now(),
+              messages: []
+            }
+          } else {
+            this.newDialog = this.capturedDialog
           }
-          this.$store.commit('SET_CAPTURED_DIALOG', dialog)
+          response.data.output.text.forEach((text, index) => {
+            this.newDialog.messages.push({
+              sender: 'watson',
+              message: text
+            })
+          })
+          this.$store.commit('SET_CAPTURED_DIALOG', this.newDialog)
           break
         case 'finished':
-          axios.post('/api/conversation/savedialog', this.$store.getters.getCapturedDialog).then(resp => {
+          axios.post('/api/conversation/savedialog', {data: this.capturedDialog}).then(resp => {
             console.log(resp)
           }).catch(err => {
             console.log(err)
           })
+          response.data.context.capture_user_feedback = null
           break
       }
       switch (response.data.context.hook) {
@@ -389,6 +419,7 @@ export default {
               options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
             })
           })
+          response.data.context.question.action === 'feedback' ? this.isFeedback = true : this.isFeedback = false
         }
       }
       switch (response.data.context.selection_question) {
@@ -519,6 +550,16 @@ export default {
           sender: 'user',
           message: data.text
         })
+        if (this.capturedDialog !== null) {
+          this.newDialog = this.capturedDialog
+          this.newDialog.messages.push({
+            sender: 'user',
+            message: data.text,
+            feedback: this.feedback,
+            isFeedback: this.isFeedback
+          })
+          this.$store.commit('SET_CAPTURED_DIALOG', this.newDialog)
+        }
         this.$store.commit('ACTIVATE_TYPING')
         this.message = ''
         axios.get('/api/conversation/message', {
@@ -663,9 +704,6 @@ export default {
       }).catch(err => {
         console.log(err)
         if (err.response) {
-          console.log(err.response.data)
-          console.log(err.response.status)
-          console.log(err.response.headers)
           if (err.response.status === 403) {
             this.error.message = 'Email ja está em uso!'
           }

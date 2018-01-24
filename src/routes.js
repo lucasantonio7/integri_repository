@@ -7,6 +7,7 @@ import Sponsors from './components/sponsors/Sponsors.vue'
 import PrivacyPolicy from './components/privacy-policy/PrivacyPolicy.vue'
 import UsageTerms from './components/usage-terms/UsageTerms.vue'
 import Curatorship from './components/curatorship/Curatorship.vue'
+import Dialog from './components/dialog/Dialog.vue'
 // import store from './store/store'
 
 export const routes = [
@@ -27,5 +28,9 @@ export const routes = [
       console.log('Teste de before Enter')
       next()
     }
+  },
+  {
+    path: '/dialogo',
+    component: Dialog
   }
 ]

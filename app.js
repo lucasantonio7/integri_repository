@@ -161,7 +161,10 @@ const twitter = require('./apis/twitter.js')(passport, cookieParser, envVars);
 const facebook = require('./apis/facebook')(watson, dbHandler, userModel, passport, envVars);
 const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars, myModel);
 const sources = require('./apis/sources')(dbHandler);
+let curatorshipModel = couchDBModel(dbHandler)
+const curatorship = require('./apis/curatorship')(dbHandler, curatorshipModel);
 app.use('/api/sources', sources)
+app.use('/api/curatorship', curatorship)
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
 app.use('/api/conversation', conversation)

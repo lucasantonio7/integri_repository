@@ -213,6 +213,15 @@ $purple: #7F59A3;
           align-self: flex-end!important;
           margin-left: 1rem;
           width: 100%;
+          .btn{
+            border: 2px solid white;
+            border: 2px solid white;
+            color: white;
+            letter-spacing: 0.1rem;
+            background: transparent;
+            border-radius: 1rem;
+            white-space: normal!important;
+          }
           .option {
             @include chatbubble($userbox);
             min-width: 7.25rem;

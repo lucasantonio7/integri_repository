@@ -68,7 +68,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       context: conversationObj._context,
       input: {
         text: conversationObj._text,
-      },
+      },  
       workspace_id: workspace_id
     }, function (err, response) {
       if (err) {
@@ -76,15 +76,15 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.log("CONVERSATION ERROR! ", err);
         res.status(500).send(err);
       } else {
-        // Capture the dialog for posterior analysis when user reach "Duvidas" node
-        if (response.context.capture_user_feedback) {
-          req.session.captured_dialog = dialogModel;
-          req.session.captured_dialog.id = Date.now();
-        } else {
-          if (req.session.captured_dialog) {
-            // Process  the messages on Front
-          }
-        }
+        // // Capture the dialog for posterior analysis when user reach "Duvidas" node
+        // if (response.context.capture_user_feedback) {
+        //   req.session.captured_dialog = dialogModel;
+        //   req.session.captured_dialog.id = Date.now();
+        // } else {
+        //   if (req.session.captured_dialog) {
+        //     // Process  the messages on Front
+        //   }
+        // }
         // Get the context and help with profile
         if (response.context.gettingProfile && !response.context.skipNLU) {
           switch (response.context.gettingProfile) {
@@ -272,8 +272,22 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
     }
   })
 
-  api.get('/savedialog', (req, res) => {
-
+  api.post('/savedialog', (req, res) => {
+    if (req.body.data) {
+      let newDialog = dialogModel;
+      newDialog._id = req.body.data._id.toString();
+      newDialog.captured = req.body.data.captured
+      newDialog.messages = req.body.data.messages
+      newDialog.save(err => {
+        if (err) {
+          res.send(500).json(err)
+        } else {
+          res.json("Dialog successfully registered")
+        }
+      })
+    } else {
+      res.status(400).send("Any dialog provided")
+    }
   })
 
   return api;

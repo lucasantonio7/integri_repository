@@ -5,7 +5,10 @@ module.exports = (model) => {
     captured: null,
     due_date: null,
     solved_date: null,
-    responsible: '',
+    responsible: {
+      name: null,
+      email: null
+    },
     status: null,
     type: 'dialog'
   })
