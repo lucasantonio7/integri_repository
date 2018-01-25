@@ -344,7 +344,7 @@ export default {
         case 'started':
           if (!this.capturedDialog) {
             this.newDialog = {
-              id: Date.now(),
+              _id: Date.now(),
               captured: Date.now(),
               messages: []
             }

@@ -280,7 +280,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       newDialog.messages = req.body.data.messages
       newDialog.save(err => {
         if (err) {
-          res.send(500).json(err)
+          res.status(500).json(err)
         } else {
           res.json("Dialog successfully registered")
         }

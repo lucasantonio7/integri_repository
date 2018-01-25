@@ -51,12 +51,13 @@ module.exports = function (dbHandler, model) {
           result.due_date = req.body.dialog.due_date
           if (req.body.dialog.solved_date) {
             result.solved_date = req.body.dialog.solved_date
+            result.status = 'finished'
           }
           if (!req.body.dialog.status) {
-            result.solved_date = 'pending'
+            result.status = 'pending'
           }
           result.responsible = req.body.dialog.responsible
-          result.status = req.body.dialog.status
+          console.log(result)
           result.save(error => {
             if (error) {
               res.status(500).send(error)

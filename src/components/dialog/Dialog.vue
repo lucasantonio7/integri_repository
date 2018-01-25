@@ -9,7 +9,7 @@
           </v-btn>
           <v-toolbar-title>Diálogo: {{ dialog._id }} - {{ dtFormat(dialog.captured) }}</v-toolbar-title>
         </v-toolbar>
-        <v-card-text >
+        <v-card-text>
           <!-- Dialog goes here -->
           <v-container column>
             <v-layout column v-for="(msg, index) in dialog.messages" :key="index">
@@ -28,48 +28,82 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-layout row wrap>
-            <v-flex xs6 md3>
-              <v-text-field label="Nome do curador" :rules="nameRules" v-model="temporaryData.name" required></v-text-field>
-            </v-flex>
-            <v-flex xs6 md3>
-              <v-text-field label="E-mail do curador" :rules="emailRules" v-model="temporaryData.email" required></v-text-field>
-            </v-flex>
-            <v-flex xs11 sm4 md2>
-              <v-menu
-                lazy
-                :close-on-content-click="false"
-                v-model="menu"
-                transition="scale-transition"
-                offset-y
-                full-width
-                :nudge-right="40"
-                max-width="290px"
-                min-width="290px"
-              >
-                <v-text-field
-                  slot="activator"
-                  label="Entregar dia"
-                  v-model="temporaryData.due_date"
-                  prepend-icon="event"
-                  readonly
-                ></v-text-field>
-                <v-date-picker v-model="temporaryData.due_date" no-title scrollable actions locale="pt-br">
-                  <template slot-scope="{ save, cancel }">
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn flat color="primary" @click="cancel">Cancelar</v-btn>
-                      <v-btn flat color="primary" @click="save">OK</v-btn>
-                    </v-card-actions>
-                  </template>
-                </v-date-picker>
-              </v-menu>
-            </v-flex>
-            <v-flex xs12 sm4 md2>
-              <v-btn block v-if="!dialog.status && !dialog.due_date" :disabled="!temporaryData.name || !temporaryData.email || !temporaryData.due_date" @click="submit">Salvar</v-btn>
-              <v-btn block v-if="dialog.status !== null && dialog.due_date !== null" @click="finish">Finalizar</v-btn>
-            </v-flex>
-          </v-layout>
+          <v-container grid-list-md>
+            <v-layout row wrap>
+              <v-flex xs6 md3>
+                <v-text-field label="Nome do curador" :rules="nameRules" v-model="dialog.responsible.name" required :disabled="dialog.status !== null"></v-text-field>
+              </v-flex>
+              <v-flex xs6 md3>
+                <v-text-field label="E-mail do curador" :rules="emailRules" v-model="dialog.responsible.email" required :disabled="dialog.status !== null"></v-text-field>
+              </v-flex>
+              <v-flex xs11 sm4 md2>
+                <v-menu
+                  lazy
+                  :close-on-content-click="false"
+                  v-model="menu"
+                  transition="scale-transition"
+                  offset-y
+                  full-width
+                  :nudge-right="40"
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <v-text-field
+                    slot="activator"
+                    label="Entregar dia"
+                    v-model="formatedDueDate"
+                    prepend-icon="event"
+                    readonly
+                    :disabled="dialog.solved_date !== null"
+                  ></v-text-field>
+                  <v-date-picker v-model="temporaryData.due_date" no-title scrollable actions locale="pt-br">
+                    <template slot-scope="{ save, cancel }">
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="primary" @click="cancel">Cancelar</v-btn>
+                        <v-btn flat color="primary" @click="save">OK</v-btn>
+                      </v-card-actions>
+                    </template>
+                  </v-date-picker>
+                </v-menu>
+              </v-flex>
+              <v-flex xs11 sm4 md2 v-if="dialog.solved_date">
+                <v-menu
+                  lazy
+                  :close-on-content-click="false"
+                  v-model="menu"
+                  transition="scale-transition"
+                  offset-y
+                  full-width
+                  :nudge-right="40"
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <v-text-field
+                    slot="activator"
+                    label="Finalizado dia"
+                    v-model="formatedSolvedDate"
+                    prepend-icon="event"
+                    readonly
+                    :disabled="dialog.solved_date !== null"
+                  ></v-text-field>
+                  <v-date-picker v-model="temporaryData.due_date" no-title scrollable actions locale="pt-br">
+                    <template slot-scope="{ save, cancel }">
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="primary" @click="cancel">Cancelar</v-btn>
+                        <v-btn flat color="primary" @click="save">OK</v-btn>
+                      </v-card-actions>
+                    </template>
+                  </v-date-picker>
+                </v-menu>
+              </v-flex>
+              <v-flex xs12 sm4 md2>
+                <v-btn block v-if="!dialog.status && !dialog.due_date || temporaryData.due_date" :disabled="!dialog.responsible.name || !dialog.responsible.email || !temporaryData.due_date" @click="submit">Salvar</v-btn>
+                <v-btn block v-if="!temporaryData.due_date && dialog.status !== null && dialog.due_date !== null && !dialog.solved_date" @click="finish">Finalizar</v-btn>
+              </v-flex>
+            </v-layout>
+          </v-container>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -81,6 +115,17 @@ export default {
   computed: {
     dialog () {
       return this.$store.getters.getCurrentDialog
+    },
+    formatedDueDate () {
+      if (this.dialog.due_date && !this.temporaryData.due_date) {
+        return this.$moment(this.dialog.due_date).format('YYYY-MM-DD')
+      } else {
+        console.log(this.temporaryData.due_date)
+        return this.temporaryData.due_date
+      }
+    },
+    formatedSolvedDate () {
+      return this.$moment(this.dialog.solved_date).format('YYYY-MM-DD')
     }
   },
   data () {
@@ -105,27 +150,32 @@ export default {
       this.$store.commit('SET_CURRENT_DIALOG', null)
     },
     dtFormat (timestamp) {
-      return this.$moment(timestamp).utc().format('DD/MM/YYYY - HH:mm')
+      return this.$moment(timestamp).format('DD/MM/YYYY - HH:mm')
     },
     submit () {
       console.log(this.temporaryData.due_date)
-      console.log(this.temporaryData.name)
-      console.log(this.temporaryData.email)
-      if (this.temporaryData.due_date && this.temporaryData.name && this.temporaryData.email) {
-        this.dialog.due_date = this.$moment(this.temporaryData.due_date, 'YYYY-MM-DD').utc()
+      if (this.temporaryData.due_date) {
+        this.dialog.due_date = this.$moment(this.temporaryData.due_date, 'YYYY-MM-DD')
         this.dialog.due_date = this.dialog.due_date.valueOf()
-        this.dialog.responsible.name = this.temporaryData.name
-        this.dialog.responsible.email = this.temporaryData.email
       }
-      console.log(this.dialog)
       axios.post('/api/curatorship/update', {dialog: this.dialog}).then(res => {
-        this.dialog = null
+        this.temporaryData.due_date = null
+        this.$emit('updatescreen')
+        this.$store.commit('SET_CURRENT_DIALOG', null)
       }).catch(err => {
         console.log(err)
       })
     },
     finish () {
-
+      this.dialog.solved_date = this.$moment(Date.now())
+      this.dialog.solved_date = this.dialog.solved_date.valueOf()
+      console.log(this.dialog)
+      axios.post('/api/curatorship/update', {dialog: this.dialog}).then(res => {
+        this.$emit('updatescreen')
+        this.$store.commit('SET_CURRENT_DIALOG', null)
+      }).catch(err => {
+        console.log(err)
+      })
     }
   }
 }
