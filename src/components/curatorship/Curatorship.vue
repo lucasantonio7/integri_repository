@@ -2,6 +2,21 @@
   <v-container class="curatorship">
     <v-layout row wrap>
       <v-flex xs12>
+        <v-toolbar dark>
+          <v-text-field 
+            prepend-icon="search"
+            label="Buscar"
+            solo-inverted
+            class="mx-3"
+            flat
+            @keyup.enter="search"
+            v-model="searchQuery"
+            single-line
+          ></v-text-field>
+          <v-btn icon v-if="searchQuery" @click="searchQuery = ''">
+            <v-icon>clear</v-icon>
+          </v-btn>
+        </v-toolbar>
         <v-tabs v-model="active" dark slider-color="orange" fixed-tabs grow>
           <v-tab v-for="tab in tabs" :key="tab.id" ripple :href="'#' + tab.id" @click="fetchData(tab)">
             {{ tab.title }}
@@ -46,7 +61,8 @@
                       </v-card-title>
                     </v-flex>
                     <v-flex xs12 md8>
-                      <v-chip color="" text-color="">
+                      <h5 class="caption">Data estipulada da entrega:</h5>
+                      <v-chip :color="deadline(msg.due_date)" text-color="">
                         <v-avatar>
                           <v-icon>fa fa-clock-o</v-icon>
                         </v-avatar>
@@ -80,12 +96,11 @@
                           <h3 class="subheading mb-1">Dialogo: {{ msg._id }}</h3>
                           <h5 class="body-1">{{ dtFormat(msg.captured) }}</h5>
                           <h6 class="caption">{{ msg.responsible.name }} - {{ msg.responsible.email }}</h6>
-                          span
                         </div>
                       </v-card-title>
                     </v-flex>
                     <v-flex xs12 md6>
-                      <p>Data estipulada da entrega:</p>
+                      <h5 class="caption">Data estipulada da entrega:</h5>
                       <v-chip color="" text-color="">
                         <v-avatar>
                           <v-icon>fa fa-clock-o</v-icon>
@@ -94,7 +109,7 @@
                       </v-chip>
                     </v-flex>
                     <v-flex xs12 md6>
-                      <p>Data da entrega:</p>
+                      <h5 class="caption">Data da entrega:</h5>
                       <v-chip color="" text-color="">
                         <v-avatar>
                           <v-icon>fa fa-clock-o</v-icon>
@@ -136,13 +151,13 @@ export default {
   },
   computed: {
     unseen () {
-      return this.$store.getters.getUnseenDialogs
+      return this.filteredCollection || this.$store.getters.getUnseenDialogs
     },
     pending () {
-      return this.$store.getters.getPendingDialogs
+      return this.filteredCollection || this.$store.getters.getPendingDialogs
     },
     finished () {
-      return this.$store.getters.getFinishedDialogs
+      return this.filteredCollection || this.$store.getters.getFinishedDialogs
     },
     isValidUnseenDialogs () {
       if (this.unseen) {
@@ -184,23 +199,38 @@ export default {
   data () {
     return {
       active: null,
+      filteredCollection: null,
       tabs: [
         {id: 'unseen', title: 'Não Visualizadas'},
         {id: 'pending', title: 'Pendentes'},
         {id: 'finished', title: 'Finalizados'}
       ],
-      selected_dialog: null
+      searchQuery: null,
+      selectedDialog: null
     }
   },
   methods: {
     view (msg) {
       this.$store.commit('SET_CURRENT_DIALOG', msg)
     },
+    deadline (date) {
+      let currentDate = this.$moment(Date.now())
+      let dl = this.$moment(date)
+      let remaining = dl.diff(currentDate, 'days')
+      if (remaining > 1) {
+        return 'green'
+      } else if (remaining <= 0) {
+        return 'red'
+      } else {
+        return 'yellow'
+      }
+    },
     dtFormat (timestamp) {
       return this.$moment(timestamp).format('DD/MM/YYYY - HH:mm')
     },
     fetchData (tab) {
       console.log(tab.id)
+      this.filteredCollection = null
       switch (tab.id) {
         case 'unseen':
           this.$store.dispatch('GET_UNSEEN_DIALOGS').then(() => {
@@ -216,6 +246,16 @@ export default {
           this.$store.dispatch('GET_FINISHED_DIALOGS')
           break
       }
+    },
+    search () {
+      if (this.active === 'unseen') {
+        this.filteredCollection = this.unseen.filter(item => item._id === this.searchQuery)
+      } else if (this.active === 'pending') {
+        this.filteredCollection = this.pending.filter(item => item._id === this.searchQuery)
+      } else if (this.active === 'finished') {
+        this.filteredCollection = this.finished.filter(item => item._id === this.searchQuery)
+      }
+      return this.filteredCollection
     }
   }
 }
