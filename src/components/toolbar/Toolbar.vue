@@ -20,7 +20,6 @@
                 <i class="fa fa-user-circle-o logout-fallback" v-if="!user.user_data.profile_image" aria-hidden="true" slot="activator"></i>
                 <img :src="user.user_data.profile_image" v-if="user.user_data.profile_image" alt="Usuário">
               </v-list-tile-avatar>
-              
               <v-list-tile-content>
                 <v-list-tile-title>
                   {{ user.user_data.name }}
@@ -46,7 +45,6 @@ export default {
   },
   computed: {
     user () {
-      console.log(this.$store.getters.getUser)
       return this.$store.getters.getUser
     }
   },

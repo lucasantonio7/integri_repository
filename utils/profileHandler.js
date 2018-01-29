@@ -36,7 +36,6 @@ module.exports = (model, userModel, dbHandler, env) => {
           dbHandler.view('profiles', 'getUsers', {
             key: params.email
           }, (err, body) => {
-            console.log(body.rows)
             if (body.rows.length > 0 && body.rows[0].value) {
               if (body.rows[0].value.unsuccessfull_attempts >= 3) {
                 reject(403)
@@ -50,14 +49,16 @@ module.exports = (model, userModel, dbHandler, env) => {
                       email: body.rows[0].value.medias.integri.email,
                       location: body.rows[0].value.location,
                       medias: body.rows[0].value.medias,
-                      like: body.rows[0].value.like
+                      like: body.rows[0].value.like,
+                      role: body.rows[0].value.role
                     }
                     let resp = {
                       token: jsonWT.sign(payload, env.global_secret, {
                         algorithm: env.hash_algorithm,
                         expiresIn: env.token_expiration
                       }),
-                      authenticationStatus: true
+                      authenticationStatus: true,
+                      role: body.rows[0].value.role
                     }
                     resolve(resp)
                   } catch (err) {

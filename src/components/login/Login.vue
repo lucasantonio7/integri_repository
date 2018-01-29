@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login" :class="{'admin': strategy === 'admin'}">
     <v-container>
       <v-layout align-center justify-center>
         <v-flex class="login-box" xs12 md8 lg5>
@@ -24,7 +24,7 @@
               <v-btn type="submit" class="login-submit" :disabled="!user.email && !user.pwd">Enviar</v-btn>
             </div>
           </form>
-          <div class="social-media-btns">
+          <div class="social-media-btns" v-if="strategy !== 'admin'">
             <login-twitter></login-twitter>
             <fbl></fbl>
             <link-to-chat></link-to-chat>
@@ -63,9 +63,13 @@ export default {
         email: this.user.email,
         password: this.user.pwd
       }).then(resp => {
+        console.log(resp.data)
         if (resp.data.authenticationStatus) {
-          console.log(resp.data)
-          window.location.href = '/'
+          if (resp.data.role === 'admin') {
+            this.$store.dispatch('LOGIN')
+          } else {
+            window.location.href = '/'
+          }
         } else {
           this.error.status = true
           this.error.message = 'Usuário ou senha incorretos!'
@@ -82,7 +86,10 @@ export default {
         }
       })
     }
-  }
+  },
+  props: [
+    'strategy'
+  ]
 }
 </script>
 <style lang="sass">

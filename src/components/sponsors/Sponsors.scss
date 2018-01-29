@@ -1,3 +1,4 @@
+$title-color:#818181;
 .sponsors {
   background-color: white;
 }
@@ -5,13 +6,23 @@
 .partners-wrapper {
   background-color: #fff;
   min-height: auto !important;
-
+  text-transform: uppercase;
+  text-align: center;
   &.container {
     padding: 4rem 0;
   }
-
+  .sponsor-title{
+    text-transform: uppercase;
+    font-size: 1rem;
+    color: $title-color;
+  }
+  .sponsor{
+    img {
+      width: 100%;
+    }
+  }
   .partners-title {
-    color: #818181;
+    color: $title-color;
     font-size: 0.8rem;
     text-align: center;
   }

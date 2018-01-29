@@ -30,11 +30,14 @@
         <v-card-actions>
           <v-container grid-list-md>
             <v-layout row wrap>
-              <v-flex xs6 md3>
-                <v-text-field label="Nome do curador" :rules="nameRules" v-model="dialog.responsible.name" required :disabled="dialog.status !== null"></v-text-field>
+              <v-flex x12>
+                <v-checkbox label="Descartar curadoria" v-model="discardCuratorship"></v-checkbox>
               </v-flex>
               <v-flex xs6 md3>
-                <v-text-field label="E-mail do curador" :rules="emailRules" v-model="dialog.responsible.email" required :disabled="dialog.status !== null"></v-text-field>
+                <v-text-field label="Nome do curador" :rules="nameRules" v-model="dialog.responsible.name" :required="!discardCuratorship" :disabled="dialog.status !== null"></v-text-field>
+              </v-flex>
+              <v-flex xs6 md3>
+                <v-text-field label="E-mail do curador" :rules="emailRules" v-model="dialog.responsible.email" :required="!discardCuratorship" :disabled="dialog.status !== null"></v-text-field>
               </v-flex>
               <v-flex xs11 sm4 md2>
                 <v-menu
@@ -99,8 +102,8 @@
                 </v-menu>
               </v-flex>
               <v-flex xs12 sm4 md2>
-                <v-btn block v-if="!dialog.status && !dialog.due_date || temporaryData.due_date" :disabled="!dialog.responsible.name || !dialog.responsible.email || !temporaryData.due_date" @click="submit">Salvar</v-btn>
-                <v-btn block v-if="!temporaryData.due_date && dialog.status !== null && dialog.due_date !== null && !dialog.solved_date" @click="finish">Finalizar</v-btn>
+                <v-btn block v-if="showSaveButton" :disabled="!dialog.responsible.name || !dialog.responsible.email || !temporaryData.due_date" @click="submit">Salvar</v-btn>
+                <v-btn block v-if="showFinishButton" @click="finish">Finalizar</v-btn>
               </v-flex>
             </v-layout>
           </v-container>
@@ -126,6 +129,24 @@ export default {
     },
     formatedSolvedDate () {
       return this.$moment(this.dialog.solved_date).format('YYYY-MM-DD')
+    },
+    showSaveButton () {
+      if (!this.discardCuratorship) {
+        if (!this.dialog.status && !this.dialog.due_date) {
+          return true
+        } else if (this.temporaryData.due_date) {
+          return true
+        }
+      } else {
+        return false
+      }
+    },
+    showFinishButton () {
+      if (this.discardCuratorship) {
+        return true
+      } else {
+        return (!this.temporaryData.due_date && this.dialog.status !== null && this.dialog.due_date !== null && !this.dialog.solved_date)
+      }
     }
   },
   data () {
@@ -136,6 +157,7 @@ export default {
         name: null,
         email: null
       },
+      discardCuratorship: false,
       emailRules: [
         v => !!v || 'E-mail deve ser preenchido',
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail deve ser válido'
@@ -169,6 +191,15 @@ export default {
     finish () {
       this.dialog.solved_date = this.$moment(Date.now())
       this.dialog.solved_date = this.dialog.solved_date.valueOf()
+      this.dialog.due_date = this.dialog.solved_date.valueOf()
+      try {
+        this.dialog.responsible = {
+          name: this.$store.getters.getUser.user_data.name,
+          email: this.$store.getters.getUser.user_data.medias.integri.email
+        }
+      } catch (ex) {
+        console.log(ex)
+      }
       console.log(this.dialog)
       axios.post('/api/curatorship/update', {dialog: this.dialog}).then(res => {
         this.$emit('updatescreen')

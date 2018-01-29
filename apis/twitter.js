@@ -29,8 +29,6 @@ module.exports = function (passport, cookieParser, env) {
       })
     } else if (cookie && cookie['integri']) {
       jsonWT.verify(cookie['integri'], env.global_secret, (err, decoded) => {
-        console.log('Decoded cookie:')
-        console.log(decoded)
         if (!err) {
           res.json({
             login: true,

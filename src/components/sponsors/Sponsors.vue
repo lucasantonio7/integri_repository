@@ -2,6 +2,14 @@
   <div class="sponsors">
   <v-container class="partners-wrapper">
     <v-layout row wrap>
+      <v-flex xs12 class="sponsor">
+        <h6 class="sponsor-title">Realização</h6>
+        <v-layout row wrap>
+          <v-flex xs4 offset-xs4>
+            <img :src="require('@/assets/svg/partners/realizacao_pv.svg')" alt="">
+          </v-flex>
+        </v-layout>
+      </v-flex>
       <v-flex xs12 lg6 class="technical-partner">
         <h6 class="partners-title">PARCEIROS TÉCNICOS</h6>
         <v-layout row wrap>
@@ -25,6 +33,9 @@
           </v-flex>
           <v-flex xs3>
             <img :src="require('@/assets/svg/partners/tech_partners_inst_unisinos.svg')" alt="">
+          </v-flex>
+          <v-flex xs3>
+            <img :src="require('@/assets/svg/partners/tech_partners_atados.svg')" alt="">
           </v-flex>
         </v-layout>
       </v-flex>
