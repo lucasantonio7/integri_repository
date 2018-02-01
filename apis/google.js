@@ -57,6 +57,44 @@ module.exports = function (apiKey, dbHandler) {
           }
         })
       });
+    },
+    processQuery(queryGroup) {
+      return new Promise((resolve, reject) => {
+        youtube.videos.list({
+          part: 'snippet,contentDetails,statistics',
+          id: queryGroup.reduce((prev, next) => {
+            if (prev.id) {
+              return prev.id + "," + next.id
+            } else {
+              return prev + "," + next.id
+            }
+          })
+        }, (err, resp) => {
+          if (err) {
+            reject(err);
+          } else {
+            // Max 50 videos
+            let relevantContent = resp.items.map(item => {
+              let elementIndexQG = queryGroup.findIndex((elem, index) => {
+                if (elem.id == item.id) {
+                  return true
+                } else {
+                  return false
+                }
+              })
+              return {
+                id: item.id,
+                title: item.snippet.title,
+                channel: item.snippet.channelTitle,
+                thumbnail: item.snippet.thumbnails.standard,
+                views: item.statistics.viewCount,
+                tags: elementIndexQG > -1 ? queryGroup[elementIndexQG].tags : ['']
+              }
+            })
+            resolve(relevantContent)
+          }
+        })
+      })
     }
   }
 
@@ -140,36 +178,25 @@ module.exports = function (apiKey, dbHandler) {
     dbHandler.view('sources', 'getVideoContent', (err, body) => {
       if (!err) {
         let videos = body.rows[0].value;
-        let videosIDs = videos.videos_sources.reduce((prev, next) => {
-          if (prev.id) {
-            return prev.id + "," + next.id
+        let queryGroups = []
+        videos.videos_sources.map(video => {
+          if (queryGroups.length < 1) {
+            queryGroups.push([video])
+          } else if (queryGroups[queryGroups.length - 1].length < 50) {
+            queryGroups[queryGroups.length - 1].push(video)
           } else {
-            return prev + "," + next.id
+            queryGroups.push([video])
           }
-        });
-        console.log(videosIDs)
-        youtube.videos.list({
-          part: 'snippet,contentDetails,statistics',
-          id: videosIDs
-        }, (err, resp) => {
-          if (err) {
-            console.log(err)
-            res.status(500).json(err);
-          } else {
-            // resp.items.forEach(item => {
-            //   // get video views and order by views
-            // })
-            // Max 50 videos
-            let relevantContent = resp.items.map(item => {
-              return {
-                title: item.snippet.title,
-                channel: item.snippet.channelTitle,
-                thumbnail: item.snippet.thumbnails.standard,
-                views: item.statistics.viewCount
-              }
-            })
-            res.send(relevantContent)
-          }
+        })
+        let queue = queryGroups.map(query => {
+          return helper.processQuery(query)
+        })
+        Promise.all(queue).then(result => {
+          let joinedResult = [].concat.apply([], result)
+          res.json(joinedResult)
+        }).catch(err => {
+          console.log(err)
+          res.status(500).json(err)
         })
       } else {
         res.status(500).json(err)

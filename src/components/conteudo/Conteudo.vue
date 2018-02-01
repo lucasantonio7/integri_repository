@@ -6,7 +6,11 @@
         </v-layout>
       </v-container>
     </v-card-media>
-    <h4>Coteúdo</h4>
+    <v-container grid-list-md fill-height fluid>
+        <v-layout align-center justify-center>
+          <h4>Conteudo</h4>
+        </v-layout>
+      </v-container>
   </div>
 </template>
 
@@ -15,7 +19,7 @@ import axios from 'axios'
 export default {
   created () {
     axios('/api/google/videocontent').then(resp => {
-      console.log(resp.data)
+      this.$store.commit('', resp.data)
     }).catch(err => {
       console.log(err)
     })

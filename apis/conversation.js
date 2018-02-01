@@ -38,9 +38,14 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       let _address = location || ""
       _address = _address.replace('Brazil', '')
       _address = _address.replace('Brasil', '')
-      axios.get('https://v2.api.atados.com.br/search/projects', {
+      console.log(_address)
+      let url = _address.includes('Rio Grande do Sul') ? 'https://api.beta.atados.com.br/search/projects' : 'https://v2.api.atados.com.br/search/projects'
+      let headerValue = _address.includes('Rio Grande do Sul') ? 'pv' : 'default'
+      console.log(url)
+      console.log(headerValue)
+      axios.get(url, {
         headers: {
-          'X-ovp-channel': 'default'
+          'X-ovp-channel': headerValue
         },
         params: {
           cause: conversationObj._context.causes.map(item => item.id).join(', '),
@@ -76,15 +81,6 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.log("CONVERSATION ERROR! ", err);
         res.status(500).send(err);
       } else {
-        // // Capture the dialog for posterior analysis when user reach "Duvidas" node
-        // if (response.context.capture_user_feedback) {
-        //   req.session.captured_dialog = dialogModel;
-        //   req.session.captured_dialog.id = Date.now();
-        // } else {
-        //   if (req.session.captured_dialog) {
-        //     // Process  the messages on Front
-        //   }
-        // }
         // Get the context and help with profile
         if (response.context.gettingProfile && !response.context.skipNLU) {
           switch (response.context.gettingProfile) {

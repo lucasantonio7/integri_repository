@@ -15,6 +15,7 @@ import { routes } from './routes'
 import store from './store/store'
 import VueCarousel from 'vue-carousel'
 import VueClipboard from 'vue-clipboard'
+import VueAnalytics from 'vue-analytics'
 
 Vue.config.productionTip = false
 Vue.use(Vuetify)
@@ -36,7 +37,10 @@ Vue.use(require('vue-moment'), {
 const router = new VueRouter({
   routes
 })
-
+Vue.use(VueAnalytics, {
+  id: 'UA-113414698-1',
+  router
+})
 new Vue({
   store,
   el: '#app',

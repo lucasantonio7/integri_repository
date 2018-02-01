@@ -57,10 +57,10 @@ export default {
     state.typing = false
   },
   ADD_DIALOG_NODE (state, payload) {
-    state.caputured_dialog.message.push(payload)
+    state.captured_dialog.message.push(payload)
   },
   SET_CAPTURED_DIALOG (state, payload) {
-    state.caputured_dialog = payload
+    state.captured_dialog = payload
   },
   SET_CURRENT_DIALOG (state, payload) {
     state.current_dialog = payload

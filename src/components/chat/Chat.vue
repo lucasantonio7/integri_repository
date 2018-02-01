@@ -229,6 +229,9 @@ export default {
   },
   data () {
     return {
+      axiosUrl: '',
+      axiosConfig: {},
+      axiosOppty: '',
       currentVideo: {
         active: false,
         id: '',
@@ -300,6 +303,27 @@ export default {
         target[prop] = payload[prop]
       }
     },
+    adjustLocationByOppty () {
+      if (this.newUser.location) {
+        if (this.newUser.location.includes('Rio Grande do Sul')) {
+          this.axiosUrl = 'https://api.beta.atados.com.br/'
+          this.axiosConfig = {headers: {'X-ovp-channel': 'pv'}}
+          this.axiosOppty = 'https://beta.parceirosvoluntarios.atados.com.br/vaga/'
+        } else {
+          this.axiosUrl = 'https://v2.api.atados.com.br/'
+          this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
+          this.axiosOppty = 'https://atados.com.br/vaga/'
+        }
+      } else if (this.userData.user_data.location.includes('Rio Grande do Sul')) {
+        this.axiosUrl = 'https://api.beta.atados.com.br/'
+        this.axiosConfig = {headers: {'X-ovp-channel': 'pv'}}
+        this.axiosOppty = 'https://beta.parceirosvoluntarios.atados.com.br/vaga/'
+      } else {
+        this.axiosUrl = 'https://v2.api.atados.com.br/'
+        this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
+        this.axiosOppty = 'https://atados.com.br/vaga/'
+      }
+    },
     gotohook (hook) {
       console.log(hook)
       switch (hook) {
@@ -311,7 +335,8 @@ export default {
       }
     },
     goToOppty (oppty) {
-      window.open('https://atados.com.br/vaga/' + oppty.slug, '_blank')
+      this.adjustLocationByOppty()
+      window.open(this.axiosOppty + oppty.slug, '_blank')
     },
     YNSelector (payload, message) {
       message.active = false
@@ -457,7 +482,8 @@ export default {
         }
         case 'skills':
           if (!this.skills) {
-            axios.get('https://v2.api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
+            this.adjustLocationByOppty()
+            axios.get(this.axiosUrl + '/startup/', this.axiosConfig).then(resp => {
               this.$store.commit('SET_SKILLS', resp.data.skills)
               this.select1.items = this.skills
               this.select1.active = true
@@ -489,7 +515,8 @@ export default {
           }
           break
         case 'causes':
-          axios.get('https://v2.api.atados.com.br/startup/', {headers: {'X-ovp-channel': 'default'}}).then(resp => {
+          this.adjustLocationByOppty()
+          axios.get(this.axiosUrl + '/startup/', this.axiosConfig).then(resp => {
             console.log(resp)
             this.$store.commit('SET_CAUSES', resp.data.causes)
             this.select1.items = this.causes

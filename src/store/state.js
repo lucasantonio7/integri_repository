@@ -25,9 +25,10 @@ export default {
   skills: null,
   access_source: null,
   opportunities: [],
-  caputured_dialog: null,
+  captured_dialog: null,
   current_dialog: null,
   unseen_dialogs: null,
   pending_dialogs: null,
-  finished_dialogs: null
+  finished_dialogs: null,
+  content_videos: null
 }
