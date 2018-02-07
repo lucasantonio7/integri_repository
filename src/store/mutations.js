@@ -62,6 +62,9 @@ export default {
   SET_CAPTURED_DIALOG (state, payload) {
     state.captured_dialog = payload
   },
+  SET_CONTENT_VIDEOS (state, payload) {
+    state.content_videos = payload
+  },
   SET_CURRENT_DIALOG (state, payload) {
     state.current_dialog = payload
   },

@@ -182,6 +182,9 @@ export default {
       })
       return groups
     },
+    userData () {
+      return this.$store.getters.getUser
+    },
     videosGroups () {
       let groups = []
       let index = 0

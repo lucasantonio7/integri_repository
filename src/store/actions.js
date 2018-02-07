@@ -57,5 +57,12 @@ export default {
         reject(err)
       })
     })
+  },
+  LOAD_CONTENT_VIDEOS ({ commit, state }) {
+    axios('/api/google/videocontent').then(resp => {
+      commit('SET_CONTENT_VIDEOS', resp.data)
+    }).catch(err => {
+      console.log(err)
+    })
   }
 }

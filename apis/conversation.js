@@ -58,6 +58,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
           }
         }
       }).then(res => {
+        console.log(res)
         if (res.data.count) {
           resolve(res.data.results)
         } else {

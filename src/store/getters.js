@@ -44,11 +44,11 @@ export default {
   getOpportunities: state => {
     return state.opportunities
   },
-  getContentVideos: state => {
-    return state.content_videos
-  },
   getCapturedDialog: state => {
     return state.captured_dialog
+  },
+  getContentVideos: state => {
+    return state.content_videos
   },
   getCurrentDialog: state => {
     return state.current_dialog
