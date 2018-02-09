@@ -64,5 +64,15 @@ export default {
     }).catch(err => {
       console.log(err)
     })
+  },
+  LOAD_STATES ({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/sources/places').then(resp => {
+        commit('SET_STATES', resp.data.estados)
+        resolve(true)
+      }).catch(err => {
+        reject(err)
+      })
+    })
   }
 }

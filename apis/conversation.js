@@ -2,6 +2,7 @@ const express = require('express');
 const utils = require('../utils/promiseHandler');
 const youtube = require('./youtube');
 const axios = require('axios');
+const path = require('path')
 module.exports = function (appEnv, dbHandler, envVars, model) {
   const dialogModel = require('../models/dialog')(model);
   const api = express.Router();
@@ -15,6 +16,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
   let workspace_id = envVars.workspace_id;
   const watson = require('./watson')(appEnv);
   const youtubeInstance = new youtube.Youtube(envVars.youtubeAPIKey, dbHandler);
+  let states = require(path.resolve('./src/assets/json/estados-cidades.json'));
   api.get('/init', (req, res) => {
     let text = req.params.text || '';
     conversation.message({
@@ -32,15 +34,57 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       }
     });
   })
-
+  // If user's location is in RS api beta should be used
+  let needAPIBeta = function (value) {
+    value = value.toLowerCase()
+    if (value.includes('rio grande do sul')){
+      return true;
+    } else {
+      return states.estados.some(state => {
+        if (state.sigla === 'RS') {
+          return state.cidades.some(city => {
+            return value.includes(city.toLowerCase())
+          })
+        } else {
+          return false
+        }
+      })
+    }
+  }
+  let includeStateName = function (value) {
+    return states.estados.some(state => {
+      if (value.includes(state.nome.toLowerCase())) {
+        console.log(value)
+        console.log(state.nome)
+        return true
+      } else {
+        return false
+      }
+    })
+  }
+  let stateOrCity = function (value) {
+    value = value.toLowerCase()
+    if (includeStateName(value)){
+      return 'administrative_area_level_1'
+    } else {
+      return 'administrative_area_level_2'
+    }
+  }
   let getOppty = function (location, conversationObj) {
     return new Promise((resolve, reject) => {
       let _address = location || ""
       _address = _address.replace('Brazil', '')
       _address = _address.replace('Brasil', '')
       console.log(_address)
-      let url = _address.includes('Rio Grande do Sul') ? 'https://api.beta.atados.com.br/search/projects' : 'https://v2.api.atados.com.br/search/projects'
-      let headerValue = _address.includes('Rio Grande do Sul') ? 'pv' : 'default'
+      let url = "";
+      let headerValue = "";
+      if (needAPIBeta(_address)){
+        url = 'https://api.beta.atados.com.br/search/projects';
+        headerValue = 'pv';
+      } else {
+        url ='https://v2.api.atados.com.br/search/projects';
+        headerValue = 'default';
+      }
       console.log(url)
       console.log(headerValue)
       axios.get(url, {
@@ -52,7 +96,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
           skill: conversationObj._context.skills.map(item => item.id).join(', '),
           address: {
             address_components: [{
-              types: ["administrative_area_level_1"],
+              types: [stateOrCity(_address)],
               long_name: _address
             }]
           }

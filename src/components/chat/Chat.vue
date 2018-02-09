@@ -308,7 +308,7 @@ export default {
     },
     adjustLocationByOppty () {
       if (this.newUser.location) {
-        if (this.newUser.location.includes('Rio Grande do Sul')) {
+        if (this.needAPIBeta(this.newUser.location)) {
           this.axiosUrl = 'https://api.beta.atados.com.br/'
           this.axiosConfig = {headers: {'X-ovp-channel': 'pv'}}
           this.axiosOppty = 'https://beta.parceirosvoluntarios.atados.com.br/vaga/'
@@ -317,7 +317,7 @@ export default {
           this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
           this.axiosOppty = 'https://atados.com.br/vaga/'
         }
-      } else if (this.userData.user_data.location.includes('Rio Grande do Sul')) {
+      } else if (this.needAPIBeta(this.userData.user_data.location)) {
         this.axiosUrl = 'https://api.beta.atados.com.br/'
         this.axiosConfig = {headers: {'X-ovp-channel': 'pv'}}
         this.axiosOppty = 'https://beta.parceirosvoluntarios.atados.com.br/vaga/'
@@ -325,6 +325,23 @@ export default {
         this.axiosUrl = 'https://v2.api.atados.com.br/'
         this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
         this.axiosOppty = 'https://atados.com.br/vaga/'
+      }
+    },
+    needAPIBeta (value) {
+      value = value.toLowerCase()
+      console.log(value)
+      if (value.includes('rio grande do sul')) {
+        return true
+      } else {
+        return this.states.some(state => {
+          if (state.sigla === 'RS') {
+            return state.cidades.some(city => {
+              return value.includes(city.toLowerCase())
+            })
+          } else {
+            return false
+          }
+        })
       }
     },
     gotohook (hook) {
@@ -467,9 +484,8 @@ export default {
       }
       switch (response.data.context.selection_question) {
         case 'state-city': {
-          axios.get('/api/sources/places').then(resp => {
-            this.$store.commit('SET_STATES', resp.data)
-            this.select1.items = this.states.estados
+          this.$store.dispatch('LOAD_STATES').then(resp => {
+            this.select1.items = this.states
             this.select1.active = true
             this.select1.noData = 'Selecione um estado'
             this.select1.icon = 'map'
@@ -641,6 +657,7 @@ export default {
           axios.get('/api/conversation/init').then(response => {
             this.$store.commit('DEACTIVATE_TYPING')
             this.$store.commit('SET_CONTEXT', response.data.context)
+            this.$store.dispatch('LOAD_STATES')
             response.data.output.text.forEach(text => {
               this.$store.commit('ADD_TEXT', {
                 sender: 'watson',
