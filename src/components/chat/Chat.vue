@@ -104,14 +104,14 @@
           </form>
         </v-dialog>
       </div>
-      <div class="chatbox-footer" :class="{'box': select1.active || select2.active}">
-        <input ref="inputbox" type="text" class="chat-input" v-model="message" v-on:keyup.enter="submit" v-if="inputboxactive">
+      <div class="chatbox-footer" :class="{'box': select1.active || select2.active, 'box-disabled': !inputBoxEnabled}" >
+        <input ref="inputbox" type="text" class="chat-input" v-model="message" :disabled="!inputBoxEnabled" v-on:keyup.enter="submit" v-if="inputboxactive">
         <div class="selections" v-if="select1.active || select2.active">
           <div class="selection-box">
-            <v-select solo v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
+            <v-select solo v-on:keyup.enter="submit" v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
           </div>
           <div class="selection-box">
-            <v-select solo v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
+            <v-select solo v-on:keyup.enter="submit" v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
           </div>
         </div>
         <v-icon :disabled="!canSend" @click="submit">send</v-icon>
@@ -244,6 +244,7 @@ export default {
           url: ''
         }
       },
+      inputBoxEnabled: true,
       message: '',
       displayLoginBox: false,
       newUser: {
@@ -381,6 +382,7 @@ export default {
           this.submit()
         })
       }
+      this.inputBoxEnabled = true
     },
     processMessage (response) {
       this.$store.commit('DEACTIVATE_TYPING')
@@ -471,6 +473,7 @@ export default {
       }
       if (response.data.context.question) {
         if (response.data.context.question.type === 'yn_question') {
+          this.inputBoxEnabled = false
           this.$nextTick().then(() => {
             this.$store.commit('ADD_TEXT', {
               type: 'yn_question',
@@ -732,6 +735,7 @@ export default {
           active: true,
           options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
         })
+        this.inputBoxEnabled = false
         this.$nextTick(function () {
           response.data.context.question = null
           this.$store.commit('SET_CONTEXT', response.data.context)

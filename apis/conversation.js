@@ -54,8 +54,6 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
   let includeStateName = function (value) {
     return states.estados.some(state => {
       if (value.includes(state.nome.toLowerCase())) {
-        console.log(value)
-        console.log(state.nome)
         return true
       } else {
         return false

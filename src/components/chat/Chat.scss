@@ -256,14 +256,21 @@ $purple: #7F59A3;
       min-height: 4rem;
       height: 4rem;
       max-height: 4rem;
-      background-color: #E6E6E6;
+      background-color: $userbox;
       margin: 1rem;
       padding: 1rem;
       justify-content: space-between;
       width: calc(100% - 2rem);
+      transition: 0.3s;
       &.box{
         max-height: 6rem;
         height: 5.5rem;
+      }
+      &.box-disabled {
+        background-color: transparentize($color: $userbox, $amount: 0.4);
+        .chat-input{
+          background-color: transparentize($color: $userbox, $amount: 0.4);
+        }
       }
       .chat-input{
         width: 100%;
