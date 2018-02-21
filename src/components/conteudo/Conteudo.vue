@@ -30,12 +30,12 @@
         </v-container>
       </v-layout>
     </v-container>
-    <!-- <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
+    <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
       <div class="floating-video">
         <span class="close-btn" @click="closeModal"><i class="fa fa-chevron-left" aria-hidden="true"></i>Voltar</span>
-        <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideo.thumbnail.width" :player-height="currentVideo.thumbnail.height" class="responsive-yt" @ready="ready"></youtube>
+        <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideo.thumbnail.width" :player-height="currentVideo.thumbnail.height" class="responsive-yt" @ready="ready" @playing="playing"></youtube>
       </div>
-    </v-dialog> -->
+    </v-dialog>
   </div>
 </template>
 
@@ -109,11 +109,16 @@ export default {
   },
   data () {
     return {
-      showVideo: null,
+      showVideo: false,
       isSliding: false,
       currentVideo: {
-        id: null,
-        thumbnail: null
+        active: false,
+        id: '',
+        thumbnail: {
+          width: '',
+          height: '',
+          url: ''
+        }
       },
       tagsValues: {
         education: {
@@ -162,6 +167,9 @@ export default {
     closeModal () {
       this.player.stopVideo()
       this.showVideo = false
+    },
+    playing (player) {
+      // The player is playing a video.
     },
     ready (player) {
       this.player = player
