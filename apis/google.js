@@ -86,7 +86,7 @@ module.exports = function (apiKey, dbHandler) {
                 id: item.id,
                 title: item.snippet.title,
                 channel: item.snippet.channelTitle,
-                thumbnail: item.snippet.thumbnails.standard,
+                thumbnail: item.snippet.thumbnails.standard || item.snippet.thumbnails.default,
                 views: item.statistics.viewCount,
                 tags: elementIndexQG > -1 ? queryGroup[elementIndexQG].tags : ['']
               }

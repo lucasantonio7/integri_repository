@@ -63,6 +63,19 @@ export default {
     state.captured_dialog = payload
   },
   SET_CONTENT_VIDEOS (state, payload) {
+    payload = payload.sort((first, second) => {
+      let comparison = 0
+      let item1 = parseInt(first.views)
+      let item2 = parseInt(second.views)
+      if (item1 === item2) {
+        comparison = 0
+      } else if (item1 > item2) {
+        comparison = 1
+      } else {
+        comparison = -1
+      }
+      return comparison * -1
+    })
     state.content_videos = payload
   },
   SET_CURRENT_DIALOG (state, payload) {
