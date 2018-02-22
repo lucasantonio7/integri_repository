@@ -1,11 +1,19 @@
 <template>
   <div class="conteudo">
-    <v-card-media :src="require('@/assets/jpg/conteudo-min.jpeg')" height="553px" class="conteudo-mask">
-      <v-container grid-list-md fill-height fluid>
-        <v-layout align-center justify-center row>
-          <v-flex xs2 v-for="(tag, index) in tagsValues" :key="index"> 
-            <p>#{{tag.title}}</p>
-            <vue-slider v-model="tag.value" v-bind="slidersOptions" :lazy="true"></vue-slider>
+    <v-card-media :src="require('@/assets/jpg/conteudo-min.jpeg')" height="600px" class="conteudo-mask">
+      <v-container grid-list-md text-xs-center fill-height="">
+        <v-layout row wrap>
+          <v-flex xs12>
+            <h3 class="headline white--text">Mova as categorias para cima e para baixo para refinar os resultados.</h3>
+          </v-flex>
+          <v-flex xs2 v-for="(tag, index) in tagsValues" :key="index" class="slider-wrapper" align-center fill-height>
+            <vue-slider v-model="tag.value" v-bind="slidersOptions" :lazy="true">
+              <template slot="tooltip">
+                <div class="custom-tooltip">
+                  <p class="headline text-xs-center white--text">#{{tag.title}}</p>
+                </div>
+              </template>
+            </vue-slider>
           </v-flex>
         </v-layout>
       </v-container>
@@ -13,11 +21,11 @@
     <v-container grid-list-md fill-height fluid>
       <v-layout align-center justify-center row wrap>
         <v-flex xs12>
-          <h4 class="title py-4 px-2">Seu conteúdo</h4>
+          <h4 class="display-1 py-4 px-2">Seu conteúdo</h4>
         </v-flex>
         <v-container fluid grid-list-md>
           <v-layout row wrap>
-            <v-flex class="video-card" d-flex xs6 md4 v-for="video in taggedVideos" :key="video.id" @click="showModal(video)">
+            <v-flex class="video-card" d-flex xs6 v-bind:md4="index < 3" v-bind:md3="index < 7" md2 v-for="(video, index) in taggedVideos" :key="video.id" @click="showModal(video)">
               <v-card>
                 <img class="video-thumbnail" :src="video.thumbnail.url">
                 <v-card-text>
@@ -48,6 +56,10 @@ export default {
   computed: {
     videos () {
       return this.$store.getters.getContentVideos
+    },
+    imageHeight () {
+      let ratio = window.innerHeight / 16
+      return ratio * 9
     },
     taggedVideos () {
       let totalVideos = this.videos.length
@@ -153,13 +165,22 @@ export default {
         }
       },
       slidersOptions: {
-        width: 4,
-        height: 350,
+        width: 2,
+        height: 500,
         dotSize: 22,
         min: 0,
         max: 100,
         direction: 'vertical',
-        tooltipDir: 'right'
+        tooltipDir: 'top',
+        bgStyle: {
+          backgroundColor: '#C4420422'
+        },
+        sliderStyle: {
+          backgroundColor: '#61217D'
+        },
+        processStyle: {
+          backgroundColor: '#61217D'
+        }
       }
     }
   },
