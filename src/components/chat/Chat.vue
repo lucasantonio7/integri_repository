@@ -436,6 +436,9 @@ export default {
           this.$store.commit('SET_CONTEXT', response.data.context)
           this.$router.push('login')
           break
+        case 'conteudo':
+          this.$router.push('conteudo')
+          break
       }
       this.$store.commit('SET_CONTEXT', response.data.context)
       console.log(response.data.context)
