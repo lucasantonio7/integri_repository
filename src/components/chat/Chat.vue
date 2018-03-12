@@ -59,6 +59,11 @@
                   <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-down</v-icon>
                 </v-btn>
               </v-flex>
+              <v-flex v-if="message.options.cancel">
+                <v-btn block flat large @click="openLink(message.options.cancel.link)">
+                  {{ message.options.cancel.text }}
+                </v-btn>
+              </v-flex>
             </v-layout>
           </v-container>
         </div>
@@ -744,6 +749,9 @@ export default {
           this.$store.commit('SET_CONTEXT', response.data.context)
         })
       })
+    },
+    openLink (link) {
+      window.open(link, '_blank')
     },
     saveProfile () {
       let user = {

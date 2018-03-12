@@ -1,6 +1,12 @@
 <template>
   <v-container class="mx-auto content" px-5 py-5 justify-center>
-    <v-layout justify-center>
+    <v-layout row wrap justify-center>
+      <v-flex xs12 md12 >
+        <v-btn flat @click="backToContent">
+          <v-icon left>fa fa-chevron-left</v-icon>
+          Voltar
+        </v-btn>
+      </v-flex>
       <v-flex xs12 md10 v-if="!error && !loading">
         <v-container>
           <v-layout row="" wrap="">
@@ -13,11 +19,16 @@
           </v-layout>
         </v-container>
       </v-flex>
+      <v-flex x12 md12 text-xs-right>
+        <v-btn fab dark large color="purple" @click="backToTop">
+          <v-icon dark>fa fa-chevron-up</v-icon>
+        </v-btn>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
 <script>
-
+import axios from 'axios'
 export default {
   computed: {
     currentText () {
@@ -26,14 +37,44 @@ export default {
   },
   created () {
     this.fetchData()
+    if (this.addView()) {
+      axios.post('/api/texts/addview', {id: this.$route.params.id}).then(res => {
+        let currentAccess = {}
+        let currentDate = new Date()
+        currentDate.setHours(currentDate.getHours() + 24)
+        currentAccess[this.$route.params.id.toString()] = currentDate.getTime()
+        localStorage.setItem('lastaccess', JSON.stringify(currentAccess))
+      }).catch(err => {
+        console.log(err)
+      })
+    }
   },
   data () {
     return {
       loading: false,
-      error: false
+      error: false,
+      storage: null
     }
   },
   methods: {
+    addView () {
+      let lastaccess = JSON.parse(localStorage.getItem('lastaccess'))
+      if (lastaccess) {
+        let currentContent = lastaccess[this.$route.params.id]
+        if (currentContent) {
+          if (!(currentContent < Date.now())) {
+            return false
+          }
+        }
+      }
+      return true
+    },
+    backToContent () {
+      this.$router.push('/conteudo')
+    },
+    backToTop () {
+      document.querySelector('.display-2').scrollIntoView({behavior: 'smooth'})
+    },
     fetchData () {
       this.loading = true
       this.$store.dispatch('GET_TEXT_DATA', this.$route.params.id).then(res => {

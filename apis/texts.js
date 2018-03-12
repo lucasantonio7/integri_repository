@@ -23,10 +23,25 @@ module.exports = function (model, textModel, dbHandler, env) {
   api.get('/txt/:id', (req, res) => {
     let id = req.params.id
     model.findOneByID(id, (err, result) => {
-      if(!err){
+      if (!err) {
         res.json(result)
       } else {
-        res.status(500)
+        res.status(500).send(err)
+      }
+    })
+  })
+  api.post('/addview', (req, res) => {
+    let id = req.body.id;
+    model.findOneByID(id, (err, result) => {
+      if (!err) {
+        result.views++
+        result.save((err) => {
+          if (err) {
+            res.status(500).send(err)
+          } else {
+            res.json(true)
+          }
+        })
       }
     })
   })
