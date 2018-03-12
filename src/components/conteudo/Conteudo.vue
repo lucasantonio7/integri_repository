@@ -1,16 +1,17 @@
 <template>
   <div class="conteudo">
-    <v-card-media :src="require('@/assets/jpg/conteudo-min.jpeg')" height="600px" class="conteudo-mask">
+    <div v-if="!loading">
+      <v-card-media :src="require('@/assets/jpg/conteudo-min.jpeg')" height="600px" class="conteudo-mask">
       <v-container grid-list-md text-xs-center fill-height="">
         <v-layout row wrap>
           <v-flex xs12>
             <h3 class="headline white--text">Mova as categorias para cima e para baixo para refinar os resultados.</h3>
           </v-flex>
-          <v-flex xs2 v-for="(tag, index) in tagsValues" :key="index" class="slider-wrapper" align-center fill-height>
+          <v-flex xs2 v-for="(tag, index) in classificationTags" :key="index" class="slider-wrapper" align-center fill-height>
             <vue-slider v-model="tag.value" v-bind="slidersOptions" :lazy="true">
               <template slot="tooltip">
                 <div class="custom-tooltip">
-                  <p class="headline text-xs-center white--text">#{{tag.title}}</p>
+                  <p class="headline text-xs-center white--text">#{{tag.name}}</p>
                 </div>
               </template>
             </vue-slider>
@@ -25,17 +26,39 @@
         </v-flex>
         <v-container fluid grid-list-md>
           <v-layout row wrap>
-            <v-flex class="video-card" d-flex xs6 v-bind:md4="index < 3" v-bind:md3="index < 7" md2 v-for="(video, index) in taggedVideos" :key="video.id" @click="showModal(video)">
-              <v-card>
-                <img class="video-thumbnail" :src="video.thumbnail.url">
-                <v-card-text>
-                  <p>{{ video.title }}</p>
-                  <p>Visualizações: {{ video.views }} <v-icon>fa fa-eye</v-icon></p>
-                </v-card-text>
+            <v-flex class="video-card" d-flex xs6 v-bind:md4="index < 3" v-bind:md3="index < 7" md2 v-for="(content, index) in sortedContent" :key="content._id">
+              <v-card v-if="!content.type">
+                <div @click="showModal(content)">
+                  <img v-if="content.thumbnail" class="video-thumbnail" :src="content.thumbnail.url">
+                  <v-card-text>
+                    <p>{{ content.title }}</p>
+                    <p>Visualizações: {{ content.views }} <v-icon>fa fa-eye</v-icon></p>
+                    <p>Tags: <v-chip v-for="(tag, index) in content.tags" :key="index"><v-avatar><v-icon>fa fa-hashtag</v-icon></v-avatar>{{ getTagName(tag) }}</v-chip></p>
+                  </v-card-text>
+                </div>
+              </v-card>
+              <v-card v-if="content.type">
+                <div @click="showText(content)">
+                  <img class="video-thumbnail" :src="require('@/assets/svg/content/thumb_texto.svg')" alt="Texto">
+                  <v-card-text>
+                    <p>{{ content.title }}</p>
+                    <p>Visualizações: {{ content.views }} <v-icon>fa fa-eye</v-icon></p>
+                    <p>Tags: <v-chip v-for="(tag, index) in content.tags" :key="index"><v-avatar><v-icon>fa fa-hashtag</v-icon></v-avatar>{{ getTagName(tag) }}</v-chip></p>
+                  </v-card-text>
+                </div>
               </v-card>
             </v-flex>
           </v-layout>
         </v-container>
+      </v-layout>
+    </v-container>
+    </div>
+    <v-container grid-list-md text-xs-center justify-center>
+      <v-layout row wrap >
+        <v-flex px-5 py-5>
+          <h3 class="title">Aguarde um momento estamos buscando conteúdo</h3>
+          <v-progress-circular py-3 indeterminate :size="300" :width="5" color="purple"></v-progress-circular>
+        </v-flex>
       </v-layout>
     </v-container>
     <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
@@ -49,35 +72,52 @@
 
 <script>
 import vueSlider from 'vue-slider-component'
+import _ from 'lodash'
 export default {
   components: {
     vueSlider
   },
   computed: {
+    classificationTags: {
+      get () {
+        return this.$store.getters.getClassificationTags
+      }
+    },
     videos () {
       return this.$store.getters.getContentVideos
+    },
+    texts () {
+      return this.$store.getters.getContentTexts
     },
     imageHeight () {
       let ratio = window.innerHeight / 16
       return ratio * 9
     },
-    taggedVideos () {
-      let totalVideos = this.videos.length
-      // Link videos with their tags
-      let tagsList = []
-      for (let prop in this.tagsValues) {
-        let selectedVideos = this.videos.filter(item => {
-          return item.tags.some(tag => {
-            if (tag === this.tagsValues[prop].title) {
+    sortedContent () {
+      let finalResult = []
+      this.sortedTags.forEach(tag => {
+        let filtered = this.contentSource.filter(content => {
+          if (content.tags.some(t => {
+            return t === tag.id
+          })) {
+            if (content.tags.length === 1) {
               return true
+            } else {
+              if (this.isTheHighestTag(content.tags, tag)) {
+                return true
+              } else {
+                return false
+              }
             }
-          })
+          }
         })
-        this.tagsValues[prop].videos = selectedVideos
-        tagsList.push(this.tagsValues[prop])
-      }
-      console.log(tagsList)
-      tagsList = tagsList.sort((first, second) => {
+        finalResult = finalResult.concat(filtered)
+      })
+      return finalResult
+    },
+    sortedTags () {
+      let tags = _.clone(this.$store.getters.getClassificationTags)
+      tags = tags.sort((first, second) => {
         let comparison = 0
         let item1 = parseInt(first.value)
         let item2 = parseInt(second.value)
@@ -90,34 +130,29 @@ export default {
         }
         return comparison * -1
       })
-      let finalResult = []
-      while (finalResult.length < totalVideos) {
-        for (let j = 0; j < tagsList.length; j++) {
-          let ratio = tagsList[j].value - 50
-          let backwards = false
-          ratio = Math.round(ratio)
-          if (ratio <= 0) {
-            ratio = 1
-            backwards = true
-          }
-          for (let i = 0; i < ratio; i++) {
-            if (tagsList[j].videos.length < 1) {
-              break
-            }
-            if (backwards) {
-              finalResult.push(tagsList[j].videos.pop())
-            } else {
-              finalResult.push(tagsList[j].videos.shift())
-            }
-          }
-          if (tagsList[j].videos.length < 1) {
-            tagsList.splice(j, 1)
-          }
+      return tags
+    },
+    contentSource () {
+      return this.$store.getters.getContentVideos.concat(this.$store.getters.getContentTexts).sort((first, second) => {
+        let comparison = 0
+        let item1 = parseInt(first.views)
+        let item2 = parseInt(second.views)
+        if (item1 === item2) {
+          comparison = 0
+        } else if (item1 > item2) {
+          comparison = 1
+        } else {
+          comparison = -1
         }
-      }
-      console.log(finalResult)
-      return finalResult
+        return comparison * -1
+      })
     }
+  },
+  created () {
+    this.fetchData()
+  },
+  watch: {
+    '$route': 'fetchData'
   },
   data () {
     return {
@@ -132,38 +167,8 @@ export default {
           url: ''
         }
       },
-      tagsValues: {
-        education: {
-          title: 'Educação',
-          value: 50,
-          videos: []
-        },
-        inspiration: {
-          title: 'Inspiração',
-          value: 50,
-          videos: []
-        },
-        sustainability: {
-          title: 'Sustentabilidade',
-          value: 50,
-          videos: []
-        },
-        volunteering: {
-          title: 'Voluntariado',
-          value: 50,
-          videos: []
-        },
-        health: {
-          title: 'Saúde',
-          value: 50,
-          videos: []
-        },
-        socialResponsibility: {
-          title: 'Responsabilidade Social',
-          value: 50,
-          videos: []
-        }
-      },
+      loading: false,
+      error: false,
       slidersOptions: {
         width: 2,
         height: 500,
@@ -189,6 +194,36 @@ export default {
       this.player.stopVideo()
       this.showVideo = false
     },
+    fetchData () {
+      let queue = []
+      this.loading = true
+      this.error = false
+      queue.push(this.$store.dispatch('LOAD_CLASSIFICATION_TAGS'))
+      queue.push(this.$store.dispatch('LOAD_CONTENT_VIDEOS'))
+      queue.push(this.$store.dispatch('LOAD_CONTENT_TEXTS'))
+      Promise.all(queue).then(res => {
+        this.loading = false
+      }).catch(err => {
+        console.log(err)
+        this.error = true
+      })
+    },
+    // Smaller index means greater importance
+    isTheHighestTag (tagset, currentTag) {
+      let tagsIndexes = []
+      tagset.forEach(tag => {
+        tagsIndexes.push(this.sortedTags.findIndex(elem => {
+          return elem.id === tag
+        }))
+      })
+      let min = tagsIndexes.reduce((index1, index2) => {
+        return Math.min(index1, index2)
+      })
+      let currentTagIndex = this.sortedTags.findIndex(elem => {
+        return elem.id === currentTag.id
+      })
+      return min === currentTagIndex
+    },
     playing (player) {
       // The player is playing a video.
     },
@@ -199,6 +234,12 @@ export default {
       this.currentVideo.thumbnail = video.thumbnail
       this.currentVideo.id = video.id
       this.showVideo = true
+    },
+    showText (text) {
+      this.$router.push({path: `texto/${text._id}`})
+    },
+    getTagName (tag) {
+      return this.$store.getters.getClassificationTagName(tag)
     }
   }
 }

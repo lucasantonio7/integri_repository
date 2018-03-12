@@ -30,5 +30,8 @@ export default {
   unseen_dialogs: null,
   pending_dialogs: null,
   finished_dialogs: null,
-  content_videos: null
+  content_videos: null,
+  content_texts: null,
+  current_text: null,
+  classification_tags: null
 }

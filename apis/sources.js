@@ -31,5 +31,15 @@ module.exports = function (dbHandler) {
       })
     }
   });
+
+  api.get('/classificationtags', (req, res) => {
+    dbHandler.view('sources', 'getClassificationTags', (err, body) => {
+      if (!err) {
+        res.json(body.rows[0].value)
+      } else {
+        res.status(500).json(err)
+      }
+    })
+  })
   return api;
 }

@@ -47,8 +47,20 @@ export default {
   getCapturedDialog: state => {
     return state.captured_dialog
   },
+  getClassificationTags: state => {
+    return state.classification_tags
+  },
+  getClassificationTagName: state => (id) => {
+    return state.classification_tags.find(tag => tag.id === id).name
+  },
   getContentVideos: state => {
     return state.content_videos
+  },
+  getContentTexts: state => {
+    return state.content_texts
+  },
+  getSpecificText: state => {
+    return state.current_text
   },
   getCurrentDialog: state => {
     return state.current_dialog

@@ -19,11 +19,13 @@ const myModel = couchDBModel(dbHandler, {
   views: ['_design/profiles/_view/getUsers']
 });
 const userModel = require('./models/user')(myModel);
+const textModel = require('./models/text')(myModel);
 // API Call
 const watson = require('./apis/watson')(appEnv);
 const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler);
 const youtube = require('./apis/youtube');
 const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler, envVars);
+const text = require('./apis/texts')(myModel, textModel, dbHandler, envVars);
 
 let _secret = "projetointegri2017";
 
@@ -167,6 +169,7 @@ app.use('/api/sources', sources)
 app.use('/api/curatorship', curatorship)
 app.use('/api/twitter', twitter)
 app.use('/api/google', google)
+app.use('/api/texts', text)
 app.use('/api/conversation', conversation)
 app.use('/api/profile', profile)
 app.use('/api/facebook', facebook)

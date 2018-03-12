@@ -33,6 +33,7 @@
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.5",
     "nano": "^6.4.0",
+    "normalizr": "^3.2.4",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "passport-jwt": "^3.0.0",

@@ -1,4 +1,5 @@
 import axios from 'axios'
+// import { normalize, schema } from 'normalizr'
 export default {
   LOGIN ({ commit, state }) {
     return new Promise((resolve, reject) => {
@@ -58,10 +59,45 @@ export default {
       })
     })
   },
+  GET_TEXT_DATA ({ commit, state }, id) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/texts/txt/' + id).then(res => {
+        console.log(res.data)
+        commit('SET_CURRENT_TEXT', res.data)
+        resolve(true)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  LOAD_CLASSIFICATION_TAGS ({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      axios('/api/sources/classificationtags').then(resp => {
+        resp.data.tags.forEach(tag => {
+          tag.value = 50
+        })
+        resolve(true)
+        commit('SET_CLASSIFICATION_TAGS', resp.data.tags)
+      }).catch(err => {
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
   LOAD_CONTENT_VIDEOS ({ commit, state }) {
     return new Promise((resolve, reject) => {
       axios('/api/google/videocontent').then(resp => {
         commit('SET_CONTENT_VIDEOS', resp.data)
+        resolve(true)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  LOAD_CONTENT_TEXTS ({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      axios('/api/texts/content').then(resp => {
+        commit('SET_CONTENT_TEXTS', resp.data)
         resolve(true)
       }).catch(err => {
         reject(err)

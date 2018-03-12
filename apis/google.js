@@ -175,7 +175,7 @@ module.exports = function (apiKey, dbHandler) {
 
   api.get('/videocontent', (req, res) => {
     let tags = req.params.tags;
-    dbHandler.view('sources', 'getVideoContent', (err, body) => {
+    dbHandler.view('sources', 'getVideoContent_c', (err, body) => {
       if (!err) {
         let videos = body.rows[0].value;
         let queryGroups = []
