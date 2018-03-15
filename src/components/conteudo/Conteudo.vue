@@ -53,7 +53,7 @@
       </v-layout>
     </v-container>
     </div>
-    <v-container grid-list-md text-xs-center justify-center>
+    <v-container grid-list-md text-xs-center justify-center v-if="loading">
       <v-layout row wrap >
         <v-flex px-5 py-5>
           <h3 class="title">Aguarde um momento estamos buscando conteúdo</h3>
