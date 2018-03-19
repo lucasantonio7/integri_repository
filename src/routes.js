@@ -8,6 +8,9 @@ import PrivacyPolicy from './components/privacy-policy/PrivacyPolicy.vue'
 import UsageTerms from './components/usage-terms/UsageTerms.vue'
 import Curatorship from './components/curatorship/Curatorship.vue'
 import TextContent from './components/text-content/TextContent.vue'
+import Dashboard from './components/dashboard/Dashboard'
+import DashboardUsersManagement from './components/dashboard-manage-users/DashboardManageUsers'
+import DashboardContentManagement from './components/dashboard-manage-content/DashboardManageContent'
 // import store from './store/store'
 
 export const routes = [
@@ -31,5 +34,22 @@ export const routes = [
     beforeEnter: (to, from, next) => {
       next()
     }
+  },
+  {
+    path: '/dashboard',
+    component: Dashboard,
+    beforeEnter: (to, from, next) => {
+      next()
+    },
+    children: [
+      {
+        path: 'usuarios',
+        component: DashboardUsersManagement
+      },
+      {
+        path: 'conteudo',
+        component: DashboardContentManagement
+      }
+    ]
   }
 ]

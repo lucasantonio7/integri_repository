@@ -23,6 +23,8 @@ module.exports = (model) => {
       permanently: false,
       block_time: null,
     },
+    role: null,
+    access: [],
     type: 'profile'
   })
   return influencer
