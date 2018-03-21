@@ -1,10 +1,10 @@
 <template>
   <div class="policy">
     <v-container>
-      <v-layout>
-        <v-flex>
-          <h3 class="display-1">{{ policy.title }}</h3>
-          <p class="body-1" v-for="(text, index) in policy.text" :key="index">{{ text }}</p>
+      <v-layout row wrap>
+        <v-flex xs12>
+          <h3 class="display-1 py-3">{{ policy.title }}</h3>
+          <p class="body-1 px-3 py-2" v-for="(text, index) in policy.text" :key="index">{{ text }}</p>
         </v-flex>
       </v-layout>
     </v-container>

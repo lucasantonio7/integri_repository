@@ -26,7 +26,7 @@
         </v-flex>
         <v-container fluid grid-list-md>
           <v-layout row wrap>
-            <v-flex class="video-card" d-flex xs6 v-bind:md4="index < 3" v-bind:md3="index < 7" md2 v-for="(content, index) in sortedContent" :key="content._id">
+            <v-flex class="video-card" d-flex xs12 v-bind:md4="index < 3" v-bind:md3="index < 7" md2 v-for="(content, index) in sortedContent" :key="content._id">
               <v-card v-if="!content.type">
                 <div @click="showModal(content)">
                   <img v-if="content.thumbnail" class="video-thumbnail" :src="content.thumbnail.url">

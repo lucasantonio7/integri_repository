@@ -1,8 +1,8 @@
 <template>
-  <router-link v-show="!user.login" class="jorney-btn" :to="{ path:'/login' }">
-    <i class="fa fa-user-o" aria-hidden="true"></i>
-    <span class="text-piece">Inicie sua jornada!</span>
-  </router-link>
+  <v-btn v-show="!user.login" dark color="purple" class="jorney-btn" large block :to="{ path:'/login' }">
+    <v-icon left>fa fa-user-o</v-icon>
+    <span left class="text-piece">Inicie sua jornada!</span>
+  </v-btn>
 </template>
 <script>
 export default {

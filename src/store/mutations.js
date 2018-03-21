@@ -50,6 +50,9 @@ export default {
   TOGGLE_CHAT_VISIBILITY (state, payload) {
     state.displayChat.active = !state.displayChat.active
   },
+  TOGGLE_DRAWER (state, payload) {
+    state.drawer = payload || !state.drawer
+  },
   ACTIVATE_TYPING (state) {
     state.typing = true
   },

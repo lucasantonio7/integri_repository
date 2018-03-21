@@ -13,7 +13,11 @@
         </v-layout>
       </v-container>
     </v-layout>
-    <router-view></router-view>
+    <v-layout row wrap>
+      <v-flex xs12>
+        <router-view></router-view>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 <script>

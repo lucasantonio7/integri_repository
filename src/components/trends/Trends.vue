@@ -4,7 +4,7 @@
       <v-flex xs12>
         <h6 class="trends-title title">Veja alguns vídeos que estão sendo assistidos</h6>
       </v-flex>
-      <v-flex xs6 md3 v-for="video in videosTrends" :key="video.id" @click="showModal(video)">
+      <v-flex xs12 md3 v-for="video in videosTrends" :key="video.id" @click="showModal(video)">
         <div class="thumbnail">
           <img :src="video.thumbnail.url" :alt="video.title">
         </div>

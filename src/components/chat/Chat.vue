@@ -513,7 +513,7 @@ export default {
         case 'skills':
           if (!this.skills) {
             this.adjustLocationByOppty()
-            axios.get(this.axiosUrl + '/startup/', this.axiosConfig).then(resp => {
+            axios.get(this.axiosUrl + 'startup/', this.axiosConfig).then(resp => {
               this.$store.commit('SET_SKILLS', resp.data.skills)
               this.select1.items = this.skills
               this.select1.active = true
@@ -546,7 +546,7 @@ export default {
           break
         case 'causes':
           this.adjustLocationByOppty()
-          axios.get(this.axiosUrl + '/startup/', this.axiosConfig).then(resp => {
+          axios.get(this.axiosUrl + 'startup/', this.axiosConfig).then(resp => {
             console.log(resp)
             this.$store.commit('SET_CAUSES', resp.data.causes)
             this.select1.items = this.causes

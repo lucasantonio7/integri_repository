@@ -36,6 +36,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
   })
   // If user's location is in RS api beta should be used
   let needAPIBeta = function (value) {
+    console.log(value)
     value = value.toLowerCase()
     if (value.includes('rio grande do sul')){
       return true;
@@ -73,6 +74,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       let _address = location || ""
       _address = _address.replace('Brazil', '')
       _address = _address.replace('Brasil', '')
+      console.log('USER ADDRESS:')
       console.log(_address)
       let url = "";
       let headerValue = "";
@@ -85,6 +87,10 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       }
       console.log(url)
       console.log(headerValue)
+      console.log('Causes')
+      console.log(conversationObj._context.causes.map(item => item.id).join(', '))
+      console.log('skill')
+      console.log(conversationObj._context.skills.map(item => item.id).join(', '))
       axios.get(url, {
         headers: {
           'X-ovp-channel': headerValue

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-layout>
+    <v-layout row wrap>
       <v-flex xs-12>
         <h3 class="display-1">Gerenciar Usuários</h3>
       </v-flex>

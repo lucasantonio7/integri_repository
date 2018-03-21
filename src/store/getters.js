@@ -1,4 +1,7 @@
 export default {
+  getDrawer: state => {
+    return state.drawer
+  },
   getUser: state => {
     return state.user
   },
