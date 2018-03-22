@@ -1,5 +1,5 @@
 <template>
-  <v-container class="mx-auto content" px-5 py-5 justify-center>
+  <v-container class="mx-auto content" grid-list-xs justify-center>
     <v-layout row wrap justify-center>
       <v-flex xs12 md12 >
         <v-btn flat @click="backToContent">

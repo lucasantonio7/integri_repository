@@ -1,20 +1,29 @@
 <template>
   <div class="conteudo">
     <div v-if="!loading">
-      <v-card-media :src="require('@/assets/jpg/conteudo-min.jpeg')" height="600px" class="conteudo-mask">
-      <v-container grid-list-md text-xs-center fill-height="">
+      <v-card-media :src="require('@/assets/jpg/conteudo-min.jpeg')" :height="slidersWrapperHeight" width="100vw" class="conteudo-mask">
+      <v-container grid-list-xs text-xs-center fill-height="">
         <v-layout row wrap>
           <v-flex xs12>
-            <h3 class="headline white--text">Mova as categorias para cima e para baixo para refinar os resultados.</h3>
+            <h3 class="white--text" :class="{'headline': $vuetify.breakpoint.mdAndUp, 'body-2': $vuetify.breakpoint.smAndDown}">Mova as categorias para cima e para baixo para refinar os resultados de conteúdo.</h3>
           </v-flex>
-          <v-flex xs2 v-for="(tag, index) in classificationTags" :key="index" class="slider-wrapper" align-center fill-height>
-            <vue-slider v-model="tag.value" v-bind="slidersOptions" :lazy="true">
-              <template slot="tooltip">
-                <div class="custom-tooltip">
-                  <p class="headline text-xs-center white--text">#{{tag.name}}</p>
-                </div>
-              </template>
-            </vue-slider>
+          <v-flex xs12>
+            <v-container :class="{'all-sliders-wrapper': $vuetify.breakpoint.smAndDown}" pb-0 pt-1 v-resize="onResize">
+              <v-layout row :style="layoutWidth" v-resize="onResize">
+                <v-flex xs6 md2 v-for="(tag, index) in classificationTags" :key="index" class="slider-wrapper" align-center fill-height>
+                  <vue-slider v-model="tag.value" v-bind="slidersOptions" :lazy="true">
+                    <template slot="tooltip">
+                      <div class="custom-tooltip">
+                        <p class="text-xs-center white--text" :class="{'headline': $vuetify.breakpoint.mdAndUp, 'body-2': $vuetify.breakpoint.smAndDown}">#{{tag.name}}</p>
+                      </div>
+                    </template>
+                  </vue-slider>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-flex>
+          <v-flex xs12>
+            <h3 class="caption white--text" v-if="$vuetify.breakpoint.smAndDown">Deslize para os lados para ver as outras oções de filtro</h3>
           </v-flex>
         </v-layout>
       </v-container>
@@ -53,9 +62,9 @@
       </v-layout>
     </v-container>
     </div>
-    <v-container grid-list-md text-xs-center justify-center v-if="loading">
+    <v-container grid-list-xs text-xs-center justify-center v-if="loading">
       <v-layout row wrap >
-        <v-flex px-5 py-5>
+        <v-flex py-5>
           <h3 class="title">Aguarde um momento estamos buscando conteúdo</h3>
           <v-progress-circular py-3 indeterminate :size="300" :width="5" color="purple"></v-progress-circular>
         </v-flex>
@@ -150,6 +159,7 @@ export default {
   },
   created () {
     this.fetchData()
+    this.onResize()
   },
   watch: {
     '$route': 'fetchData'
@@ -158,6 +168,7 @@ export default {
     return {
       showVideo: false,
       isSliding: false,
+      layoutWidth: '',
       currentVideo: {
         active: false,
         id: '',
@@ -169,6 +180,7 @@ export default {
       },
       loading: false,
       error: false,
+      slidersWrapperHeight: '',
       slidersOptions: {
         width: 2,
         height: 500,
@@ -207,6 +219,20 @@ export default {
         console.log(err)
         this.error = true
       })
+    },
+    onResize () {
+      let currentWidth = window.innerWidth
+      let elementratio = 0
+      if (currentWidth < 960) {
+        elementratio = currentWidth * 0.5
+        this.layoutWidth = 'width:' + (this.classificationTags.length * elementratio) + 'px'
+        this.slidersWrapperHeight = (window.innerHeight - 92) + 'px'
+        this.slidersOptions.height = window.innerHeight * 0.6314465408805031
+      } else {
+        this.layoutWidth = ''
+        this.slidersWrapperHeight = '600px'
+        this.slidersOptions.height = 500
+      }
     },
     // Smaller index means greater importance
     isTheHighestTag (tagset, currentTag) {

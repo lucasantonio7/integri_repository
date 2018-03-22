@@ -12,7 +12,7 @@ module.exports = function (model, textModel, dbHandler, env) {
               return txt.value
             }))
           } else {
-            res.status(500).json(textsErr)
+            res.status(500).json(err)
           }
         })
       } else {
