@@ -46,7 +46,7 @@
           </v-container>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-container grid-list-md v-if="message.type === 'yn_question' && message.active">
-            <v-layout row class="chatbox-yn-question" >
+            <v-layout row wrap class="chatbox-yn-question" >
               <v-flex xs12 s5 md4 @click="YNSelector(true, message)">
                 <v-btn block flat large>
                   {{ message.options.yes }}
@@ -578,10 +578,6 @@ export default {
         if (this.select1.active) {
           switch (this.select1.origin) {
             case 'states':
-              data = {
-                text: this.select2.model + ', ' + this.select1.model.sigla,
-                context: this.$store.getters.getContext
-              }
               if (this.$store.getters.getUser.login) {
                 let userData = this.$store.getters.getUser
                 userData.user_data.location = this.select2.model + ', ' + this.select1.model.nome
@@ -590,9 +586,14 @@ export default {
                 // OBS: Salvar usuário
               } else {
                 this.newUser.location = this.select2.model + ', ' + this.select1.model.nome
+                this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: this.newUser.location}))
               }
               this.select1.active = false
               this.select2.active = false
+              data = {
+                text: this.select2.model + ', ' + this.select1.model.sigla,
+                context: this.$store.getters.getContext
+              }
               break
             case 'skills':
               this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {skills: this.select1.model}))

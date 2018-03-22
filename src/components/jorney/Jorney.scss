@@ -1,9 +1,14 @@
 $purple: #7F59A3;
 $b_purple: #a275ba;
 $white: #fff;
-
-.jorney-btn{
-  background-color: $purple!important;
+.jorney-btn {
+  background-color: $purple !important;
   text-transform: inherit;
   width: 100%;
+  height: 65px !important;
+  font-size: 1.35rem;
+}
+
+.btn--large.fixed .btn__content {
+  justify-content: flex-start !important;
 }

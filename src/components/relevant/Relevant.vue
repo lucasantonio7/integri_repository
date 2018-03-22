@@ -16,7 +16,7 @@
     </v-container> -->
     <v-layout row wrap>
       <v-flex xs12>
-        <jorney></jorney>
+        <jorney :fixed="true"></jorney>
       </v-flex>
       <v-flex xs12>
         <chat></chat>
