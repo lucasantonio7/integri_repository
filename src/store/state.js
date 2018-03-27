@@ -33,6 +33,8 @@ export default {
   content_videos: null,
   content_texts: null,
   current_text: null,
+  current_video: null,
   classification_tags: null,
-  drawer: false
+  drawer: false,
+  player_active: false
 }

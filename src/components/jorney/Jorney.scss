@@ -9,6 +9,8 @@ $white: #fff;
   font-size: 1.35rem;
 }
 
-.btn--large.fixed .btn__content {
-  justify-content: flex-start !important;
+.fixed {
+  .btn__content {
+    justify-content: flex-start !important;
+  }
 }

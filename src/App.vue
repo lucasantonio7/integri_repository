@@ -7,6 +7,7 @@
       <router-view name="share"></router-view>
       <router-view name="sponsors"></router-view>
       <!-- <share-social></share-social> -->
+      <video-viewer></video-viewer>
       <footerBar></footerBar>
     </v-app>
   </div>
@@ -15,11 +16,13 @@
 <script>
   import Toolbar from './components/toolbar/Toolbar'
   import FooterBar from './components/footer/FooterBar'
+  import VideoViewer from './components/video-viewer/VideoViewer'
   export default {
     name: 'app',
     components: {
       Toolbar,
-      FooterBar
+      FooterBar,
+      VideoViewer
     }
   }
 

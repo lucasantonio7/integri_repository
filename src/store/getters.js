@@ -26,6 +26,12 @@ export default {
   getPolicy: state => {
     return state.policy
   },
+  getPlayerStatus: state => {
+    return state.player_active
+  },
+  getCurrentVideo: state => {
+    return state.current_video
+  },
   getUsageTerms: state => {
     return state.usage_terms
   },

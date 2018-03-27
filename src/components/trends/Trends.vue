@@ -4,7 +4,7 @@
       <v-flex xs12>
         <h6 class="trends-title title">Veja alguns vídeos que estão sendo assistidos</h6>
       </v-flex>
-      <v-flex xs12 md3 v-for="video in videosTrends" :key="video.id" @click="showModal(video)">
+      <v-flex xs12 md3 v-for="video in videosTrends" :key="video.id" @click="playVideo(video)">
         <div class="thumbnail">
           <img :src="video.thumbnail.url" :alt="video.title">
         </div>
@@ -80,9 +80,8 @@ export default {
     showMore () {
       this.display += 4
     },
-    showModal (video) {
-      this.currentVideo = video
-      this.showVideo = true
+    playVideo (video) {
+      this.$store.commit('PLAY_VIDEO', video)
     },
     closeModal () {
       this.player.stopVideo()

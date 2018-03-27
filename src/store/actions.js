@@ -70,6 +70,15 @@ export default {
       })
     })
   },
+  GET_VIDEO ({ commit, state }, id) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/google/video/' + id).then(res => {
+        resolve(res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
   LOAD_CLASSIFICATION_TAGS ({ commit, state }) {
     return new Promise((resolve, reject) => {
       axios('/api/sources/classificationtags').then(resp => {

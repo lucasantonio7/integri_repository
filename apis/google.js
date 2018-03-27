@@ -204,5 +204,30 @@ module.exports = function (apiKey, dbHandler) {
     })
   })
 
+  api.get('/video/:id', (req, res) => {
+    let videoId = req.params.id;
+    youtube.videos.list({
+      part: 'snippet',
+      id: videoId
+    }, (err, videoData) => {
+      console.log(err)
+      if (err) {
+        res.status(500).json(err)
+      } else {
+        if (videoData.items.length > 0) {
+          let video = videoData.items.pop()
+          res.json({
+            id: video.id,
+            title: video.snippet.title,
+            channel: video.snippet.channelTitle,
+            thumbnail: video.snippet.thumbnails.standard || video.snippet.thumbnails.default
+          })
+        } else {
+          res.status(500)
+        }
+      }
+    })
+  })
+
   return api;
 }

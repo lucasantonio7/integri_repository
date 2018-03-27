@@ -5,12 +5,12 @@
       <v-container grid-list-xs text-xs-center fill-height="">
         <v-layout row wrap>
           <v-flex xs12>
-            <h3 class="white--text" :class="{'headline': $vuetify.breakpoint.mdAndUp, 'body-2': $vuetify.breakpoint.smAndDown}">Mova as categorias para cima e para baixo para refinar os resultados de conteúdo.</h3>
+            <h3 class="white--text" :class="{'headline': $vuetify.breakpoint.mdAndUp, 'body-2': $vuetify.breakpoint.smAndDown}">Mova as categorias para cima e para baixo para refinar os resultados de conteúdo abaixo.</h3>
           </v-flex>
           <v-flex xs12>
             <v-container :class="{'all-sliders-wrapper': $vuetify.breakpoint.smAndDown}" pb-0 pt-1 v-resize="onResize">
               <v-layout row :style="layoutWidth" v-resize="onResize">
-                <v-flex xs6 md2 v-for="(tag, index) in classificationTags" :key="index" class="slider-wrapper" align-center fill-height>
+                <v-flex xs4 md2 v-for="(tag, index) in classificationTags" :key="index" class="slider-wrapper" align-center fill-height>
                   <vue-slider v-model="tag.value" v-bind="slidersOptions" :lazy="true">
                     <template slot="tooltip">
                       <div class="custom-tooltip">

@@ -13,8 +13,13 @@
     <div class="chatbox-messages">
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
-          <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
-          <v-container grid-list-md text-xs-center v-if="message.videos">
+          <v-layout align-end>
+            <v-avatar v-if="message.sender === 'watson'" class="white">
+              <img :src="require('@/assets/svg/logo/integri_logo.svg')" alt="">
+            </v-avatar>
+            <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
+          </v-layout>
+          <v-container grid-list-xs text-xs-center v-if="message.videos">
             <carousel :perPage="1" :navigationEnabled="true" class="video-slider">
               <slide v-for="(groups,i) in videosGroups" :key="i">
                 <v-layout row wrap>
@@ -28,7 +33,7 @@
               </slide>
             </carousel>
           </v-container>
-          <v-container grid-list-md text-xs-center v-if="message.opportunities">
+          <v-container grid-list-xs text-xs-center v-if="message.opportunities">
             <carousel :perPage="1" :navigationEnabled="true" class="video-slider">
               <slide v-for="(groups,i) in opptyGroups" :key="i">
                 <v-layout row wrap>
@@ -45,7 +50,7 @@
             </carousel>
           </v-container>
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
-          <v-container grid-list-md v-if="message.type === 'yn_question' && message.active">
+          <v-container grid-list-xs v-if="message.type === 'yn_question' && message.active">
             <v-layout row wrap class="chatbox-yn-question" >
               <v-flex xs12 s5 md4 @click="YNSelector(true, message)">
                 <v-btn block flat large>

@@ -32,6 +32,25 @@ export default {
   SET_CAUSES (state, payload) {
     state.causes = payload
   },
+  PLAY_VIDEO (state, payload) {
+    state.current_video = payload
+    state.player_active = true
+  },
+  STOP_VIDEO (state, payload) {
+    state.currentVideo = {
+      active: false,
+      id: '',
+      thumbnail: {
+        width: '',
+        height: '',
+        url: ''
+      }
+    }
+    state.player_active = false
+  },
+  SET_VIDEO_PLAYER_STATUS (state, payload) {
+    state.player_active = payload
+  },
   SET_SKILLS (state, payload) {
     state.skills = payload
   },
