@@ -1,14 +1,30 @@
 <template>
   <div class="integri">
-    <v-container grid-list-md text-xs-center>
-      <v-layout row wrap justify-center="">
-        <v-flex xs12>
-          <h3 class="display-2 white--text py-4">Bem vindo!</h3>
-          <blockquote class="headline white--text pr-5 pl-5 py-3">Somos uma plataforma focada em despertar a Responsabilidade Social Individual das pessoas, 
-            interligando indivíduos às práticas do bem, por meio de conteúdo inspiracional, cursos, vídeos e oportunidades de voluntariado.</blockquote>
+    <v-container grid-list-xs text-xs-center fluid>
+      <v-layout row wrap>
+        <v-flex xs12 lg6>
+          <v-container>
+            <h3 class="display-2 white--text py-4">Bem vindo!</h3>
+            <blockquote class="headline white--text pr-5 pl-5 py-3">Somos uma plataforma focada em despertar a Responsabilidade Social Individual das pessoas, 
+              interligando indivíduos às práticas do bem, por meio de conteúdo inspiracional, cursos, vídeos e oportunidades de voluntariado.</blockquote>
+            <v-layout row="" wrap="">
+              <v-flex xs12 md4 py-5>
+                <img class="pa-3 pr-5 pl-5 pb-3 full-img" :src="require('@/assets/svg/home/faixa_tempo.svg')" alt="">
+                <h5 class="white--text pr-5 pl-5 py-3 title">No seu tempo</h5>
+              </v-flex>
+              <v-flex xs12 md4 py-5>
+                <img class="pa-3 pr-5 pl-5 full-img" :src="require('@/assets/svg/home/faixa_proposito.svg')" alt="">
+                <h5 class="white--text pr-5 pl-5 py-3 title">De acordo com o seu propósito</h5>
+              </v-flex>
+              <v-flex xs12 md4 py-5>
+                <img class="pa-3 pr-5 pl-5 full-img" :src="require('@/assets/svg/home/faixa_forma.svg')" alt="">
+                <h5 class="white--text pr-5 pl-5 py-3 title">Da melhor forma para você</h5>
+              </v-flex>
+            </v-layout>
+          </v-container>
         </v-flex>
-        <v-flex xs12 md10 py-5>
-          <youtube-video-component :video="vdata" :showDescription="false"></youtube-video-component>
+        <v-flex xs12 lg6>
+          <youtube-video-component :video="vdata" :showDescription="true"></youtube-video-component>
         </v-flex>
       </v-layout>
     </v-container>

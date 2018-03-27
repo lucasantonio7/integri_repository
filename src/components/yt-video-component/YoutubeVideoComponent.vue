@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout row justify-center>
-      <v-card @click.native.stop="playVideo">
+      <v-card @click.native.stop="playVideo" style="width: 100%">
         <div class="thumbnail">
           <img :src="video.thumbnail.url" :alt="video.title">
         </div>
