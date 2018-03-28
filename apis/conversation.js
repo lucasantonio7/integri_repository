@@ -78,9 +78,11 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       console.log(_address)
       let url = "";
       let headerValue = "";
+      let isAPIBeta = false;
       if (needAPIBeta(_address)){
         url = 'https://api.beta.atados.com.br/search/projects';
         headerValue = 'pv';
+        isAPIBeta = true
       } else {
         url ='https://v2.api.atados.com.br/search/projects';
         headerValue = 'default';
@@ -91,20 +93,24 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       console.log(conversationObj._context.causes.map(item => item.id).join(', '))
       console.log('skill')
       console.log(conversationObj._context.skills.map(item => item.id).join(', '))
+      let paramsData = {
+        cause: conversationObj._context.causes.map(item => item.id).join(', '),
+        skill: conversationObj._context.skills.map(item => item.id).join(', '),
+        address: {
+          address_components: [{
+            types: [stateOrCity(_address)],
+            long_name: _address
+          }]
+        }
+      }
+      if (isAPIBeta) {
+        delete paramsData.skill
+      }
       axios.get(url, {
         headers: {
           'X-ovp-channel': headerValue
         },
-        params: {
-          cause: conversationObj._context.causes.map(item => item.id).join(', '),
-          skill: conversationObj._context.skills.map(item => item.id).join(', '),
-          address: {
-            address_components: [{
-              types: [stateOrCity(_address)],
-              long_name: _address
-            }]
-          }
-        }
+        params: paramsData
       }).then(res => {
         console.log(res)
         if (res.data.count) {

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="video-component">
     <v-layout row justify-center>
       <v-card @click.native.stop="playVideo" style="width: 100%">
         <div class="thumbnail">

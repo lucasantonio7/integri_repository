@@ -1,10 +1,13 @@
-.thumbnail{
-  position: relative;
-  width: 100%;
-  img{
-    max-width: 100%;
+.video-component{
+  cursor: pointer;
+  .thumbnail{
+    position: relative;
     width: 100%;
-    height: auto;
-    top: 0;
+    img{
+      max-width: 100%;
+      width: 100%;
+      height: auto;
+      top: 0;
+    }
   }
 }

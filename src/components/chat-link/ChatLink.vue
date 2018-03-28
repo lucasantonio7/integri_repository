@@ -2,7 +2,7 @@
   <div>
     <div class="chat-link" @click="linkToChat">
       <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="">
-      <span>Conversar com o Watson</span>
+      <span>Conversar com a Lévi (sem rede social)</span>
     </div>
     <span></span>
   </div>
