@@ -38,7 +38,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
   let needAPIBeta = function (value) {
     console.log(value)
     value = value.toLowerCase()
-    if (value.includes('rio grande do sul')){
+    if (value.includes('rio grande do sul')) {
       return true;
     } else {
       return states.estados.some(state => {
@@ -63,7 +63,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
   }
   let stateOrCity = function (value) {
     value = value.toLowerCase()
-    if (includeStateName(value)){
+    if (includeStateName(value)) {
       return 'administrative_area_level_1'
     } else {
       return 'administrative_area_level_2'
@@ -79,33 +79,26 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       let url = "";
       let headerValue = "";
       let isAPIBeta = false;
-      if (needAPIBeta(_address)){
+      if (needAPIBeta(_address)) {
         url = 'https://api.beta.atados.com.br/search/projects';
         headerValue = 'pv';
         isAPIBeta = true
       } else {
-        url ='https://v2.api.atados.com.br/search/projects';
+        url = 'https://v2.api.atados.com.br/search/projects';
         headerValue = 'default';
       }
-      console.log(url)
-      console.log(headerValue)
-      console.log('Causes')
-      console.log(conversationObj._context.causes.map(item => item.id).join(', '))
-      console.log('skill')
-      console.log(conversationObj._context.skills.map(item => item.id).join(', '))
-      let paramsData = {
-        cause: conversationObj._context.causes.map(item => item.id).join(', '),
-        skill: conversationObj._context.skills.map(item => item.id).join(', '),
-        address: {
-          address_components: [{
-            types: [stateOrCity(_address)],
-            long_name: _address
-          }]
-        }
+      let paramsData = {}
+      paramsData.cause = conversationObj._context.causes.map(item => item.id).join(', ')
+      if (!isAPIBeta) {
+        paramsData.skill = conversationObj._context.skills.map(item => item.id).join(', ')
       }
-      if (isAPIBeta) {
-        delete paramsData.skill
+      paramsData.address = {
+        address_components: [{
+          types: [stateOrCity(_address)],
+          long_name: _address
+        }]
       }
+      
       axios.get(url, {
         headers: {
           'X-ovp-channel': headerValue
@@ -128,7 +121,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       context: conversationObj._context,
       input: {
         text: conversationObj._text,
-      },  
+      },
       workspace_id: workspace_id
     }, function (err, response) {
       if (err) {
@@ -244,6 +237,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
               delete response.context.display
             }
             conversationObj._context = response.context
+            conversationObj._text = " "
             processConversationMessage(res, req, conversationObj)
           }).catch(err => {
             if (err.response) {
@@ -258,6 +252,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
             response.context.opportunities = null
             response.context.search_oppty = null
             conversationObj._context = response.context
+            conversationObj._text = " "
             processConversationMessage(res, req, conversationObj)
           })
         } else {

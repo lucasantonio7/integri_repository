@@ -15,7 +15,7 @@
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
           <v-layout align-end>
             <v-avatar v-if="message.sender === 'watson'" class="white">
-              <img :src="require('@/assets/svg/logo/integri_logo.svg')" alt="">
+              <img :src="require('@/assets/png/logo/levi.png')" alt="">
             </v-avatar>
             <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
           </v-layout>
@@ -52,20 +52,20 @@
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-container grid-list-xs v-if="message.type === 'yn_question' && message.active">
             <v-layout row wrap class="chatbox-yn-question" >
-              <v-flex xs12 s5 md4 @click="YNSelector(true, message)">
+              <v-flex xs12 md4 @click.stop="YNSelector(true, message)">
                 <v-btn block flat large>
                   {{ message.options.yes }}
                   <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-up</v-icon>
                 </v-btn>
               </v-flex>
-              <v-flex xs12 s5 md4 @click="YNSelector(false, message)">
+              <v-flex xs12 md4 @click.stop="YNSelector(false, message)">
                 <v-btn block flat large>
                   {{ message.options.no }}
                   <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-down</v-icon>
                 </v-btn>
               </v-flex>
-              <v-flex v-if="message.options.cancel">
-                <v-btn block flat large @click="openLink(message.options.cancel.link)">
+              <v-flex xs12 md4 v-if="message.options.cancel">
+                <v-btn block flat large @click.stop="openLink(message.options.cancel.link)">
                   {{ message.options.cancel.text }}
                 </v-btn>
               </v-flex>
@@ -116,14 +116,14 @@
       </div>
       <div class="chatbox-footer" :class="{'box': select1.active || select2.active, 'box-disabled': !inputBoxEnabled}" >
         <input ref="inputbox" type="text" class="chat-input" v-model="message" :disabled="!inputBoxEnabled" v-on:keyup.enter="submit" v-if="inputboxactive">
-        <div class="selections" v-if="select1.active || select2.active">
-          <div class="selection-box">
+        <v-layout class="selections" v-if="select1.active || select2.active" row wrap>
+          <v-flex xs12 md6 lg4 class="selection-box">
             <v-select solo v-on:keyup.enter="submit" v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
-          </div>
-          <div class="selection-box">
+          </v-flex>
+          <v-flex xs12 md6 lg4 class="selection-box">
             <v-select solo v-on:keyup.enter="submit" v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
-          </div>
-        </div>
+          </v-flex>
+        </v-layout>
         <v-icon :disabled="!canSend" @click="submit">send</v-icon>
       </div>
     </div>
@@ -322,7 +322,7 @@ export default {
         if (this.needAPIBeta(this.newUser.location)) {
           this.axiosUrl = 'https://api.beta.atados.com.br/'
           this.axiosConfig = {headers: {'X-ovp-channel': 'pv'}}
-          this.axiosOppty = 'https://beta.parceirosvoluntarios.atados.com.br/vaga/'
+          this.axiosOppty = 'https://parceirosvoluntarios.atados.com.br/vaga/'
         } else {
           this.axiosUrl = 'https://v2.api.atados.com.br/'
           this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
@@ -331,7 +331,7 @@ export default {
       } else if (this.needAPIBeta(this.userData.user_data.location)) {
         this.axiosUrl = 'https://api.beta.atados.com.br/'
         this.axiosConfig = {headers: {'X-ovp-channel': 'pv'}}
-        this.axiosOppty = 'https://beta.parceirosvoluntarios.atados.com.br/vaga/'
+        this.axiosOppty = 'https://parceirosvoluntarios.atados.com.br/vaga/'
       } else {
         this.axiosUrl = 'https://v2.api.atados.com.br/'
         this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
