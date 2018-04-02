@@ -1,32 +1,15 @@
 $background: #C93680;
-
 .chat-btn {
-  background-color: $background;
-  display: inline-flex;
-  max-height: 70px;
-  padding: 10px 31px 10px 31px;
+  background-color: $background !important;
+  text-transform: inherit!important;
   width: 100%;
-  cursor: pointer;
-  img {
-    border-right: 1px solid #e06ea9;
-    height: 50px;
-    padding-right: 11px;
-    width: 50px;
-  }
-
-  .img-piece {
-    display: inline-block;
-    padding: 0.5rem;
-    width: 40px;
-  }
-
+  height: 65px !important;
+  font-size: 1.35rem;
   .text-piece {
     color: #fff;
     display: inline-block;
-    font-size: 1.5rem !important;
+    font-size: 1.35rem !important;
     line-height: 3rem !important;
     padding: 0.5rem 1rem;
-    text-decoration: none;
-    vertical-align: top;
   }
 }

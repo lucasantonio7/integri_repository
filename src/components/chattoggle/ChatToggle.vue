@@ -1,12 +1,14 @@
 <template>
   <div>
-    <div class="chat-btn" @click="toggle">
+    <v-btn @click="toggle" block dark class="chat-btn">
       <span v-if="displayLabel">
-        <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="">
+        <v-avatar tile>
+          <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="">
+        </v-avatar>
         <span v-if="!user.login" class="text-piece">Conte-nos sobre você!</span>
         <span v-if="user.login" class="text-piece">Dúvidas? Fale conosco!</span>
       </span>
-    </div>
+    </v-btn>
     <div class="chat-toggle" v-if="displayChat">
       <chat></chat>
     </div>

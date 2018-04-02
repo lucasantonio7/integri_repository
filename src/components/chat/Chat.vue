@@ -72,7 +72,7 @@
             </v-layout>
           </v-container>
         </div>
-        <div class="chatbox-dialog-line" v-show="isTyping">
+        <div class="chatbox-dialog-line" :class="{'hidden':!isTyping}">
           <div class="chatbox-typing">
             <div class="dot"></div>
             <div class="dot"></div>
@@ -219,16 +219,21 @@ export default {
   watch: {
     chat (newVal) {
       if (newVal) {
-        let lastMsg = newVal[newVal.length - 1]
-        let elements
-        if (lastMsg.sender === 'user') {
-          elements = document.querySelectorAll('.chatbox-user')
-        } else {
-          elements = document.querySelectorAll('.chatbox-watson')
-        }
-        let scrollTo = elements[elements.length - 1]
+        // let lastMsg = newVal[newVal.length - 1]
+        // let elements
+        // if (lastMsg.sender === 'user') {
+        //   elements = document.querySelectorAll('.chatbox-user')
+        // } else {
+        //   elements = document.querySelectorAll('.chatbox-watson')
+        // }
+        // let scrollTo = elements[elements.length - 1]
+        // setTimeout(() => {
+        //   scrollTo.parentElement.parentElement.scrollTop = scrollTo.offsetTop
+        //   console.log('Scrolled')
+        // }, 350)
+        let chat = document.querySelector('.chatbox-messages-wrapper')
         setTimeout(() => {
-          scrollTo.parentElement.parentElement.scrollTop = scrollTo.offsetTop
+          chat.scrollTop = chat.scrollHeight
         }, 350)
       }
     },

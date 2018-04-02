@@ -158,7 +158,10 @@ $purple: #7F59A3;
         margin: 1rem;
         &.deactivated{
           margin: 0rem;
-        }        
+        }
+        &.hidden {
+          display: none
+        }
         .hook{
           display: inline-block;
           padding: 1rem;
