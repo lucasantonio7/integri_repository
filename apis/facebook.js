@@ -49,7 +49,13 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
       }, (err, body) => {
         if (body.rows.length > 0) {
           let user = body.rows[0].value;
-          return cb(null, user);
+          graph.get(profile.id + '?fields=id,name,posts,location,picture', (err, res) => {
+            if (!err && res.posts) {
+              user.profile_image = res.picture.data.is_silhouette ? '' : res.picture.data.url
+              user.location = res.location ? res.location.name : ''
+            }
+            return cb(null, user);
+          })
         } else {
           graph.get(profile.id + '?fields=id,name,posts,location,picture', (err, res) => {
             if (!err && res.posts) {
