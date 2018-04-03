@@ -14,7 +14,7 @@
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
           <v-layout align-end>
-            <v-avatar v-if="message.sender === 'watson'" class="white">
+            <v-avatar v-if="message.sender === 'watson'" class="white levi">
               <img :src="require('@/assets/png/logo/levi.png')" alt="">
             </v-avatar>
             <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
@@ -219,18 +219,6 @@ export default {
   watch: {
     chat (newVal) {
       if (newVal) {
-        // let lastMsg = newVal[newVal.length - 1]
-        // let elements
-        // if (lastMsg.sender === 'user') {
-        //   elements = document.querySelectorAll('.chatbox-user')
-        // } else {
-        //   elements = document.querySelectorAll('.chatbox-watson')
-        // }
-        // let scrollTo = elements[elements.length - 1]
-        // setTimeout(() => {
-        //   scrollTo.parentElement.parentElement.scrollTop = scrollTo.offsetTop
-        //   console.log('Scrolled')
-        // }, 350)
         let chat = document.querySelector('.chatbox-messages-wrapper')
         setTimeout(() => {
           chat.scrollTop = chat.scrollHeight

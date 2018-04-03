@@ -130,7 +130,7 @@ module.exports = function (watson, dbHandler, userModel, passport, env) {
 
   api.get('/login/return',
     passport.authenticate('facebook', {
-      failureRedirect: '/login'
+      failureRedirect: '/#/login'
     }),
     function (req, res) {
       res.redirect('/');
