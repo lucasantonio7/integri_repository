@@ -1,16 +1,20 @@
 .fbc {
-  background-color: #C93680;
+  // background-color: #C93680;
   border-radius: 0.5rem;
-  width: 85px;
-  height: 85px;
+  width: 105px;
+  height: 105px;
   position: absolute;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  padding: 1rem;
+  right: 0.5rem;
+  bottom: 1rem;
+  padding: 0.5rem;
   display: table;
   cursor: pointer;
-  &.notify-user{
-    &::after{
+  &.small {
+    width: 85px;
+    height: 85px;
+  }
+  &.notify-user {
+    &::after {
       content: '!';
       width: 1.5rem;
       height: 1.5rem;
@@ -23,5 +27,20 @@
       color: #fff;
       font-weight: bold;
     }
+  }
+}
+
+.message {
+  right: calc(105px + 1rem);
+  bottom: calc(1.5rem + 52px);
+  padding: 1rem;
+  position: absolute;
+  color: white;
+  background-color: #7F59A3;
+  border-radius: 0.5rem;
+  margin-left: 1rem;
+  &.small {
+    right: 7rem;
+    bottom: 3.5rem
   }
 }
