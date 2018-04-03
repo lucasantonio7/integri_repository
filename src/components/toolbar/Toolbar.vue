@@ -16,7 +16,7 @@
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn flat :to="{ path: '/' }">Home</v-btn>
         <v-btn flat :to="{ path: '/conteudo' }">Conteúdo</v-btn>
-        <v-btn flat :to="{ path: '/facaparte' }">Faça Parte</v-btn>
+        <!-- <v-btn flat :to="{ path: '/facaparte' }">Faça Parte</v-btn> -->
         <v-menu offset-x :close-on-content-click="false" :nudge-width="200" v-model="menu" v-if="user.login">
           <v-avatar class="logged-profile-avatar" slot="activator" v-if="user.user_data.profile_image">
             <img :src="user.user_data.profile_image" alt="Usuário">
@@ -64,7 +64,7 @@
         </v-list-tile>
         <v-list-tile-content><v-btn flat block :to="{ path: '/' }">Home</v-btn></v-list-tile-content>
         <v-list-tile-content><v-btn flat block :to="{ path: '/conteudo' }">Conteúdo</v-btn></v-list-tile-content>
-        <v-list-tile-content><v-btn flat block :to="{ path: '/facaparte' }">Faça Parte</v-btn></v-list-tile-content>
+        <!-- <v-list-tile-content><v-btn flat block :to="{ path: '/facaparte' }">Faça Parte</v-btn></v-list-tile-content> -->
         <v-list-tile-content><v-btn flat block :to="{ path: '/politicas/privacidade' }">Privacidade</v-btn></v-list-tile-content>
         <v-list-tile-content><v-btn flat block :to="{ path: '/politicas/uso' }">Termos de uso</v-btn></v-list-tile-content>
       </v-list>
