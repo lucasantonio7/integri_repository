@@ -22,7 +22,7 @@ const userModel = require('./models/user')(myModel);
 const textModel = require('./models/text')(myModel);
 // API Call
 const watson = require('./apis/watson')(appEnv);
-const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler);
+const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler, myModel);
 const youtube = require('./apis/youtube');
 const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler, envVars);
 const text = require('./apis/texts')(myModel, textModel, dbHandler, envVars);
