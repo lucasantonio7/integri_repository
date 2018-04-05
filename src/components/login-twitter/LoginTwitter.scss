@@ -1,26 +1,27 @@
-.jorney-btn{
-  background-color: #A275BA;
-  display: inline-flex;
-  padding: 0.75rem;
+$blue: #1DA1F2;
+.social-twitter {
   width: 100%;
+  background-color: $blue;
+  color: white;
+  padding: 0.75rem;
+  line-height: 1.75rem!important;
+  display: flex;
   cursor: pointer;
-  .fa{
-    color: #fff;
-    font-size: 1.8rem;
-    min-width: 40px;
+  margin: 0.25rem 0;
+  max-height: 49px;
+  .text-piece {
+    line-height: 1.75rem!important;
+    vertical-align: text-bottom;
+  }
+  .brand-block {
+    display: inline-block;
+    padding: 0 0.5rem;
+    font-size: 1.5rem;
+    max-width: 35px;
+    border-right: 1px solid white;
+  }
+  .text-block {
+    padding: 0 0.5rem;
     text-align: center;
-  }
-  .img-piece{
-    width: 40px;
-    padding: 0.5rem;
-    display: inline-block;
-  }
-  .text-piece{
-    display: inline-block;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    font-size: 1rem!important;
-    line-height: 1rem!important;
-    color: #fff;
   }
 }

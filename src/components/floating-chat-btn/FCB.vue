@@ -1,6 +1,11 @@
 <template>
-  <div class="fbc" @click="toggle" :class="{'notify-user': isDenied && isNotificationActive}">
-    <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="" :class="{'animated tada': isDenied}">
+  <div @click="toggle">
+    <div class="message animated fadeInRight" v-if="displayMsg" :class="{'small': $vuetify.breakpoint.smAndDown}">
+      Oi! Se tiver alguma dúvida, clique aqui para falar comigo!
+    </div>
+    <div class="fbc animated bounceIn" :class="{'notify-user': isDenied && isNotificationActive, 'small': $vuetify.breakpoint.smAndDown}">
+      <img :src="require('@/assets/png/logo/levi.png')" alt="" :class="{'animated tada': isDenied}">
+    </div>
   </div>
 </template>
 <script>
@@ -16,6 +21,9 @@ export default {
       return this.$store.getters.displayChat.active
     }
   },
+  data: () => ({
+    displayMsg: false
+  }),
   watch: {
     isDenied (newVal) {
       if (newVal) {
@@ -30,6 +38,11 @@ export default {
         this.$store.commit('HIDE_CHAT_NOTIFICATION')
       }
     }
+  },
+  mounted () {
+    setTimeout(() => {
+      this.displayMsg = true
+    }, 800)
   }
 }
 </script>

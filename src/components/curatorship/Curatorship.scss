@@ -1,0 +1,8 @@
+$background1: #4D0D47;
+$background2: #63225D;
+$background3: #7A3773;
+.curatorship {
+  background: $background3;
+  background-image: linear-gradient(to top, $background1, $background2 20%, $background3 43.92%);
+  min-height: calc(100vh - 64px);
+}

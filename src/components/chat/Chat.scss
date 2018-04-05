@@ -3,6 +3,7 @@ $darkerbg: #B32B6D;
 $watsonbox: #F27638;
 $userbox: #E6E6E6;
 $white: #fff;
+$purple: #7F59A3;
 
 @mixin chatbubble ($bgColor){
   display: flex;
@@ -12,9 +13,16 @@ $white: #fff;
   position: relative;
   max-width: 85%;
 }
-
+@keyframes pulse {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
 .show-overflow{
   overflow: visible;
+}
+
+.levi img {
+  height: auto!important;
 }
 
 .login-dialog-wrapper{
@@ -90,6 +98,42 @@ $white: #fff;
       padding: 0.2rem 1rem;
     }
   }
+  .thumbnail-opportunity{
+    width: 100%;
+    padding-top: 56.25%;
+    overflow: hidden;
+    position: relative;
+    img {
+      width: 100%;
+      min-width: 100%;
+      height: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+  .chatbox-typing{
+    @include chatbubble($watsonbox);
+    align-self: flex-start;
+    margin-left: 1rem;
+    left: 0;
+    .dot{
+      width: 0.75rem;
+      height: 0.75rem;
+      background-color: $userbox;
+      border-radius: 50%;
+      margin: 0 0.25rem;
+      animation: pulse 0.5s infinite;
+      animation-direction: alternate;
+      animation-timing-function: ease-in-out; 
+      &:first-child{
+        animation-delay: 0.25s
+      }
+      &::last-child{
+        animation-delay: 0.15s
+      }
+    }
+  }
   .chatbox-messages {
     margin: 1.5rem;
     margin-top: 0;
@@ -108,21 +152,31 @@ $white: #fff;
       align-items: flex-end;
       align-content: flex-start;
       justify-content: flex-end;
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: calc(100vh - 10.5rem - 48px);
       .chatbox-dialog-line{
         width: calc(100% - 2rem);
         display: flex;
         flex-flow: column;
         margin: 1rem;
+        &.deactivated{
+          margin: 0rem;
+        }
+        &.hidden {
+          display: none
+        }
         .hook{
-          display: inline-flex;
+          display: inline-block;
           padding: 1rem;
-          background-color: $watsonbox;
+          background-color: $userbox;
           border-radius: 1rem;
           position: relative;
-          width: 3rem;
-          color: $white;
+          color: $watsonbox;
           margin-top: 0.5rem;
+          cursor: pointer;
+          max-width: 85%;
+          width: 12rem;
         }
         .chatbox-watson{
           @include chatbubble($watsonbox);
@@ -139,6 +193,11 @@ $white: #fff;
             position: absolute;
             left: -0.75rem;
             bottom: 0;
+          }
+          a{
+            padding: 0 0 0 0.25rem;
+            color: $purple;
+            font-weight: bold;
           }
         }
         .chatbox-user{
@@ -158,13 +217,29 @@ $white: #fff;
           }
         }
         .chatbox-yn-question{
-          align-self: flex-start;
-          margin-left: 1rem;
+          align-self: flex-end!important;
+          // margin-left: 1rem;
+          width: 100%;
+          .btn{
+            border: 2px solid white;
+            border: 2px solid white;
+            color: white;
+            letter-spacing: 0.1rem;
+            background: transparent;
+            border-radius: 1rem;
+            white-space: normal!important;
+          }
           .option {
             @include chatbubble($userbox);
-            min-width: 5rem;
+            min-width: 7.25rem;
+            max-width: 20rem;
             justify-content: center;
-            margin: 0 0.5rem;
+            margin: 0 0.75rem;
+            cursor: pointer;
+            border: 2px solid white;
+            color: white;
+            letter-spacing: 0.1rem;
+            background: transparent;
             &:first-child{
               margin-left: 0;
             }
@@ -174,17 +249,36 @@ $white: #fff;
           }
         }
       }
+      .video-card {
+        cursor: pointer;
+        .video-thumbnail{
+          width: 100%!important;
+          max-width: 100%;
+        }
+      }
     }
     .chatbox-footer {
       display: flex;
       flex: 1 1 10%;
       min-height: 4rem;
+      height: 4rem;
       max-height: 4rem;
-      background-color: #E6E6E6;
+      background-color: $userbox;
       margin: 1rem;
       padding: 1rem;
       justify-content: space-between;
       width: calc(100% - 2rem);
+      transition: 0.3s;
+      &.box{
+        max-height: 6rem;
+        height: 5.5rem;
+      }
+      &.box-disabled {
+        background-color: transparentize($color: $userbox, $amount: 0.4);
+        .chat-input{
+          background-color: transparentize($color: $userbox, $amount: 0.4);
+        }
+      }
       .chat-input{
         width: 100%;
         background-color: #fff;
@@ -195,4 +289,19 @@ $white: #fff;
       }
     }
   }
+}
+.selections{
+  display: flex;
+  .selection-box{
+    padding-right: 1.2rem;
+    .input-group{
+      padding: 0!important
+    }
+  }
+}
+
+.savebox-error-msg{
+  color: #f00;
+  font-weight: bold;
+  animation-iteration-count: 3;
 }

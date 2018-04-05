@@ -1,4 +1,7 @@
 $purple: #845bab;
+$dark-gray:#999;
+$pink: #c93680;
+$red: #ff3860;
 
 .facaparte {
   padding: 0;
@@ -16,6 +19,74 @@ $purple: #845bab;
     margin: 0 auto;
   }
 
+  .btn-enviar {
+    background-color: $pink!important;
+    color: white!important;
+    font-size: 12px;
+    float: right;
+    margin-top: 40px;
+  }
+
+  .form-faca-parte {
+    max-width: 80%;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+
+  .input-block {
+    margin-top: 10px;
+    padding-right: 30px;
+  }
+
+  .input-text,
+  .input-textarea {
+    border: 2px solid $dark-gray;
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    vertical-align: top;
+
+    &.is-danger {
+      border: 2px solid $red;
+    }
+  }
+
+  .input-textarea {
+    height: 228px;
+  }
+
+  .input-label {
+    font-size: 14px;
+    color: $dark-gray;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .faca--card {
+    background-color: $purple!important;
+    color: white!important;
+    line-height: 2rem;
+    font-size: 1.5rem;
+    height: 9.5rem;
+    padding: 2.5rem;
+    white-space: normal;
+    margin: 0;
+    text-transform: capitalize;
+    *{
+      text-decoration: none;
+      color: white!important
+    }
+    .btn__content{
+      width: 100%;
+      white-space: normal;
+    }
+  }
+
+  .input-error {
+    color: $red;
+    font-size: 12px;
+  }
+
   .facacallout {
     height: 133px;
     background-color: $purple;
@@ -23,5 +94,15 @@ $purple: #845bab;
     &.lastone {
       margin-left: -8px;
     }
+  }
+}
+
+.facaparte-mask{
+  .card__media__background::after{
+    background: rgba(126, 89, 163, 0.4);
+    width: 100%;
+    height: 100%;
+    content: '';
+    position: absolute;
   }
 }

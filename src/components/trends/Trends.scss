@@ -16,10 +16,37 @@
 }
 .trends-title {
   font-family: Roboto;
-  font-weight: bold;
+  font-weight: bold!important;
   color: #818181;
   margin: 2rem 0rem;
 }
 .no-fixed-height{
   min-height: auto!important;
+}
+.load-new{
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+.thumbnail{
+  position: relative;
+  width: 100%;
+  img{
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+}
+.floating-video{
+  background-color: black;
+  position: relative;
+}
+.close-btn{
+  color: white;
+  padding: 0.5rem;
+  line-height: 2.5rem;
+  cursor: pointer;
+  .fa{
+    padding-right: 0.5rem
+  }
 }

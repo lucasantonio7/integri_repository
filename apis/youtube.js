@@ -26,7 +26,7 @@ class Youtube {
               if (videos.pageInfo.totalResults > 0) {
                 videos.items.forEach(video => {
                   if (video.id.videoId) {
-                    resolve(video.id.videoId)
+                    resolve(video)
                   } else {
                     reject({
                       message: 'This object is not a video'
@@ -39,6 +39,7 @@ class Youtube {
                 })
               }
             } else {
+              console.error(err)
               reject(err)
             }
           })
@@ -46,7 +47,11 @@ class Youtube {
       })
       Promise.all(channelsPromises.map(utils.reflect)).then(videos => {
         let sucess = videos.filter(item => item.status === 'resolved');
-        resolve(sucess);
+        if (sucess.length) {
+          resolve(sucess);
+        } else {
+          reject(videos)
+        }
       }).catch(err => {
         reject(err)
       })

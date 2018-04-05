@@ -1,0 +1,22 @@
+$background: #C93680;
+.chat-link{
+  width: 100%;
+  background-color: $background;
+  color: #fff;
+  padding: 0.75rem;
+  line-height: 1.75rem!important;
+  display: flex;  
+  cursor: pointer;
+  max-height: 49px;
+  img {
+    border-right: 1px solid #e06ea9;
+    padding: 0 0.5rem;
+    max-width: 35px;
+  }
+  span{
+    line-height: 1.75rem!important;
+    vertical-align: text-bottom;
+    padding: 0 0.5rem;
+    text-align: center;
+  }
+}

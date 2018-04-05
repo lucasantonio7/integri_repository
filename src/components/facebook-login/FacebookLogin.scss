@@ -1,0 +1,27 @@
+.fb-login {
+  background: #3b5998;
+  color: white;
+  width: 100%;
+  padding: 0.75rem;
+  line-height: 1.75rem!important;
+  display: flex;
+  cursor: pointer;
+  margin: 0.25rem 0;
+  max-height: 49px;
+  .text-piece {
+    line-height: 1.75rem!important;
+    vertical-align: text-bottom;
+  }
+  .brand-block {
+    display: inline-block;
+    padding: 0 0.5rem;
+    font-size: 1.5rem;
+    max-width: 35px;
+    min-width: 35px;
+    border-right: 1px solid white;
+  }
+  .text-block {
+    padding: 0 0.5rem;
+    text-align: center;
+  }
+}

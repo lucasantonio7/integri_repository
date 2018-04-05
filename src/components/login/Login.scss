@@ -1,0 +1,117 @@
+$background1: #4D0D47;
+$background2: #63225D;
+$background3: #7A3773;
+.login {
+  background: $background3;
+  background-image: linear-gradient(to top, $background1, $background2 20%, $background3 43.92%);
+  height: 100%;
+  &.admin{
+    background: transparent;
+    background-image: none;
+  }
+  .body-2 {
+    color: gray;
+  }
+  .login-box {
+    background: white;
+    padding: 1.5rem;
+    margin: 5.57rem;
+    @media (max-width: 600px) {
+      margin: 2.785rem;
+      margin-right: 0;
+      margin-left: 0;
+    }
+    .login-box-title {
+      .login-feather-detail {
+        text-align: center;
+        position: relative;
+        &:before {
+          content: '';
+          position: absolute;
+          min-height: 7.125rem;
+          min-width: 7.125rem;
+          max-height: 7.125rem;
+          max-width: 7.125rem;
+          top: -5.45rem;
+          background: white;
+          left: 50%;
+          margin-left: -3.5625rem;
+          border-radius: 50%;
+        }
+        img {
+          max-height: 7.125rem;
+          max-width: 7.125rem;
+          position: absolute;
+          top: -5.8125rem;
+          left: 50%;
+          margin-left: -3.5625rem;
+        }
+      }
+    }
+    .login-form {
+      padding: 1.5rem;
+      @media (max-width: 600px) {
+        padding: 1.5rem 0;
+      }
+      .input-addon {
+        margin: 1rem 0rem;
+        position: relative;
+        .fa {
+          border-right: 1px solid #999;
+          padding: 0.25rem;
+          margin-right: 0.25rem;
+          min-width: 1.67rem;
+          box-sizing: border-box;
+          position: absolute;
+          top: 0.5rem;
+          left: 0.5rem;
+        }
+        input {
+          padding: 0.5rem 0.5rem 0.5rem 2.5rem;
+          width: 100%;
+          border: 1px solid #999;
+        }
+      }
+      .login-form-action {
+        display: flex;
+        justify-content: flex-end;
+        .login-submit {
+          background: #C93680!important;
+          color: white!important;
+          margin-right: 0!important;
+          &.btn--disabled {
+            background: #999!important
+          }
+        }
+      }
+    }
+  }
+}
+
+.split {
+  width: 100%;
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0.5rem;
+  &:before {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: #999;
+    display: block;
+  }
+}
+
+.social-media-btns {
+  padding: 0 1.5rem;
+  @media (max-width: 600px) {
+    padding: 0;
+  }
+}
+
+.error-text {
+  color: #f00;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
