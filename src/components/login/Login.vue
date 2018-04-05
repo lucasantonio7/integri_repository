@@ -9,6 +9,7 @@
             </div>
           </div>
           <form class="login-form" @submit.prevent="login">
+            <h3 class="body-2 py-1 pt-3">Se você já possui cadastro, insira suas credenciais abaixo:</h3>
             <div class="input-addon">
               <i class="fa fa-user-o" aria-hidden="true"></i>
               <input type="email" v-model="user.email" placeholder="E-mail" required>
@@ -24,7 +25,9 @@
               <v-btn type="submit" class="login-submit" :disabled="!user.email && !user.pwd">Enviar</v-btn>
             </div>
           </form>
+          
           <div class="social-media-btns" v-if="strategy !== 'admin'">
+            <h3 class="body-2 pb-2">Se você ainda não possui cadastro, escolha uma das opções abaixo:</h3>
             <login-twitter></login-twitter>
             <fbl></fbl>
             <link-to-chat></link-to-chat>

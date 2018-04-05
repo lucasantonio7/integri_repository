@@ -24,7 +24,12 @@
           </v-container>
         </v-flex>
         <v-flex xs12 lg6>
-          <youtube-video-component :video="vdata" :showDescription="true"></youtube-video-component>
+          <!-- <youtube-video-component :video="vdata" :showDescription="true"></youtube-video-component> -->
+          <v-container>
+            <v-layout>
+              <youtube class="responsive-yt" :video-id="videoid" @ready="ready" @playing="playing"></youtube>
+            </v-layout>
+          </v-container>
         </v-flex>
       </v-layout>
     </v-container>
@@ -47,6 +52,14 @@ export default {
     }).catch(err => [
       console.log(err)
     ])
+  },
+  methods: {
+    ready (player) {
+      this.player = player
+    },
+    playing (player) {
+      // The player is playing a video.
+    }
   }
 }
 </script>

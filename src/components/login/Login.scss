@@ -4,10 +4,13 @@ $background3: #7A3773;
 .login {
   background: $background3;
   background-image: linear-gradient(to top, $background1, $background2 20%, $background3 43.92%);
-  height: calc(100vh - 64px);
+  height: 100%;
   &.admin{
     background: transparent;
     background-image: none;
+  }
+  .body-2 {
+    color: gray;
   }
   .login-box {
     background: white;

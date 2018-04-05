@@ -29,20 +29,19 @@ export default {
           url: ''
         }
       },
+      display: 0,
       showVideo: false
     }
   },
   mounted () {
     axios.get('/api/google/trends').then(response => {
       this.$store.commit('SET_TRENDS', response.data)
+      this.display = this.$store.getters.getUser.login ? 8 : 4
     }).catch(err => {
       console.log(err)
     })
   },
   computed: {
-    display () {
-      return this.$store.getters.getUser.login ? 8 : 4
-    },
     videosTrends () {
       let count = 0
       return this.$store.getters.getTrends.filter(trend => {

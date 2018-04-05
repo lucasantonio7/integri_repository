@@ -107,66 +107,90 @@ module.exports = function (apiKey, dbHandler, model) {
 
   api.get('/trends', (req, res) => {
     // Get uploads playlist from a given channel or set of channels
-    dbHandler.view('sources', 'getYoutubeSource', (err, body) => {
+    dbHandler.view('sources', 'getIntegriTrendsCache', (err, body) => {
       if (!err) {
-        let channels = body.rows[0].value;
-        channels = channels.map(ch => {
-          return ch.id
-        });
-        channels = channels.join(', ');
-        youtube.channels.list({
-          part: 'contentDetails',
-          id: channels,
-        }, function (err, channelDetails) {
-          if (err) {
-            res.status(500).send(err);
-          } else {
-            if (channelDetails.pageInfo.totalResults > 0) {
-              // For each list get the videos
-              let videosPromises = channelDetails.items.map(item => {
-                return new Promise((resolve, reject) => {
-                  youtube.playlistItems.list({
-                    part: 'snippet',
-                    playlistId: item.contentDetails.relatedPlaylists.uploads,
-                    maxResults: 3
-                  }, function (err, playlist) {
-                    // Loop through videos list
-                    if (err) {
-                      try {
-                        res.status(err.response.status).send(err)
-                      } catch (e) {
-                        res.status(404).send(err)
-                      }
-                    } else {
-                      let videosList = []
-                      playlist.items.forEach(function (video) {
-                        videosList.push({
-                          id: video.snippet.resourceId.videoId,
-                          title: video.snippet.title,
-                          channel: video.snippet.channelTitle,
-                          thumbnail: video.snippet.thumbnails.standard || video.snippet.thumbnails.default
-                        })
-                      });
-                      resolve(videosList);
-                    }
-                  });
-                })
+        let integri_cache = body.rows[0].value;
+        if (Object.keys(integri_cache.trends).length > 0 && integri_cache.trends.constructor === Object) {
+          let trendlist = Object.keys(integri_cache.trends).map(trend => {
+            return integri_cache.trends[trend]
+          })
+          res.json(trendlist);
+        } else {
+          dbHandler.view('sources', 'getYoutubeSource', (err, body) => {
+            if (!err) {
+              let channels = body.rows[0].value;
+              channels = channels.map(ch => {
+                return ch.id
               });
-              Promise.all(videosPromises.map(utils.reflect)).then(videos => {
-                let sucess = videos.filter(item => item.status === 'resolved');
-                let response = sucess.map(video => {
-                  return video.v
-                })
-                response = [].concat.apply([], response);
-                res.json(response);
-              }).catch(err => {
-                res.status(500).send(err);
-              })
-            } else {
-              res.status(404).send('Resource not found');
+              channels = channels.join(', ');
+              youtube.channels.list({
+                part: 'contentDetails',
+                id: channels,
+              }, function (err, channelDetails) {
+                if (err) {
+                  res.status(500).send(err);
+                } else {
+                  if (channelDetails.pageInfo.totalResults > 0) {
+                    // For each list get the videos
+                    let videosPromises = channelDetails.items.map(item => {
+                      return new Promise((resolve, reject) => {
+                        youtube.playlistItems.list({
+                          part: 'snippet',
+                          playlistId: item.contentDetails.relatedPlaylists.uploads,
+                          maxResults: 3
+                        }, function (err, playlist) {
+                          // Loop through videos list
+                          if (err) {
+                            try {
+                              res.status(err.response.status).send(err)
+                            } catch (e) {
+                              res.status(404).send(err)
+                            }
+                          } else {
+                            let videosList = []
+                            playlist.items.forEach(function (video) {
+                              videosList.push({
+                                id: video.snippet.resourceId.videoId,
+                                title: video.snippet.title,
+                                channel: video.snippet.channelTitle,
+                                thumbnail: video.snippet.thumbnails.standard || video.snippet.thumbnails.default
+                              })
+                            });
+                            resolve(videosList);
+                          }
+                        });
+                      })
+                    });
+                    Promise.all(videosPromises.map(utils.reflect)).then(videos => {
+                      let sucess = videos.filter(item => item.status === 'resolved');
+                      let response = sucess.map(video => {
+                        return video.v
+                      })
+                      response = [].concat.apply([], response);
+                      if (integri_cache) {
+                        model.findOneByID(integri_cache.id, (error, result) => {
+                          if (!error) {
+                            response.forEach(vid => {
+                              result.trends[vid.id] = vid
+                            })
+                            result.save(err => {
+                              console.log(err)
+                            })
+                          }
+                        })
+                      }
+                      res.json(response);
+                    }).catch(err => {
+                      res.status(500).send(err);
+                    })
+                  } else {
+                    res.status(404).send('Resource not found');
+                  }
+                }
+              });
             }
-          }
-        });
+          })
+        }
       }
     })
   })
@@ -199,7 +223,6 @@ module.exports = function (apiKey, dbHandler, model) {
               }
               // Verify if there is any video that wasn't on cache
               if (videos.videos_sources.length > 0) {
-                console.log('Teimoso')
                 videos.videos_sources.map(video => {
                   if (queryGroups.length < 1) {
                     queryGroups.push([video])

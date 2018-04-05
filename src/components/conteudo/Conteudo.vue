@@ -41,7 +41,7 @@
                   <img v-if="content.thumbnail" class="video-thumbnail" :src="content.thumbnail.url">
                   <v-card-text>
                     <p>{{ content.title }}</p>
-                    <p>Visualizações: {{ content.views }} <v-icon>fa fa-eye</v-icon></p>
+                    <!-- <p>Visualizações: {{ content.views }} <v-icon>fa fa-eye</v-icon></p> -->
                     <p>Tags: <v-chip v-for="(tag, index) in content.tags" :key="index"><v-avatar><v-icon>fa fa-hashtag</v-icon></v-avatar>{{ getTagName(tag) }}</v-chip></p>
                   </v-card-text>
                 </div>
@@ -51,7 +51,7 @@
                   <img class="video-thumbnail" :src="require('@/assets/svg/content/thumb_texto.svg')" alt="Texto">
                   <v-card-text>
                     <p>{{ content.title }}</p>
-                    <p>Visualizações: {{ content.views }} <v-icon>fa fa-eye</v-icon></p>
+                    <!-- <p>Visualizações: {{ content.views }} <v-icon>fa fa-eye</v-icon></p> -->
                     <p>Tags: <v-chip v-for="(tag, index) in content.tags" :key="index"><v-avatar><v-icon>fa fa-hashtag</v-icon></v-avatar>{{ getTagName(tag) }}</v-chip></p>
                   </v-card-text>
                 </div>
