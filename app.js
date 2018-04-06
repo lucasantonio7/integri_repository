@@ -26,6 +26,8 @@ const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler, myMode
 const youtube = require('./apis/youtube');
 const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler, envVars);
 const text = require('./apis/texts')(myModel, textModel, dbHandler, envVars);
+const external_data = require('./apis/external_data')(myModel, dbHandler);
+const newsletter = require('./apis/newsletter')(myModel, dbHandler);
 
 let _secret = "projetointegri2017";
 
@@ -173,6 +175,8 @@ app.use('/api/texts', text)
 app.use('/api/conversation', conversation)
 app.use('/api/profile', profile)
 app.use('/api/facebook', facebook)
+app.use('/api/external', external_data)
+app.use('/api/newsletter', newsletter)
 app.post('/api/access_denied', (req, res) => {
   try {
     let status = req.body.access_status

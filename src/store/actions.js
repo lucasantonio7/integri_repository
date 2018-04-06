@@ -122,5 +122,23 @@ export default {
         reject(err)
       })
     })
+  },
+  CONTENT_SHARE ({ commit, state }, content) {
+    return new Promise((resolve, reject) => {
+      axios.post('/api/external/shared', content).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  SUBSCRIBE_NEWSLETTER ({ commit, state }, email) {
+    return new Promise((resolve, reject) => {
+      axios.post('/api/newsletter/subscribe', {email}).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
   }
 }

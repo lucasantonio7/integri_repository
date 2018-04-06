@@ -25,8 +25,8 @@
         </v-flex>
         <v-flex xs12 lg6>
           <!-- <youtube-video-component :video="vdata" :showDescription="true"></youtube-video-component> -->
-          <v-container>
-            <v-layout>
+          <v-container fill-height>
+            <v-layout align-center>
               <youtube class="responsive-yt" :video-id="videoid" @ready="ready" @playing="playing"></youtube>
             </v-layout>
           </v-container>
