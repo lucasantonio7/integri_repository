@@ -25,7 +25,6 @@
               <v-btn type="submit" class="login-submit" :disabled="!user.email && !user.pwd">Enviar</v-btn>
             </div>
           </form>
-          
           <div class="social-media-btns" v-if="strategy !== 'admin'">
             <h3 class="body-2 pb-2">Se você ainda não possui cadastro, escolha uma das opções abaixo:</h3>
             <login-twitter></login-twitter>
@@ -62,14 +61,16 @@ export default {
   },
   methods: {
     login () {
-      axios.post('/signin', {
+      axios.post('/api/access/signin', {
         email: this.user.email,
         password: this.user.pwd
       }).then(resp => {
         console.log(resp.data)
         if (resp.data.authenticationStatus) {
-          if (resp.data.role === 'admin') {
-            this.$store.dispatch('LOGIN')
+          if (resp.data.role === 'admin' || resp.data.role === 'curator') {
+            this.$store.dispatch('LOGIN').then(res => {
+              this.$router.push(this.$store.getters.getLoginReturn)
+            })
           } else {
             window.location.href = '/'
           }

@@ -82,5 +82,11 @@ export default {
   },
   getFinishedDialogs: state => {
     return state.finished_dialogs
+  },
+  getLoginReturn: state => {
+    return state.login_return
+  },
+  getDashboardFeatures: state => {
+    return state.dashboard_features
   }
 }

@@ -68,6 +68,7 @@ if (!appEnv.isLocal){
 
 const access = require('./apis/access')(dbHandler, envVars, userModel, myModel)
 const auth = require('./utils/auth')(passport, userModel, envVars, cookieParser)
+const dashboard = require('./apis/dashboard')(dbHandler, myModel, cookieParser, envVars)
 
 // This piece of code should be changed
 let port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
@@ -167,6 +168,8 @@ const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars, 
 const sources = require('./apis/sources')(dbHandler);
 let curatorshipModel = couchDBModel(dbHandler)
 const curatorship = require('./apis/curatorship')(dbHandler, curatorshipModel);
+app.use('/api/access', access)
+app.use('/api/dashboard', dashboard)
 app.use('/api/sources', sources)
 app.use('/api/curatorship', curatorship)
 app.use('/api/twitter', twitter)
@@ -186,7 +189,6 @@ app.post('/api/access_denied', (req, res) => {
   }
   res.end();
 })
-app.use(access)
 
 app.listen(port, () => {
   console.log('running on port: ', port)

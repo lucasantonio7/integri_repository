@@ -113,6 +113,15 @@ export default {
       })
     })
   },
+  LOAD_FEATURES ({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      axios('/api/dashboard/features').then(res => {
+        commit('SET_FEATURES', res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
   LOAD_STATES ({ commit, state }) {
     return new Promise((resolve, reject) => {
       axios.get('/api/sources/places').then(resp => {

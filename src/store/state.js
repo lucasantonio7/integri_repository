@@ -36,5 +36,7 @@ export default {
   current_video: null,
   classification_tags: null,
   drawer: false,
-  player_active: false
+  player_active: false,
+  login_return: null,
+  dashboard_features: null
 }

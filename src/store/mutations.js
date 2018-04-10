@@ -110,5 +110,14 @@ export default {
   },
   SET_FINISHED_DIALOGS (state, payload) {
     state.finished_dialogs = payload
+  },
+  SET_LOGIN_RETURN (state, payload) {
+    state.login_return = payload
+  },
+  CLEAR_LOGIN_RETURN (state, payload) {
+    state.login_return = null
+  },
+  SET_FEATURES (state, payload) {
+    state.dashboard_features = payload
   }
 }

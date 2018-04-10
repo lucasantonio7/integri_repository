@@ -6,7 +6,6 @@ module.exports = function (passport, userModel, env, cookieParser) {
   let getAuthToken = function (req) {
     if (req.cookies) {
         var cookie = cookieParser.JSONCookies(req.cookies);
-  
         if (cookie && cookie['integri']) {
             return cookie['integri'];
         } else {
