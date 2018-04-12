@@ -135,7 +135,7 @@ export default {
   CONTENT_SHARE ({ commit, state }, content) {
     return new Promise((resolve, reject) => {
       axios.post('/api/external/shared', content).then(res => {
-        resolve(res)
+        resolve(res.data)
       }).catch(err => {
         reject(err)
       })
@@ -144,7 +144,25 @@ export default {
   SUBSCRIBE_NEWSLETTER ({ commit, state }, email) {
     return new Promise((resolve, reject) => {
       axios.post('/api/newsletter/subscribe', {email}).then(res => {
-        resolve(res)
+        resolve(res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  GET_NEWSLETTER_SUBSCRIPTIONS ({ commit, state }, email) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/newsletter/subscriptions').then(res => {
+        commit('SET_NEWSLETTER_SUBSCRIBERS', res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  DASHBOARD_GET_CONTENT ({ commit, state }, source) {
+    return new Promise((resolve, reject) => {
+      axios.get('', {source}).then(resp => {
+        console.log(resp)
       }).catch(err => {
         reject(err)
       })

@@ -88,5 +88,11 @@ export default {
   },
   getDashboardFeatures: state => {
     return state.dashboard_features
+  },
+  getDashboardSelectedFeatures: state => {
+    return state.dashboard_selected_feature
+  },
+  getNewsletterSubscribers: state => {
+    return state.newsletter_subscribers
   }
 }

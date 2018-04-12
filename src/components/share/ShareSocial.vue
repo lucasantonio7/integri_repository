@@ -5,17 +5,17 @@
         <v-layout row wrap class="social-btns">
           <a href="https://www.facebook.com/integri.org/" target="_blank" class="social-link">
             <v-btn icon>
-              <v-icon>fa fa-facebook</v-icon>
+              <v-icon>fab fa-facebook-f</v-icon>
             </v-btn>
           </a>
           <a href="https://twitter.com/Integri_org" target="_blank" class="social-link">
             <v-btn icon>
-              <v-icon>fa fa-twitter</v-icon>
+              <v-icon>fab fa-twitter</v-icon>
             </v-btn>
           </a>
           <a href="https://www.instagram.com/integri_org/" target="_blank" class="social-link">
             <v-btn icon>
-              <v-icon>fa fa-instagram</v-icon>
+              <v-icon>fab fa-instagram</v-icon>
             </v-btn>
           </a>
         </v-layout>
@@ -62,7 +62,6 @@ export default {
   methods: {
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
-        console.log('Mama se mama sa mamacosa')
         if (result) {
           this.subscribe()
         }
@@ -71,20 +70,27 @@ export default {
     subscribe () {
       this.feedback = 'Aguardem, estamos processando sua inscrição'
       this.error = false
+      this.processing = true
       this.$store.dispatch('SUBSCRIBE_NEWSLETTER', this.email).then(res => {
         this.error = null
-        this.feedback = null
+        this.feedback = 'E-mail inscrito com sucesso em nossa newsletter!'
         this.email = ''
+        this.processing = false
         this.clear()
       }).catch(err => {
         if (err.response.status === 403) {
           this.feedback = 'Este e-mail já está cadastrado em nossa newsletter'
           this.error = true
+          this.processing = false
         }
       })
     },
     clear () {
       this.$validator.reset()
+      let instance = this
+      setTimeout(() => {
+        instance.feedback = ''
+      }, 4500)
     }
   }
 }

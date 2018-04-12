@@ -9,7 +9,7 @@
     <v-layout row wrap py-3>
       <v-container grid-list-md>
         <v-layout row wrap>
-          <v-flex xs12 md4 lg3 py-1 my-1 v-for="(feature, index) in features" :key="index" class="feature" @click="openFeature(feature)">
+          <v-flex xs12 md6 lg3 pa-1 my-1 v-for="(feature, index) in features" :key="index" class="feature" @click="openFeature(feature)">
             <v-layout align-center justify-center row>
               <v-flex class="feature-thumb">
                 <v-avatar size="70" class="border">
@@ -42,6 +42,7 @@
     methods: {
       openFeature (feature) {
         if (feature.url) {
+          this.$store.commit('SET_SELECTED_FEATURE', feature)
           this.$router.push({ name: feature.url })
         }
       }

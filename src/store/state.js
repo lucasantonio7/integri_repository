@@ -38,5 +38,7 @@ export default {
   drawer: false,
   player_active: false,
   login_return: null,
-  dashboard_features: null
+  dashboard_features: null,
+  dashboard_selected_feature: null,
+  newsletter_subscribers: []
 }

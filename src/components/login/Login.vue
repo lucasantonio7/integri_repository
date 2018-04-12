@@ -10,14 +10,23 @@
           </div>
           <form class="login-form" @submit.prevent="login">
             <h3 class="body-2 py-1 pt-3">Se você já possui cadastro, insira suas credenciais abaixo:</h3>
-            <div class="input-addon">
-              <i class="fa fa-user-o" aria-hidden="true"></i>
+            <v-layout row wrap>
+              <v-flex xs12>
+                <v-text-field prepend-icon="far fa-user" label="E-mail" v-model="user.email">
+                </v-text-field>
+              </v-flex>
+            </v-layout>
+            <v-flex xs12>
+              <v-text-field prepend-icon="fas fa-lock" type="password" label="Senha" v-model="user.pwd"></v-text-field>
+            </v-flex>
+            <!-- <div class="input-addon">
+              <i class="far fa-user" aria-hidden="true"></i>
               <input type="email" v-model="user.email" placeholder="E-mail" required>
             </div>
             <div class="input-addon">
-              <i class="fa fa-lock" aria-hidden="true"></i>
+              <i class="" aria-hidden="true"></i>
               <input type="password" v-model="user.pwd" placeholder="Senha" required>
-            </div>
+            </div> -->
             <div v-if="error.status" class="animated bounce error-text">
               {{ error.message }}
             </div>

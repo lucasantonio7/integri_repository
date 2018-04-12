@@ -43,14 +43,19 @@ export const routes = [
     path: '/dashboard',
     component: Dashboard,
     beforeEnter: (to, from, next) => {
-      console.log(store.getters.getUser)
-      if (store.getters.getUser.login && (store.getters.getUser.user_data.role === 'admin' || store.getters.getUser.user_data.role === 'curator')) {
-        store.dispatch('LOAD_FEATURES')
-        next()
-      } else {
+      store.dispatch('LOGIN').then(res => {
+        if (store.getters.getUser.login && (store.getters.getUser.user_data.role === 'admin' || store.getters.getUser.user_data.role === 'curator')) {
+          store.dispatch('LOAD_FEATURES')
+          next()
+        } else {
+          store.commit('SET_LOGIN_RETURN', '/dashboard')
+          next('/login')
+        }
+      }).catch(err => {
+        console.log(err)
         store.commit('SET_LOGIN_RETURN', '/dashboard')
         next('/login')
-      }
+      })
     },
     children: [
       {

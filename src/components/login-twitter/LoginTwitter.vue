@@ -1,7 +1,7 @@
 <template>
   <div class="social-twitter" @click="startLogin">
     <div class="brand-block">
-      <i class="fa fa-twitter" aria-hidden="true"></i>
+      <i class="fab fa-twitter" aria-hidden="true"></i>
     </div>
     <div class="text-block">
       <span class="text-piece">Conecte-se com Twitter</span>

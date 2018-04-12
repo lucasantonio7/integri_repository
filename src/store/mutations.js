@@ -119,5 +119,11 @@ export default {
   },
   SET_FEATURES (state, payload) {
     state.dashboard_features = payload
+  },
+  SET_SELECTED_FEATURE (state, payload) {
+    state.dashboard_selected_feature = payload
+  },
+  SET_NEWSLETTER_SUBSCRIBERS (state, payload) {
+    state.newsletter_subscribers = payload
   }
 }
