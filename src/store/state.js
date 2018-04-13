@@ -40,5 +40,6 @@ export default {
   login_return: null,
   dashboard_features: null,
   dashboard_selected_feature: null,
-  newsletter_subscribers: []
+  dashboard_newsletter_subscribers: [],
+  dashboard_content: []
 }

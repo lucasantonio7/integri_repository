@@ -4,7 +4,7 @@
       Oi! Se tiver alguma dúvida, clique aqui para falar comigo!
     </div>
     <div class="fbc animated bounceIn" :class="{'notify-user': isDenied && isNotificationActive, 'small': $vuetify.breakpoint.smAndDown}">
-      <img :src="require('@/assets/png/logo/levi.png')" alt="" :class="{'animated tada': isDenied}">
+      <img :src="require('@/assets/png/logo/amoroso.png')" alt="" :class="{'animated tada': isDenied}">
     </div>
   </div>
 </template>

@@ -124,6 +124,6 @@ export default {
     state.dashboard_selected_feature = payload
   },
   SET_NEWSLETTER_SUBSCRIBERS (state, payload) {
-    state.newsletter_subscribers = payload
+    state.dashboard_newsletter_subscribers = payload
   }
 }

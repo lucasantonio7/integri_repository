@@ -93,6 +93,9 @@ export default {
     return state.dashboard_selected_feature
   },
   getNewsletterSubscribers: state => {
-    return state.newsletter_subscribers
+    return state.dashboard_newsletter_subscribers
+  },
+  getDashboardContentList: state => {
+    return state.dashboard_content
   }
 }

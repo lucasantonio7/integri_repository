@@ -15,7 +15,7 @@
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
           <v-layout align-end>
             <v-avatar v-if="message.sender === 'watson'" class="white levi">
-              <img :src="require('@/assets/png/logo/levi.png')" alt="">
+              <img :src="require('@/assets/png/logo/super_feliz.png')" alt="">
             </v-avatar>
             <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
           </v-layout>

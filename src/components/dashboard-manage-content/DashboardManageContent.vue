@@ -20,7 +20,7 @@
         </v-toolbar>
         <v-tabs-items v-model="active">
           <v-tab-item v-for="tab in tabs" :key="tab.id">
-            <v-data-table :headers="headers" class="elevation-1" no-results-text="Nenhum usuário foi encontrado" no-data-text="Nenhum usuário foi encontrado">
+            <v-data-table :headers="headers" class="elevation-1" no-results-text="Nenhum conteúdo foi encontrado" no-data-text="Nenhum conteúdo foi encontrado">
               <template slot="items">
 
               </template>
@@ -46,6 +46,16 @@ export default {
           text: 'Titulo',
           align: 'left',
           value: 'title'
+        },
+        {
+          text: 'Visualizações',
+          align: 'left',
+          value: 'views'
+        },
+        {
+          text: 'Tags',
+          align: 'left',
+          value: 'tags'
         }
       ],
       tabs: {

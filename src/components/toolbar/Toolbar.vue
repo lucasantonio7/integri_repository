@@ -21,12 +21,12 @@
           <v-avatar class="logged-profile-avatar" slot="activator" v-if="user.user_data.profile_image">
             <img :src="user.user_data.profile_image" alt="Usuário">
           </v-avatar>
-          <i class="fa fa-user-circle-o user-fallback" aria-hidden="true" v-if="!user.user_data.profile_image" slot="activator"></i>
+          <i class="far fa-user-circle user-fallback" aria-hidden="true" v-if="!user.user_data.profile_image" slot="activator"></i>
           <v-card>
             <v-list>
               <v-list-tile avatar>
                 <v-list-tile-avatar>
-                  <i class="fa fa-user-circle-o logout-fallback" v-if="!user.user_data.profile_image" aria-hidden="true" slot="activator"></i>
+                  <i class="far fa-user-circle logout-fallback" v-if="!user.user_data.profile_image" aria-hidden="true" slot="activator"></i>
                   <img :src="user.user_data.profile_image" v-if="user.user_data.profile_image" alt="Usuário">
                 </v-list-tile-avatar>
                 <v-list-tile-content>
@@ -51,7 +51,8 @@
         </v-list-tile-content>
         <v-list-tile avatar v-if="user.user_data">
           <v-list-tile-avatar>
-            <img :src="user.user_data.profile_image">
+            <img :src="user.user_data.profile_image" v-if="user.user_data.profile_image">
+            <v-icon v-if="!user.user_data.profile_image">far fa-user-circle</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title v-html="user.user_data.name"></v-list-tile-title>
