@@ -29,7 +29,7 @@
                      v-validate="'required|email'" 
                      label="Insira aqui seu e-mail"
                      v-model="email"></v-text-field>
-          <p ma-0 class="animated bounceIn" :class="{'input-error': displayFeedbackMessage === 'error'}" v-show="!!displayFeedbackMessage">
+          <p ma-0 class="animated bounceIn white--text" :class="{'input-error': displayFeedbackMessage === 'error'}" v-show="!!displayFeedbackMessage">
             {{ errors.first('email') || feedback }}
             <v-progress-circular indeterminate v-if="displayFeedbackMessage === 'processing'"></v-progress-circular>
           </p>
@@ -54,6 +54,8 @@ export default {
         return 'error'
       } else if (this.processing) {
         return 'processing'
+      } else if (this.feedback) {
+        return 'feedback'
       } else {
         return false
       }
@@ -75,8 +77,8 @@ export default {
         this.error = null
         this.feedback = 'E-mail inscrito com sucesso em nossa newsletter!'
         this.email = ''
-        this.processing = false
         this.clear()
+        this.processing = false
       }).catch(err => {
         if (err.response.status === 403) {
           this.feedback = 'Este e-mail já está cadastrado em nossa newsletter'

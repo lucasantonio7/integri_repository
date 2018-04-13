@@ -1,8 +1,12 @@
 <template>
   <div class="curatorship">
     <v-container>
-      <login strategy="admin" v-if="!grantedAccess"></login>
       <v-layout row wrap v-if="grantedAccess">
+        <v-flex xs12>
+          <v-btn class="pa-0 ma-0" flat dark :to="{ path: '/dashboard' }">
+            <v-icon left>fa fa-chevron-left</v-icon> Voltar
+          </v-btn>
+        </v-flex>
         <v-flex xs12>
           <v-toolbar dark>
             <v-text-field 
@@ -147,8 +151,8 @@
   </div>
 </template>
 <script>
+// Watson Dialog
 import Dialog from '../dialog/Dialog.vue'
-import Login from '../login/Login'
 export default {
   created () {
     this.$store.dispatch('GET_UNSEEN_DIALOGS').then(() => {
@@ -158,8 +162,7 @@ export default {
     })
   },
   components: {
-    currentDialog: Dialog,
-    Login
+    currentDialog: Dialog
   },
   computed: {
     user () {

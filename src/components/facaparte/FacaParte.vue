@@ -56,19 +56,29 @@
             <h4>{{ error }}</h4>
             <v-btn right class="btn-enviar" type="submit">Enviar</v-btn>
           </v-flex>
+          <v-flex xs12>
+            <v-alert class="animated bounceIn" :type="alertType" :value="feedback || sendingData">
+              {{ feedback }}
+              <v-progress-circular indeterminate v-if="sendingData"></v-progress-circular>
+            </v-alert>
+          </v-flex>
         </v-layout>
       </form>
     </v-container>
-    <div class="waiting" v-if="sendingData">
-      <h3>Aguarde, estamos enviando os dados</h3>
-      <v-progress-circular indeterminate></v-progress-circular>
-    </div>
   </div>
 </template>
 <script>
-
 export default {
-  components: {
+  computed: {
+    alertType () {
+      if (this.feedback && !this.error) {
+        return 'success'
+      } else if (this.sendingData) {
+        return 'warning'
+      } else {
+        return 'success'
+      }
+    }
   },
   data: () => ({
     email: '',
@@ -78,6 +88,7 @@ export default {
     displayForm: null,
     error: null,
     sendingData: false,
+    feedback: '',
     options: {
       share: {
         id: 'share',
@@ -101,17 +112,24 @@ export default {
       this.$validator.validateAll().then((result) => {
         if (result) {
           this.sendingData = true
+          this.error = ''
+          this.feedback = 'Aguarde um momento estamos processando seu pedido'
           this.$store.dispatch('CONTENT_SHARE', {email: this.email, name: this.name, data: this.colaborar}).then(res => {
             this.sendingData = false
-            this.error = false
+            this.error = ''
+            this.feedback = 'Conteúdo compartilhado com sucesso!.'
             // Clear all fields
             this.email = ''
             this.name = ''
             this.colaborar = ''
             this.$validator.reset()
+            let instance = this
+            setTimeout(() => {
+              instance.feedback = ''
+            }, 4500)
           }).catch(err => {
             if (err.response.status === 403) {
-              this.error = 'Novo conteúdo enviado em menos de '
+              this.error = 'Novo conteúdo enviado em menos de 10 minutos'
             }
             this.sendingData = false
           })
