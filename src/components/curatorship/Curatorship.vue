@@ -3,7 +3,7 @@
     <v-container>
       <v-layout row wrap v-if="grantedAccess">
         <v-flex xs12>
-          <v-btn class="pa-0 ma-0" flat dark :to="{ path: '/dashboard' }">
+          <v-btn class="pa-0 ma-0" flat :to="{ path: '/dashboard' }">
             <v-icon left>fa fa-chevron-left</v-icon> Voltar
           </v-btn>
         </v-flex>
@@ -45,7 +45,7 @@
                   <v-divider></v-divider>
                 </v-card>
               </v-card>
-              <v-jumbotron dark v-if="!isValidUnseenDialogs">
+              <v-jumbotron v-if="!isValidUnseenDialogs">
                 <v-container fill-height>
                   <v-layout align-center>
                     <v-flex>
@@ -84,7 +84,7 @@
                   <v-divider></v-divider>
                 </v-card>
               </v-card>
-              <v-jumbotron dark v-if="!isValidPendingDialogs">
+              <v-jumbotron v-if="!isValidPendingDialogs">
                 <v-container fill-height>
                   <v-layout align-center>
                     <v-flex>
@@ -132,7 +132,7 @@
                   <v-divider></v-divider>
                 </v-card>
               </v-card>
-              <v-jumbotron dark v-if="!isValidFinishedDialogs">
+              <v-jumbotron v-if="!isValidFinishedDialogs">
                 <v-container fill-height>
                   <v-layout align-center>
                     <v-flex>

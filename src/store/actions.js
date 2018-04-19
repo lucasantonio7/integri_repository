@@ -159,13 +159,25 @@ export default {
       })
     })
   },
-  DASHBOARD_GET_CONTENT ({ commit, state }, source) {
+  DASHBOARD_GET_SHARED_CONTENT ({ commit, state }, source) {
     return new Promise((resolve, reject) => {
-      axios.get('', {source}).then(resp => {
+      axios.get('').then(resp => {
         console.log(resp)
       }).catch(err => {
         reject(err)
       })
     })
+  },
+  DASHBOARD_SAVE_CONTENT_VIDEO ({ commit, state }, video) {
+    return axios.post('/api/dashboard/content-video', {video})
+  },
+  DASHBOARD_SAVE_CONTENT_TEXT ({ commit, state }, text) {
+    return axios.post('/api/dashboard/content-text', {text})
+  },
+  DASHBOARD_DELETE_CONTENT_VIDEO ({ commit, state }, payload) {
+    return axios.delete('/api/dashboard/remove-video/' + payload.id)
+  },
+  DASHBOARD_DELETE_CONTENT_TEXT ({ commit, state }, payload) {
+    return axios.delete('/api/dashboard/remove-text/' + payload._id)
   }
 }

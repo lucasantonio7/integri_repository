@@ -70,7 +70,12 @@ export const routes = [
       {
         path: 'conteudo',
         name: 'conteudo',
-        component: DashboardContentManagement
+        component: DashboardContentManagement,
+        children: [
+          {
+            path: 'novo'
+          }
+        ]
       },
       {
         path: 'curadoria',
