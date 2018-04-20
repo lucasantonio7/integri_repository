@@ -49,6 +49,7 @@
     "vue-moment": "^3.1.0",
     "vue-slider-component": "^2.5.3",
     "vue-template-compiler": "^2.5.9",
+    "vue-wysiwyg": "^1.7.0",
     "vue-youtube-embed": "^2.1.2",
     "vuetify": "^1.0.0-beta.4",
     "vuex": "^2.4.0",

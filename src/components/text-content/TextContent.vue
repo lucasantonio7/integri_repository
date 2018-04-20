@@ -16,6 +16,9 @@
               </h2>
             </v-flex>
             <v-flex v-html="currentText.text" class="text-content"></v-flex>
+            <v-flex xs12>
+              {{ processSource }}
+            </v-flex>
           </v-layout>
         </v-container>
       </v-flex>
@@ -33,6 +36,17 @@ export default {
   computed: {
     currentText () {
       return this.$store.getters.getSpecificText
+    },
+    processSource () {
+      if (this.currentText.source) {
+        let matches = this.currentText.source.match(this.expressionURL)
+        matches.forEach(match => {
+          this.currentText.source = this.currentText.source.replace(match, '<a href="' + match + '">' + match + '</a>')
+        })
+        return this.currentText.source
+      } else {
+        return ''
+      }
     }
   },
   created () {
@@ -53,7 +67,8 @@ export default {
     return {
       loading: false,
       error: false,
-      storage: null
+      storage: null,
+      expressionURL: /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g
     }
   },
   methods: {

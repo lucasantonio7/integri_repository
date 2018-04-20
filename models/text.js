@@ -7,6 +7,7 @@ module.exports = (model) => {
     views: 0,
     likes: 0,
     unlikes: 0,
+    source: null,
     type: 'text'
   })
   return text

@@ -76,12 +76,11 @@
                           ></v-select>
                         </v-flex>
                         <v-flex xs12>
-                          <v-text-field
-                            name="text-content"
-                            label="Texto"
-                            v-model="editedItem.text"
-                            textarea
-                          ></v-text-field>
+                          <wysiwyg v-model="editedItem.text" />
+                        </v-flex>
+                        <v-flex xs12>
+                          <p class="subheading">Fonte:</p>
+                          <v-text-field v-model="editedItem.source" label="Fonte"></v-text-field>
                         </v-flex>
                       </v-layout>
                     </v-container>
@@ -112,7 +111,10 @@
       <!-- Table -->
       <v-flex xs12>
         <v-toolbar dark tabs>
-          <v-text-field prepend-icon="search" label="Buscar" solo-inverted class="mx-3" flat></v-text-field>
+          <v-text-field prepend-icon="search" v-model="searchQuery" label="Buscar por ID ou título" solo-inverted class="mx-3" flat @change="search"></v-text-field>
+          <v-btn icon v-if="searchQuery" @click="clearQuery">
+            <v-icon>clear</v-icon>
+          </v-btn>
           <v-tabs slot="extension" centered v-model="active" slider-color="pink accent-2" color="transparent">
             <v-tab v-for="tab in tabs" :key="tab.id" @click="fetchData(tab)">
               {{tab.title}}
@@ -192,6 +194,7 @@ export default {
         channel: '',
         title: '',
         text: '',
+        source: '',
         tags: []
       },
       editedItem: {
@@ -200,9 +203,11 @@ export default {
         channel: '',
         title: '',
         text: '',
+        source: '',
         tags: []
       },
       dialog: false,
+      filteredCollection: null,
       isDeleting: false,
       items: [],
       itemTypes: [{
@@ -213,6 +218,7 @@ export default {
         text: 'Texto'
       }],
       loading: false,
+      searchQuery: null,
       tabs: {
         videos: {
           id: 1,
@@ -271,7 +277,6 @@ export default {
         // Text content
         action = 'DASHBOARD_DELETE_CONTENT_TEXT'
       }
-      console.log(action)
       this.$store.dispatch(action, this.editedItem).then(res => {
         this.fetchData(this.tabs[this.currentItemType])
         this.dialog = false
@@ -284,6 +289,10 @@ export default {
     },
     clearURL () {
       this.editedItem.id = this.editedItem.id.replace('https://youtu.be/', '').replace('https://www.youtube.com/watch?v=', '')
+    },
+    clearQuery () {
+      this.searchQuery = null
+      this.fetchData(Object.entries(this.tabs)[this.active][1])
     },
     closeModal () {
       this.dialog = false
@@ -353,7 +362,8 @@ export default {
           _id: this.editedItem._id,
           title: this.editedItem.title,
           text: this.editedItem.text,
-          tags: this.editedItem.tags
+          tags: this.editedItem.tags,
+          source: this.editedItem.source
         }
       }
       this.$store.dispatch(action, payload).then(res => {
@@ -362,10 +372,21 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    search () {
+      this.items = this.items.filter(item => {
+        if (item.title.includes(this.searchQuery.trim())) {
+          return true
+        } else if (item.id === this.searchQuery.trim()) {
+          return true
+        }
+      })
+      console.log(this.items)
     }
   }
 }
 </script>
 <style lang="sass">
   @import 'DashboardManageContent'
+  @import '~vue-wysiwyg/dist/vueWysiwyg.css'
 </style>

@@ -16,7 +16,10 @@ import store from './store/store'
 import VueCarousel from 'vue-carousel'
 import VueClipboard from 'vue-clipboard'
 import VueAnalytics from 'vue-analytics'
-
+import wysiwyg from 'vue-wysiwyg'
+Vue.use(wysiwyg, {
+  // Config
+})
 Vue.config.productionTip = false
 Vue.use(Vuetify)
 Vue.use(Vuex)

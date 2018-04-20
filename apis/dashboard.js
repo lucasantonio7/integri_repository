@@ -94,7 +94,8 @@ module.exports = function (dbHandler, model, cookieParser, env) {
         model.findOneByID(text._id, (error, result) => {
           result.title = text.title;
           result.text = text.text;
-          result.tags = text.tags
+          result.tags = text.tags;
+          result.source = text.source
           result.save((err) => {
             if (!err) {
               res.json(true)

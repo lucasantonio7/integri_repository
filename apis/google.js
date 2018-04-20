@@ -212,10 +212,7 @@ module.exports = function (apiKey, dbHandler, model) {
             try {
               videos_cache = body.rows[0].value;
               let now = moment()
-              if (now.diff(moment(videos_cache.last_update), 'hours') >= 24){
-                console.log('Cache is older than 24 hours')
-              }
-              if (Object.keys(videos_cache.videos).length > 0 && videos_cache.videos.constructor === Object) {
+              if (Object.keys(videos_cache.videos).length > 0 && videos_cache.videos.constructor === Object && now.diff(moment(videos_cache.last_update), 'hours') < 24) {
                 // Remove all already cached videos
                 videos.videos_sources = videos.videos_sources.filter(video => {
                   if (videos_cache.videos[video.id]) {
@@ -253,6 +250,9 @@ module.exports = function (apiKey, dbHandler, model) {
                         joinedResult.forEach(vid => {
                           result.videos[vid.id] = vid
                         })
+                        if (now.diff(moment(result.last_update), 'hours') >= 24){
+                          result.last_update = now
+                        }
                         result.save(err => {
                           if (err) {
                             console.log(err)
