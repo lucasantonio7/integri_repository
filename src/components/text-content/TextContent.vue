@@ -17,7 +17,7 @@
             </v-flex>
             <v-flex v-html="currentText.text" class="text-content"></v-flex>
             <v-flex xs12>
-              {{ processSource }}
+              <p v-html="processSource"></p>
             </v-flex>
           </v-layout>
         </v-container>
@@ -41,7 +41,7 @@ export default {
       if (this.currentText.source) {
         let matches = this.currentText.source.match(this.expressionURL)
         matches.forEach(match => {
-          this.currentText.source = this.currentText.source.replace(match, '<a href="' + match + '">' + match + '</a>')
+          this.currentText.source = this.currentText.source.replace(match, '<a href="' + match + '" target="_blank">' + match + '</a>')
         })
         return this.currentText.source
       } else {
