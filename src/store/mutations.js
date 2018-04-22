@@ -125,5 +125,8 @@ export default {
   },
   SET_NEWSLETTER_SUBSCRIBERS (state, payload) {
     state.dashboard_newsletter_subscribers = payload
+  },
+  SET_DASHBOARD_SHARED_CONTENT (state, payload) {
+    state.dashboard_shared_content = payload
   }
 }

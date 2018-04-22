@@ -21,8 +21,8 @@
         <v-tabs-items v-model="active">
           <v-tab-item v-for="tab in tabs" :key="tab.id">
             <v-data-table :headers="headers" :items="items" class="elevation-1" no-results-text="Nenhum usuário foi encontrado" no-data-text="Nenhum usuário foi encontrado">
-              <template slot="items">
-
+              <template slot="items" slot-scope="props">
+                <td>{{ item.props.name }}</td>
               </template>
             </v-data-table>
           </v-tab-item>
@@ -42,22 +42,22 @@ export default {
         all: {
           id: 1,
           title: 'Todos usuários',
-          command: 'all'
+          source: 'all'
         },
         facebook: {
           id: 2,
           title: 'Facebook',
-          command: 'facebook'
+          source: 'facebook'
         },
         twitter: {
           id: 3,
           title: 'Twitter',
-          command: 'twitter'
+          source: 'twitter'
         },
         parceiros: {
           id: 4,
           title: 'Parceiros',
-          command: 'parceiros'
+          source: 'parceiros'
         }
       },
       headers: [

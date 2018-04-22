@@ -161,8 +161,9 @@ export default {
   },
   DASHBOARD_GET_SHARED_CONTENT ({ commit, state }, source) {
     return new Promise((resolve, reject) => {
-      axios.get('').then(resp => {
-        console.log(resp)
+      axios.get('/api/external/content').then(resp => {
+        commit('SET_DASHBOARD_SHARED_CONTENT', resp.data)
+        resolve(true)
       }).catch(err => {
         reject(err)
       })

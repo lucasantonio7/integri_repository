@@ -97,5 +97,8 @@ export default {
   },
   getDashboardContentList: state => {
     return state.dashboard_content
+  },
+  getDashboardSharedContentList: state => {
+    return state.dashboard_shared_content
   }
 }
