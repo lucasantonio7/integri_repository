@@ -79,7 +79,7 @@
             <div class="dot"></div>
           </div>
         </div>
-        <v-dialog v-model="displayLoginBox" persistent content-class="show-overflow">
+        <v-dialog v-model="displayLoginBox" persistent content-class="show-overflow" :fullscreen="$vuetify.breakpoint.smAndDown" :max-width="$vuetify.breakpoint.width * 0.65">
           <form class="login-dialog-wrapper">
             <div class="login-dialog-title">
               <div class="login-feather-detail">
@@ -88,20 +88,16 @@
             </div>
             <div class="login-form">
               <div class="input-addon">
-                <i class="fa fa-user-o" aria-hidden="true"></i>
-                <input type="text" v-model="newUser.name" placeholder="Nome" required>
+                <v-text-field solo label="Nome" v-model="newUser.name" prepend-icon="far fa-user" required></v-text-field>
               </div>
               <div class="input-addon">
-                <i class="fa fa-envelope-o" aria-hidden="true"></i>
-                <input type="email" v-model="newUser.email" placeholder="E-mail" required>
+                <v-text-field solo label="E-mail" v-model="newUser.email" prepend-icon="far fa-envelope" type="email" required></v-text-field>
               </div>
               <div class="input-addon">
-                <i class="fa fa-lock" aria-hidden="true"></i>
-                <input type="password" v-model="newUser.pwd" placeholder="Senha" required>
+                <v-text-field solo label="Senha" type="password" v-model="newUser.pwd" prepend-icon="fas fa-lock" required></v-text-field>
               </div>
               <div class="input-addon">
-                <i class="fa fa-lock" aria-hidden="true"></i>
-                <input type="password" v-model="newUser._pwdConf" placeholder="Confirme sua senha" required>
+                <v-text-field solo label="Confirme sua senha" type="password" v-model="newUser._pwdConf" prepend-icon="fas fa-lock" required></v-text-field>
               </div>
               <v-layout>
                 <v-flex>

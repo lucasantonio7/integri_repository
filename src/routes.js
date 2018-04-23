@@ -44,6 +44,7 @@ export const routes = [
     component: Dashboard,
     beforeEnter: (to, from, next) => {
       store.dispatch('LOGIN').then(res => {
+        console.log(store.getters.getUser.user_data.role)
         if (store.getters.getUser.login && (store.getters.getUser.user_data.role === 'admin' || store.getters.getUser.user_data.role === 'curator')) {
           store.dispatch('LOAD_FEATURES')
           next()

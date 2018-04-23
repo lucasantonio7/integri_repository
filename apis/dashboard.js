@@ -18,7 +18,13 @@ module.exports = function (dbHandler, model, cookieParser, env) {
                 }
               })
             } else if (decoded.role === 'curator') {
-              // 
+              dbHandler.view('sources', 'getSystemFeatures', (err, body) => {
+                if (!err) {
+                  res.json(decoded.access.map(acc => body.rows[0].value.features[acc]))
+                } else {
+                  res.status(500).json(err)
+                }
+              })
             } else {
               res.status(403).json(false)
             }

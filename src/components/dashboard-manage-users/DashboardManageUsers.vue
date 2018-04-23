@@ -135,8 +135,8 @@ export default {
         },
         parceiros: {
           id: 4,
-          title: 'Parceiros',
-          source: 'parceiros'
+          title: 'Integri',
+          source: 'integri'
         }
       },
       selectedUser: {
