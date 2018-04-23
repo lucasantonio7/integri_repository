@@ -25,6 +25,11 @@
           <v-card>
             <v-card-text>
               <v-container grid-list-md>
+                <v-layout v-if="loading">
+                  <v-flex xs12>
+                    <v-progress-linear v-if="loading" color="pink accent-2" indeterminate></v-progress-linear>
+                  </v-flex>
+                </v-layout>
                 <v-layout wrap v-if="!isDeleting">
                   <v-flex xs12 sm6>
                     <v-select
@@ -270,6 +275,7 @@ export default {
   methods: {
     confirmDelete () {
       let action = ''
+      this.loading = true
       if (this.currentItemType === this.tabs.videos.source) {
         // Youtube content
         action = 'DASHBOARD_DELETE_CONTENT_VIDEO'
@@ -283,6 +289,7 @@ export default {
         this.editedItem = this.defaultItem
         this.currentItemType = null
         this.isDeleting = false
+        this.loading = false
       }).catch(err => {
         console.log(err)
       })
@@ -348,6 +355,7 @@ export default {
     save () {
       let payload = null
       let action = ''
+      this.loading = true
       if (this.currentItemType === this.tabs.videos.source) {
         // Youtube content
         action = 'DASHBOARD_SAVE_CONTENT_VIDEO'
@@ -368,6 +376,7 @@ export default {
       }
       this.$store.dispatch(action, payload).then(res => {
         this.editedItem = this.defaultItem
+        this.loading = false
         this.fetchData(this.tabs[this.currentItemType])
       }).catch(err => {
         console.log(err)

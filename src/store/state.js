@@ -42,5 +42,6 @@ export default {
   dashboard_selected_feature: null,
   dashboard_newsletter_subscribers: [],
   dashboard_content: [],
-  dashboard_shared_content: []
+  dashboard_shared_content: [],
+  dashboard_users: []
 }

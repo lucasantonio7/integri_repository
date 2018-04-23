@@ -10,7 +10,8 @@
         <h3 class="headline py-2">{{ selectedFeature.title }}</h3>
       </v-flex>
       <v-flex xs12>
-        <v-data-table :headers="headers" :items="items" class="elevation-1" no-results-text="Nenhuma inscrição encontrada" no-data-text="Não há nenhuma inscrição">
+        <v-data-table :headers="headers" :items="items" :loading="items.length < 1" class="elevation-1" no-results-text="Nenhuma inscrição encontrada" no-data-text="Não há nenhuma inscrição">
+          <v-progress-linear slot="progress" color="pink accent-2" indeterminate></v-progress-linear>
           <template slot="items" slot-scope="props">
             <td>{{ props.item.id }}</td>
           </template>
@@ -43,7 +44,6 @@ export default {
       return this.$store.getters.getDashboardSelectedFeatures
     },
     items () {
-      console.log(this.$store.getters.getNewsletterSubscribers)
       return this.$store.getters.getNewsletterSubscribers
     }
   },

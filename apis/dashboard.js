@@ -183,5 +183,58 @@ module.exports = function (dbHandler, model, cookieParser, env) {
       }
     })
   })
+  api.get('/users', (req, res) => {
+    let source = req.query.source;
+    console.log(source)
+    let view = '';
+    switch (source) {
+      case 'all':
+        view = 'getAllUsers';
+        break;
+        case 'facebook':
+          view = 'getFacebookUsers';
+          break;
+        case 'twitter':
+          view = 'getTwitterUsers';
+          break;
+        case 'integri':
+          view = 'getUsers';
+          break;
+    }
+    dbHandler.view('profiles', view, (err, body) => {
+      if (err) {
+        console.log(err)
+        res.status(err.statusCode).json(err)
+      } else {
+        res.json(body.rows.map(item => item.value))
+      }
+    })
+  })
+  api.post('/update-user', (req, res) => {
+    let user = req.body.user
+    if (user) {
+      model.findOneByID(user._id, (error, result) => {
+        if(!error){
+          result.access = user.access;
+          result.role = user.role;
+          result.save((err) => {
+            if (!err) {
+              res.json(true)
+            } else {
+              res.status(500).json(err)
+            }
+          })
+        } else {
+          if (error.statusCode) {
+            res.status(error.statusCode).json(error)
+          } else {
+            res.status(500).json(error)
+          }
+        }
+      })
+    } else {
+      res.status(412).json(false)
+    }
+  })
   return api
 }

@@ -20,13 +20,31 @@
           <v-card>
             <v-card-text>
               <v-container>
-                <v-layout row wrap>
-                  <v-flex xs12>
-                    {{ selectedSharedContent.content }}
+                <v-layout row wrap v-if="!isDeleting">
+                  <v-flex xs12 >
+                    <blockquote>
+                      {{ selectedSharedContent.content }}
+                    </blockquote>
+                  </v-flex>
+                </v-layout>
+                <v-layout row wrap v-if="isDeleting">
+                  <v-flex xs12 md10>
+                    <p class="title text-xs-center">Deseja realmente deletar? Esse registro não pode ser recuperado posteriormente</p>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-avatar class="white levi" tile size="100">
+                      <img :src="require('@/assets/png/logo/triste.png')" alt="">
+                    </v-avatar>
                   </v-flex>
                 </v-layout>
               </v-container>
             </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn @click="confirmDelete" v-if="isDeleting">
+                Deletar
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-dialog>
       </v-flex>
@@ -94,6 +112,7 @@ export default {
           value: 'created'
         }
       ],
+      isDeleting: false,
       default: {
         author: '',
         content: '',
@@ -111,6 +130,17 @@ export default {
     closeModal () {
       this.dialog = false
       this.selectedSharedContent = this.default
+      this.isDeleting = false
+    },
+    confirmDelete () {
+      this.$store.dispatch('DASHBOARD_DELETE_SHARED_CONTENT', this.selectedSharedContent).then(res => {
+        this.fetchData()
+        this.dialog = false
+        this.selectedSharedContent = this.default
+        this.isDeleting = false
+      }).catch(err => {
+        console.log(err)
+      })
     },
     dtFormat (timestamp) {
       return this.$moment(timestamp).format('DD/MM/YYYY - HH:mm')
@@ -123,8 +153,12 @@ export default {
         console.log(err)
       })
     },
-    startDeleting () {},
+    startDeleting (selected) {
+      this.isDeleting = true
+      this.viewRegister(selected)
+    },
     viewRegister (selected) {
+      this.selectedSharedContent._id = selected._id
       this.selectedSharedContent.author = selected.email
       this.selectedSharedContent.created = selected.created
       this.selectedSharedContent.content = selected.data

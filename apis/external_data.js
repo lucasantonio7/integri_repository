@@ -59,11 +59,27 @@ module.exports = function (model, dbHandler) {
       res.status(500).json(ex)
     }
   })
-  api.post('/viewd', (req, res) => {
-    
-  })
-  api.delete('/delete', (req, res) => {
+  api.post('/viewed', (req, res) => {
+    let id = req.body.id;
+    model.findOneByID(id, (error, result) => {
 
+    })
+  })
+  api.delete('/delete/:id', (req, res) => {
+    let id = req.params.id
+    model.findOneByID(id, (error, result) => {
+      if (!error) {
+        result.delete((err) => {
+          if (!err) {
+            res.json(true)
+          } else {
+            res.status(500).json(err)
+          }
+        })
+      } else {
+        res.status(500).json(err)
+      }
+    })
   })
   return api
 }

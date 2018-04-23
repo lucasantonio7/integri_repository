@@ -180,5 +180,21 @@ export default {
   },
   DASHBOARD_DELETE_CONTENT_TEXT ({ commit, state }, payload) {
     return axios.delete('/api/dashboard/remove-text/' + payload._id)
+  },
+  DASHBOARD_DELETE_SHARED_CONTENT ({ commit, state }, payload) {
+    return axios.delete('/api/external/delete/' + payload._id)
+  },
+  DASHBOARD_LOAD_USERS ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/dashboard/users', { params: { source: payload } }).then(resp => {
+        commit('SET_DASHBOARD_USERS', resp.data)
+        resolve(true)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  DASHBOARD_SAVE_USER_CHANGES ({ commit, state }, payload) {
+    return axios.post('/api/dashboard/update-user', { user: payload })
   }
 }

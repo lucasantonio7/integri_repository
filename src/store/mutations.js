@@ -128,5 +128,8 @@ export default {
   },
   SET_DASHBOARD_SHARED_CONTENT (state, payload) {
     state.dashboard_shared_content = payload
+  },
+  SET_DASHBOARD_USERS (state, payload) {
+    state.dashboard_users = payload
   }
 }
