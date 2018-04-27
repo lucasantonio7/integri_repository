@@ -102,7 +102,7 @@ export default {
       ngo: {
         id: 'ngo',
         text: 'Inscreva sua ONG',
-        href: 'https://parceirosvoluntarios.atados.com.br/'
+        href: 'https://parceirosvoluntarios.atados.com.br/sou-uma-ong'
       }
     },
     selected: ''
