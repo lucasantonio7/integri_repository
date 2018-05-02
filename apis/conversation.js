@@ -98,6 +98,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
           long_name: _address
         }]
       }
+      paramsData.closed = false
       
       axios.get(url, {
         headers: {
