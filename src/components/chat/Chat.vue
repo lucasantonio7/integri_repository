@@ -52,7 +52,7 @@
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-container grid-list-xs v-if="message.type === 'yn_question' && message.active">
             <v-layout row wrap class="chatbox-yn-question" >
-              <v-flex xs12 md3 @click.stop="YNSelector(true, message)">
+              <v-flex xs12 md3 @click.stop="YNSelector('yes', message)">
                 <v-btn block flat large>
                   {{ message.options.yes }}
                   <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-up</v-icon>
@@ -69,7 +69,7 @@
                   {{ message.options.cancel.text }}
                 </v-btn>
               </v-flex>
-              <v-flex xs12 md3 @click.stop="YNSelector(true, message)" v-if="message.options.oppty">
+              <v-flex xs12 md3 @click.stop="YNSelector('oppty', message)" v-if="message.options.oppty">
                 <v-btn block flat large>
                   {{ message.options.oppty }}
                 </v-btn>
@@ -369,7 +369,7 @@ export default {
         if (message.action === 'save_profile') {
           this.displayLoginBox = true
         } else {
-          this.message = message.options.yes
+          this.message = message.options[payload]
           if (message.action === 'feedback') {
             this.feedback = true
           }
