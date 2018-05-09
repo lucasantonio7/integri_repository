@@ -11,7 +11,7 @@
       </v-flex>
       <!-- edit box -->
       <v-flex xs-12>
-        <v-dialog v-model="dialog" :fullscreen="$vuetify.breakpoint.smAndDown" :max-width="$vuetify.breakpoint.width * 0.65" transition="dialog-bottom-transition">
+        <v-dialog persistent v-model="dialog" :fullscreen="$vuetify.breakpoint.smAndDown" :max-width="$vuetify.breakpoint.width * 0.65" transition="dialog-bottom-transition">
           <v-btn color="pink accent-2 ma-0" dark large slot="activator" class="mb-2">
             <v-icon left>fas fa-plus</v-icon>
             Criar novo
@@ -90,6 +90,12 @@
                       </v-layout>
                     </v-container>
                   </v-flex>
+                  <v-flex xs12>
+                    <v-alert class="animated bounceIn" :type="alertType" :value="feedback">
+                      {{ feedback }}
+                      <v-progress-circular indeterminate v-if="loading"></v-progress-circular>
+                    </v-alert>
+                  </v-flex>
                 </v-layout>
                 <v-layout row wrap v-if="isDeleting">
                   <v-flex xs12 md10>
@@ -116,7 +122,7 @@
       <!-- Table -->
       <v-flex xs12>
         <v-toolbar dark tabs>
-          <v-text-field prepend-icon="search" v-model="searchQuery" label="Buscar por ID ou título" solo-inverted class="mx-3" flat @change="search"></v-text-field>
+          <v-text-field prepend-icon="search" v-model="searchQuery" label="Buscar por ID ou título" solo-inverted class="mx-3" flat @change="search" @keyup.enter="search"></v-text-field>
           <v-btn icon v-if="searchQuery" @click="clearQuery">
             <v-icon>clear</v-icon>
           </v-btn>
@@ -188,10 +194,22 @@ export default {
   created () {
     this.$store.dispatch('LOAD_CLASSIFICATION_TAGS')
     this.fetchData(this.tabs.videos)
+    if (!Object.entries) {
+      Object.entries = function (obj) {
+        let ownProps = Object.keys(obj)
+        let i = ownProps.length
+        let resArray = new Array(i) // preallocate the Array
+        while (i--) {
+          resArray[i] = [ownProps[i], obj[ownProps[i]]]
+        }
+        return resArray
+      }
+    }
   },
   data () {
     return {
       active: '',
+      alertType: 'success',
       currentItemType: null,
       defaultItem: {
         _id: null,
@@ -202,6 +220,7 @@ export default {
         source: '',
         tags: []
       },
+      feedback: '',
       editedItem: {
         _id: null,
         id: '',
@@ -319,23 +338,28 @@ export default {
     fetchData (tab) {
       this.items = []
       this.loading = true
-      if (tab.source === this.tabs.videos.source) {
-        this.$store.dispatch('LOAD_CONTENT_VIDEOS').then(res => {
-          this.items = this.$store.getters.getContentVideos
-          this.loading = false
-        })
-      } else if (tab.source === this.tabs.texts.source) {
-        this.$store.dispatch('LOAD_CONTENT_TEXTS').then(res => {
-          this.items = this.$store.getters.getContentTexts
-          this.loading = false
-        })
-      } else {
-        // Load videos considering that videos is the first item on tabs variable
-        this.$store.dispatch('LOAD_CONTENT_VIDEOS').then(res => {
-          this.items = this.$store.getters.getContentVideos
-          this.loading = false
-        })
-      }
+      return new Promise((resolve, reject) => {
+        if (tab.source === this.tabs.videos.source) {
+          this.$store.dispatch('LOAD_CONTENT_VIDEOS').then(res => {
+            this.items = this.$store.getters.getContentVideos
+            this.loading = false
+            resolve(true)
+          })
+        } else if (tab.source === this.tabs.texts.source) {
+          this.$store.dispatch('LOAD_CONTENT_TEXTS').then(res => {
+            this.items = this.$store.getters.getContentTexts
+            this.loading = false
+            resolve(true)
+          })
+        } else {
+          // Load videos considering that videos is the first item on tabs variable
+          this.$store.dispatch('LOAD_CONTENT_VIDEOS').then(res => {
+            this.items = this.$store.getters.getContentVideos
+            this.loading = false
+            resolve(true)
+          })
+        }
+      })
     },
     getTagName (tags) {
       return tags.map(tag => this.$store.getters.getClassificationTagName(tag)).reduce((prev, next) => prev + ', ' + next)
@@ -374,23 +398,48 @@ export default {
           source: this.editedItem.source
         }
       }
+      let instance = this
       this.$store.dispatch(action, payload).then(res => {
         this.editedItem = this.defaultItem
-        this.loading = false
-        this.fetchData(this.tabs[this.currentItemType])
+        this.feedback = 'Operação realizada com sucesso'
+        this.alertType = 'success'
+        this.fetchData(this.tabs[this.currentItemType]).then(() => {
+          this.currentItemType = null
+        })
+        setTimeout(() => {
+          instance.feedback = ''
+          instance.loading = false
+        }, 4500)
       }).catch(err => {
         console.log(err)
+        if (err.response) {
+          this.feedback = err.response
+          console.log(err.response)
+        } else if (err.request) {
+          this.feedback = err.request
+          console.log(err.request)
+        } else {
+          this.feedback = err.message
+          console.log(err.message)
+        }
+        this.alertType = 'warning'
+        setTimeout(() => {
+          instance.feedback = ''
+        }, 4500)
       })
     },
     search () {
-      this.items = this.items.filter(item => {
-        if (item.title.includes(this.searchQuery.trim())) {
-          return true
-        } else if (item.id === this.searchQuery.trim()) {
-          return true
-        }
-      })
-      console.log(this.items)
+      if (this.searchQuery) {
+        this.items = this.items.filter(item => {
+          if (item.title.toLowerCase().includes(this.searchQuery.trim().toLowerCase())) {
+            return true
+          } else if (item.id === this.searchQuery.trim()) {
+            return true
+          }
+        })
+      } else {
+        this.clearQuery()
+      }
     }
   }
 }

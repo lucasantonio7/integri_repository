@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "start": "node app.js",
+    "start": "node --harmony app.js",
     "build": "node build/build.js",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
@@ -46,6 +46,9 @@
     "vue": "^2.5.9",
     "vue-analytics": "^5.8.0",
     "vue-carousel": "^0.6.5",
+    "vue-clipboard": "0.0.1",
+    "vue-i18n": "^7.6.0",
+    "vue-json-excel": "^0.2.5",
     "vue-moment": "^3.1.0",
     "vue-slider-component": "^2.5.3",
     "vue-template-compiler": "^2.5.9",
@@ -130,8 +133,8 @@
     "webpack-merge": "^4.1.0"
   },
   "engines": {
-    "node": ">= 6.11.1",
-    "npm": ">= 3.10.10"
+    "node": ">= 8.11.1",
+    "npm": ">= 6.0.0"
   },
   "browserslist": [
     "> 1%",

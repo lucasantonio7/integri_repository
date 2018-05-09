@@ -99,7 +99,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         }]
       }
       paramsData.closed = false
-      
+
       axios.get(url, {
         headers: {
           'X-ovp-channel': headerValue
@@ -130,6 +130,25 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.log("CONVERSATION ERROR! ", err);
         res.status(500).send(err);
       } else {
+        if (response.context.verifyAPI) {
+          Promise.all([axios.get('https://api.beta.atados.com.br/startup/', {
+              headers: {
+                'X-ovp-channel': 'pv'
+              }
+            }),
+            axios.get('https://v2.api.atados.com.br/startup/', {
+              headers: {
+                'X-ovp-channel': 'default'
+              }
+            })
+          ]).then(res => {
+            response.context.apiOffline = false
+            delete response.context.verifyAPI
+          }).catch(err => {
+            response.context.apiOffline = true
+            delete response.context.verifyAPI
+          })
+        }
         // Get the context and help with profile
         if (response.context.gettingProfile && !response.context.skipNLU) {
           switch (response.context.gettingProfile) {

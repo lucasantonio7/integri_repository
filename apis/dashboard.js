@@ -2,7 +2,6 @@ const api = require('express').Router();
 let jsonWT = require('jsonwebtoken');
 module.exports = function (dbHandler, model, cookieParser, env) {
   const dialogModel = require('../models/dialog')(model);
-  const textsModel = require('../models/text')(model);
   api.get('/features', (req, res) => {
     if (req.cookies) {
       let cookie = cookieParser.JSONCookies(req.cookies);
@@ -101,7 +100,7 @@ module.exports = function (dbHandler, model, cookieParser, env) {
           result.title = text.title;
           result.text = text.text;
           result.tags = text.tags;
-          result.source = text.source
+          result.source = text.source;
           result.save((err) => {
             if (!err) {
               res.json(true)
@@ -111,13 +110,15 @@ module.exports = function (dbHandler, model, cookieParser, env) {
           })
         })
       } else {
-        let newText = textsModel;
-        newText.title = text.title;
-        newText.text = text.text;
-        newText.tags = text.tags
-        newText.save((err) => {
+        let textsModel = require('../models/text')(model);
+        textsModel.title = text.title;
+        textsModel.text = text.text;
+        textsModel.tags = text.tags;
+        textsModel.source = text.source;
+        textsModel.save((err) => {
           if (!err) {
-            res.json(true)
+            console.log('document saved with id: ' + textsModel._id)
+            res.json('document saved with id: ' + textsModel._id)
           } else {
             res.status(500).json(err)
           }
