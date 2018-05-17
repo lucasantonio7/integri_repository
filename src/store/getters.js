@@ -103,5 +103,8 @@ export default {
   },
   getDashboardUsers: state => {
     return state.dashboard_users
+  },
+  getTTSToken: state => {
+    return state.tts_token
   }
 }

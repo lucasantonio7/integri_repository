@@ -131,5 +131,8 @@ export default {
   },
   SET_DASHBOARD_USERS (state, payload) {
     state.dashboard_users = payload
+  },
+  SET_TTS_TOKEN (state, payload) {
+    state.tts_token = payload
   }
 }

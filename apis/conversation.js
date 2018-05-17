@@ -30,7 +30,13 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.log('error:', err);
         res.json(err)
       } else {
-        res.json(response)
+        watson.getTTSToken().then(token => {
+          response.ttsToken = token
+          res.json(response)
+        }).catch(err => {
+          console.log(err)
+          res.json(response)
+        })
       }
     });
   })
@@ -129,7 +135,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.error(err);
         console.log("CONVERSATION ERROR! ", err);
         res.status(500).send(err);
-      } else {
+      } else {        
         if (response.context.verifyAPI) {
           Promise.all([axios.get('https://api.beta.atados.com.br/startup/', {
               headers: {
@@ -355,6 +361,18 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       res.status(400).send("Any dialog provided")
     }
   })
+
+  api.get('/synthesize', (req, res, next) => {
+    console.log(req.query)
+    const transcript = watson.synthesize(req.query)
+    transcript.on('response', (response) => {
+      if (req.query.download) {
+        response.headers['content-disposition'] = 'attachment; filename=transcript.wav';
+      }
+    });
+    transcript.on('error', next);
+    res.send(transcript)
+  });
 
   return api;
 }

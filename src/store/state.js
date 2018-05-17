@@ -43,5 +43,6 @@ export default {
   dashboard_newsletter_subscribers: [],
   dashboard_content: [],
   dashboard_shared_content: [],
-  dashboard_users: []
+  dashboard_users: [],
+  tts_token: null
 }
