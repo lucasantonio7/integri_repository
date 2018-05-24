@@ -30,8 +30,9 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.log('error:', err);
         res.json(err)
       } else {
-        watson.getTTSToken().then(token => {
-          response.ttsToken = token
+        watson.getSpeechTokens().then(tokens => {
+          response.ttsToken = tokens[0]
+          response.sttToken = tokens[1]
           res.json(response)
         }).catch(err => {
           console.log(err)

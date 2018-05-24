@@ -30,15 +30,11 @@ module.exports = function (appEnv) {
     password: NLUCredentials.password,
     version_date: '2017-02-27'
   });
-  let speechToText = new SpeechToTextV1({
+  let speech_to_text_authorization = new watson.AuthorizationV1({
     username: appEnv.services['speech_to_text'][0].credentials.username,
-    password: appEnv.services['speech_to_text'][0].credentials.password
+    password: appEnv.services['speech_to_text'][0].credentials.password,
+    url: appEnv.services['speech_to_text'][0].credentials.url
   });
-
-  let STTParams = {
-    model: 'pt-BR_BroadbandModel',
-    content_type: 'audio/flac'
-  }
 
   let text_to_speech_authorization = new watson.AuthorizationV1({
     username: appEnv.services['text_to_speech'][0].credentials.username,
@@ -106,16 +102,22 @@ module.exports = function (appEnv) {
       //   return tts.synthesize(params)
       // })
     },
-    getTTSToken () {
+    getSpeechTokens () {
       return new Promise((resolve, reject) => {
-        text_to_speech_authorization.getToken((err, token) => {
+        text_to_speech_authorization.getToken((err, tts) => {
           if(err){
             reject(err)
           }else {
-            resolve(token)
+            speech_to_text_authorization.getToken((err, stt) => {
+              if(err){
+                reject(err)
+              }else {
+                resolve([tts, stt])
+              }
+            })
           }
         })
-      })      
+      })
     }
   }
 }

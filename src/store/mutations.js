@@ -134,5 +134,8 @@ export default {
   },
   SET_TTS_TOKEN (state, payload) {
     state.tts_token = payload
+  },
+  SET_STT_TOKEN (state, payload) {
+    state.stt_token = payload
   }
 }

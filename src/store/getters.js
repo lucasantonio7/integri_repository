@@ -106,5 +106,8 @@ export default {
   },
   getTTSToken: state => {
     return state.tts_token
+  },
+  getSTTToken: state => {
+    return state.stt_token
   }
 }
