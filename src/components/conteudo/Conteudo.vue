@@ -70,10 +70,10 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
+    <v-dialog v-model="showVideo" persistent :fullscreen="$vuetify.breakpoint.smAndDown" :max-width="currentVideoDimensions.width" :width="currentVideoDimensions.width">
       <div class="floating-video">
         <span class="close-btn" @click="closeModal"><i class="fa fa-chevron-left" aria-hidden="true"></i>Voltar</span>
-        <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideo.thumbnail.width" :player-height="currentVideo.thumbnail.height" class="responsive-yt" @ready="ready" @playing="playing"></youtube>
+        <youtube :video-id="currentVideo.id" :player-vars="{ autoplay: 1 }" :player-width="currentVideoDimensions.width" :player-height="currentVideoDimensions.height" class="responsive-yt" @ready="ready" @playing="playing"></youtube>
       </div>
     </v-dialog>
   </div>
@@ -92,6 +92,26 @@ export default {
         return this.$store.getters.getClassificationTags
       }
     },
+    currentWidth () {
+      return window.innerWidth
+    },
+    currentVideoDimensions () {
+      if (this.$vuetify.breakpoint.smAndDown) {
+        return {
+          width: this.currentWidth,
+          height: (this.currentWidth / 16) * 9
+        }
+      } else {
+        if (this.currentVideo.thumbnail.width < 640) {
+          return {
+            width: this.currentWidth * 0.5,
+            height: ((this.currentWidth / 2) / 16) * 9
+          }
+        } else {
+          return this.currentVideo.thumbnail
+        }
+      }
+    },
     videos () {
       return this.$store.getters.getContentVideos
     },
@@ -99,8 +119,7 @@ export default {
       return this.$store.getters.getContentTexts
     },
     imageHeight () {
-      let ratio = window.innerHeight / 16
-      return ratio * 9
+      return (window.innerHeight / 16) * 9
     },
     sortedContent () {
       let finalResult = []
@@ -221,10 +240,9 @@ export default {
       })
     },
     onResize () {
-      let currentWidth = window.innerWidth
       let elementratio = 0
-      if (currentWidth < 960) {
-        elementratio = currentWidth * 0.5
+      if (this.currentWidth < 960) {
+        elementratio = this.currentWidth * 0.5
         this.layoutWidth = 'width:' + (this.classificationTags.length * elementratio) + 'px'
         this.slidersWrapperHeight = (window.innerHeight - 92) + 'px'
         this.slidersOptions.height = window.innerHeight * 0.6314465408805031
