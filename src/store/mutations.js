@@ -137,5 +137,8 @@ export default {
   },
   SET_STT_TOKEN (state, payload) {
     state.stt_token = payload
+  },
+  STOP_SPEECH_ANIMATION (state, payload) {
+    state.chat[state.chat.length - 1].isPlaying = false
   }
 }

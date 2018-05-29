@@ -41,6 +41,19 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       }
     });
   })
+  /**
+   * Remove duplicates from an array of objects in javascript
+   * @param arr - Array of objects
+   * @param prop - Property of each object to compare
+   * @returns {Array}
+   */
+  let removeDuplicates = function ( arr, prop ) {
+    let obj = {};
+    return Object.keys(arr.reduce((prev, next) => {
+      if(!obj[next[prop].videoId]) obj[next[prop].videoId] = next; 
+      return obj;
+    }, obj)).map((i) => obj[i]);
+  }
   // If user's location is in RS api beta should be used
   let needAPIBeta = function (value) {
     console.log(value)
@@ -193,6 +206,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
                         })
                       });
                       response.context.video = [].concat.apply([], filtered);
+                      response.context.video = removeDuplicates(response.context.video,'id')
                       response.context.user = req.session.newProfile;
                       req.session.newProfile = false
                       res.json(response)

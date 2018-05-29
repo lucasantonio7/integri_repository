@@ -10,6 +10,7 @@
         </v-btn>
       </v-toolbar>
     </div>
+    <h5 class="sound-warning">ligue seu som ou coloque fones de ouvido <v-icon right class="white--text">fas fa-headphones</v-icon></h5>
     <div class="chatbox-messages">
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
@@ -18,6 +19,7 @@
               <img :src="require('@/assets/png/logo/super_feliz.png')" alt="">
             </v-avatar>
             <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
+            <v-icon class="audio-feedback white--text" :class="{'animated pulse infinite': message.isPlaying}" v-if="message.isPlaying">fas fa-volume-up</v-icon>
           </v-layout>
           <v-container grid-list-xs text-xs-center v-if="message.videos">
             <carousel :perPage="1" :navigationEnabled="true" class="video-slider">
@@ -320,7 +322,7 @@ export default {
       let stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
         token: this.$store.getters.getSTTToken,
         model: 'pt-BR_BroadbandModel',
-        inactivity_timeout: 4,
+        inactivity_timeout: 3,
         smart_formatting: true,
         object_mode: false
       })
@@ -433,18 +435,17 @@ export default {
       return new Promise((resolve, reject) => {
         if (collection.length > 0) {
           let synth = collection.shift()
-          console.log(synth.audio)
           synth.audio.load()
           synth.audio.oncanplay = () => {
             this.$store.commit('DEACTIVATE_TYPING')
-            console.log(synth.audio.src)
             this.inputBoxEnabled = false
             synth.audio.play()
             this.$store.commit('ADD_TEXT', {
               sender: 'watson',
               message: synth.text,
               videos: synth.data.context.display === 'videos' ? true : null,
-              opportunities: synth.data.context.display === 'opportunity' ? true : null
+              opportunities: synth.data.context.display === 'opportunity' ? true : null,
+              isPlaying: true
             })
             if (synth.data.context.video && synth.data.context.display) {
               this.$store.commit('SET_RELEVANT', synth.data.context.video)
@@ -460,6 +461,7 @@ export default {
             }
           }
           synth.audio.onended = () => {
+            this.$store.commit('STOP_SPEECH_ANIMATION')
             this.processAudioQueue(collection).then(() => {
               resolve(true)
             })
@@ -471,6 +473,7 @@ export default {
       })
     },
     processMessage (response) {
+      console.log(response)
       switch (response.data.context.capture_user_feedback) {
         case 'started':
           if (!this.capturedDialog) {
@@ -534,9 +537,13 @@ export default {
           text = text.replace('social_media', this.$store.getters.getAccessSource)
         }
         return new Promise((resolve, reject) => {
-          this.synthesizeAndDisplay(text).then(synth => {
-            resolve({ audio: synth.audio, data: response.data, text })
-          })
+          if (text) {
+            this.synthesizeAndDisplay(text).then(synth => {
+              resolve({ audio: synth.audio, data: response.data, text })
+            })
+          } else {
+            resolve({ audio: null, data: response.data, text })
+          }
         })
       })
       Promise.all(synthesisQueue).then(processedSynth => {
@@ -647,21 +654,25 @@ export default {
         if (this.select1.active) {
           switch (this.select1.origin) {
             case 'states':
-              if (this.$store.getters.getUser.login) {
-                let userData = this.$store.getters.getUser
-                userData.user_data.location = this.select2.model + ', ' + this.select1.model.nome
-                this.$store.commit('SET_USER', userData)
-                this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: userData.user_data.location}))
-                // OBS: Salvar usuário
+              if (!this.select2.model) {
+                return false
               } else {
-                this.newUser.location = this.select2.model + ', ' + this.select1.model.nome
-                this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: this.newUser.location}))
-              }
-              this.select1.active = false
-              this.select2.active = false
-              data = {
-                text: this.message || this.select2.model + ', ' + this.select1.model.sigla,
-                context: this.$store.getters.getContext
+                if (this.$store.getters.getUser.login) {
+                  let userData = this.$store.getters.getUser
+                  userData.user_data.location = this.select2.model + ', ' + this.select1.model.nome
+                  this.$store.commit('SET_USER', userData)
+                  this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: userData.user_data.location}))
+                  // OBS: Salvar usuário
+                } else {
+                  this.newUser.location = this.select2.model + ', ' + this.select1.model.nome
+                  this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: this.newUser.location}))
+                }
+                this.select1.active = false
+                this.select2.active = false
+                data = {
+                  text: this.message || this.select2.model + ', ' + this.select1.model.sigla,
+                  context: this.$store.getters.getContext
+                }
               }
               break
             case 'skills':
@@ -744,7 +755,6 @@ export default {
             this.$store.commit('SET_TTS_TOKEN', response.data.ttsToken)
             this.$store.commit('SET_STT_TOKEN', response.data.sttToken)
             this.$store.dispatch('LOAD_STATES')
-            console.log(response.data)
             Promise.all(response.data.output.text.map(text => {
               return this.synthesizeAndDisplay(text)
             })).then(values => {
@@ -754,10 +764,12 @@ export default {
                   this.$store.commit('DEACTIVATE_TYPING')
                   this.$store.commit('ADD_TEXT', {
                     sender: 'watson',
-                    message: val.text
+                    message: val.text,
+                    isPlaying: true
                   })
                 }
                 val.audio.onended = () => {
+                  this.$store.commit('STOP_SPEECH_ANIMATION')
                   resolve(true)
                 }
               })
