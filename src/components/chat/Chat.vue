@@ -121,10 +121,10 @@
         <input ref="inputbox" type="text" class="chat-input" v-model="message" :disabled="!inputBoxEnabled" v-on:keyup.enter="submit" v-if="inputboxactive">
         <v-layout class="selections" v-if="select1.active || select2.active" row wrap>
           <v-flex xs12 md6 lg4 class="selection-box">
-            <v-select solo v-on:keyup.enter="submit" v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
+            <v-select solo v-on:keyup.enter="submit" v-bind:items="select1.items" :disabled="!inputBoxEnabled" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
           </v-flex>
           <v-flex xs12 md6 lg4 class="selection-box">
-            <v-select solo v-on:keyup.enter="submit" v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
+            <v-select solo v-on:keyup.enter="submit" v-bind:items="select2.items" :disabled="!inputBoxEnabled" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
           </v-flex>
         </v-layout>
         <v-icon v-if="canSend" :disabled="!canSend" @click="submit">send</v-icon>
@@ -364,7 +364,7 @@ export default {
         } else {
           this.axiosUrl = 'https://v2.api.atados.com.br/'
           this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
-          this.axiosOppty = 'https://atados.com.br/vaga/'
+          this.axiosOppty = 'https://www.atados.com.br/vaga/'
         }
       } else if (this.needAPIBeta(this.userData.user_data.location)) {
         this.axiosUrl = 'https://api.beta.atados.com.br/'
@@ -373,7 +373,7 @@ export default {
       } else {
         this.axiosUrl = 'https://v2.api.atados.com.br/'
         this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
-        this.axiosOppty = 'https://atados.com.br/vaga/'
+        this.axiosOppty = 'https://www.atados.com.br/vaga/'
       }
     },
     needAPIBeta (value) {
