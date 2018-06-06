@@ -1,7 +1,7 @@
 <template>
   <div @click="toggle">
     <div class="message animated fadeInRight" v-if="displayMsg" :class="{'small': $vuetify.breakpoint.smAndDown}">
-      Oi! Se tiver alguma dúvida, clique aqui para falar comigo!
+      {{msg}}
     </div>
     <div class="fbc animated bounceIn" :class="{'notify-user': isDenied && isNotificationActive, 'small': $vuetify.breakpoint.smAndDown}">
       <img :src="require('@/assets/png/logo/amoroso.png')" alt="" :class="{'animated tada': isDenied}">
@@ -22,7 +22,9 @@ export default {
     }
   },
   data: () => ({
-    displayMsg: false
+    displayMsg: false,
+    defaultMsg: 'Oi! Se tiver alguma dúvida, clique aqui para falar comigo!',
+    msg: ''
   }),
   watch: {
     isDenied (newVal) {
@@ -42,6 +44,11 @@ export default {
   mounted () {
     setTimeout(() => {
       this.displayMsg = true
+      if (this.$store.getters.getUser.login) {
+        this.msg = 'Olá ' + this.$store.getters.getUser.user_data.name + ', clique aqui para obter mais conteúdo'
+      } else {
+        this.msg = this.defaultMsg
+      }
     }, 800)
   }
 }

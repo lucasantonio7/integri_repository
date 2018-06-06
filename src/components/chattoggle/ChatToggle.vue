@@ -43,9 +43,6 @@ export default {
         } else {
           this.$store.commit('SET_ACCESS_SOURCE', 'Integri')
         }
-        this.$nextTick().then(() => {
-          this.$store.commit('SET_CHAT_VISIBLE')
-        })
       }
     }
   },

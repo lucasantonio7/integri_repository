@@ -142,6 +142,9 @@
 <script>
 import axios from 'axios'
 import WatsonSpeech from 'watson-speech'
+// import io from 'socket.io-client'
+// const stt = io('')
+// const tts = io('')
 export default {
   computed: {
     causes () {

@@ -10,7 +10,7 @@
             </v-btn>
           </v-toolbar>
           <v-flex xs12>
-            <youtube class="responsive-yt" :video-id="vid.id" :player-width="vid.thumbnail.width" :player-height="vid.thumbnail.height"  @ready="ready" @playing="playing"></youtube>
+            <youtube class="responsive-yt" :video-id="vid.id" :player-width="vid.thumbnail.width" :player-height="vid.thumbnail.height" @ready="ready" @playing="playing"></youtube>
           </v-flex>
         </v-layout>
       </v-dialog>

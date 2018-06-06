@@ -66,6 +66,9 @@ export default {
   SET_ACCESS_SOURCE (state, payload) {
     state.access_source = payload
   },
+  CLEAR_ACCESS_SOURCE (state, payload) {
+    state.access_source = null
+  },
   TOGGLE_CHAT_VISIBILITY (state, payload) {
     state.displayChat.active = !state.displayChat.active
   },
