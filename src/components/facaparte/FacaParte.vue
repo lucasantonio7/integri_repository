@@ -10,7 +10,7 @@
     <v-container fluid grid-list-xs>
       <v-layout row wrap>
         <v-flex md4 xs12>
-          <v-btn class="faca--card" :class="{ 'elevation-10 active': selected === options.share.id }" block @click="selectOption(options.share.id)">{{ options.share.text }}</v-btn>
+          <v-btn class="faca--card" block @click="selectOption(options.share.id)">{{ options.share.text }}</v-btn>
         </v-flex>
         <v-flex md4 xs12>
           <v-btn class="faca--card" block :href="options.volunteering.href" target="_blank">{{ options.volunteering.text }}</v-btn>
