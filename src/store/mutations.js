@@ -143,5 +143,11 @@ export default {
   },
   STOP_SPEECH_ANIMATION (state, payload) {
     state.chat[state.chat.length - 1].isPlaying = false
+  },
+  SET_TTS_SOCKET_CONNECTION_STATE (state, payload) {
+    state.ttsWebSocketOpen = payload
+  },
+  SET_STT_SOCKET_CONNECTION_STATE (state, payload) {
+    state.sttWebSocketOpen = payload
   }
 }

@@ -107,7 +107,13 @@ export default {
   getTTSToken: state => {
     return state.tts_token
   },
+  getTTSWSConnectionState: state => {
+    return state.ttsWebSocketOpen
+  },
   getSTTToken: state => {
     return state.stt_token
+  },
+  getSTTWSConnectionState: state => {
+    return state.sttWebSocketOpen
   }
 }

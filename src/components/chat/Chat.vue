@@ -144,7 +144,6 @@ import axios from 'axios'
 import WatsonSpeech from 'watson-speech'
 // import io from 'socket.io-client'
 // const stt = io('')
-// const tts = io('')
 export default {
   computed: {
     causes () {
@@ -292,6 +291,9 @@ export default {
         item_text: ''
       },
       showVideo: false,
+      stt: null,
+      tts: null,
+      ttsAudioStream: [],
       error: {
         message: ''
       },
@@ -438,37 +440,40 @@ export default {
       return new Promise((resolve, reject) => {
         if (collection.length > 0) {
           let synth = collection.shift()
-          synth.audio.load()
-          synth.audio.oncanplay = () => {
-            this.$store.commit('DEACTIVATE_TYPING')
-            this.inputBoxEnabled = false
-            synth.audio.play()
-            this.$store.commit('ADD_TEXT', {
-              sender: 'watson',
-              message: synth.text,
-              videos: synth.data.context.display === 'videos' ? true : null,
-              opportunities: synth.data.context.display === 'opportunity' ? true : null,
-              isPlaying: true
-            })
-            if (synth.data.context.video && synth.data.context.display) {
-              this.$store.commit('SET_RELEVANT', synth.data.context.video)
-              delete synth.data.context.display
-              delete synth.data.context.video
-              this.$store.commit('SET_CONTEXT', synth.data.context)
+          this.synthesizeAndDisplay(synth.text).then(resp => {
+            resp.audio.load()
+            resp.audio.oncanplay = () => {
+              this.$store.commit('DEACTIVATE_TYPING')
+              this.inputBoxEnabled = false
+              resp.audio.play()
+              this.$store.commit('ADD_TEXT', {
+                sender: 'watson',
+                message: resp.text,
+                videos: synth.data.context.display === 'videos' ? true : null,
+                opportunities: synth.data.context.display === 'opportunity' ? true : null,
+                isPlaying: true
+              })
+              if (synth.data.context.video && synth.data.context.display) {
+                this.$store.commit('SET_RELEVANT', synth.data.context.video)
+                delete synth.data.context.display
+                delete synth.data.context.video
+                this.$store.commit('SET_CONTEXT', synth.data.context)
+              }
+              if (synth.data.context.opportunities) {
+                this.$store.commit('SET_OPPORTUNITIES', synth.data.context.opportunities)
+                delete synth.data.context.display
+                delete synth.data.context.opportunities
+                this.$store.commit('SET_CONTEXT', synth.data.context)
+              }
             }
-            if (synth.data.context.opportunities) {
-              this.$store.commit('SET_OPPORTUNITIES', synth.data.context.opportunities)
-              delete synth.data.context.display
-              delete synth.data.context.opportunities
-              this.$store.commit('SET_CONTEXT', synth.data.context)
+            resp.audio.onended = () => {
+              this.$store.commit('STOP_SPEECH_ANIMATION')
+              this.audio.src = null
+              this.processAudioQueue(collection).then(() => {
+                resolve(true)
+              })
             }
-          }
-          synth.audio.onended = () => {
-            this.$store.commit('STOP_SPEECH_ANIMATION')
-            this.processAudioQueue(collection).then(() => {
-              resolve(true)
-            })
-          }
+          })
         } else {
           this.inputBoxEnabled = true
           resolve(true)
@@ -540,13 +545,7 @@ export default {
           text = text.replace('social_media', this.$store.getters.getAccessSource)
         }
         return new Promise((resolve, reject) => {
-          if (text) {
-            this.synthesizeAndDisplay(text).then(synth => {
-              resolve({ audio: synth.audio, data: response.data, text })
-            })
-          } else {
-            resolve({ audio: null, data: response.data, text })
-          }
+          resolve({ audio: null, data: response.data, text })
         })
       })
       Promise.all(synthesisQueue).then(processedSynth => {
@@ -773,6 +772,7 @@ export default {
                 }
                 val.audio.onended = () => {
                   this.$store.commit('STOP_SPEECH_ANIMATION')
+                  this.audio.src = null
                   resolve(true)
                 }
               })
@@ -856,7 +856,29 @@ export default {
      */
     synthesizeAndDisplay (text) {
       return new Promise((resolve, reject) => {
-        resolve({ audio: WatsonSpeech.TextToSpeech.synthesize({ text, voice: 'pt-BR_IsabelaVoice', token: this.$store.getters.getTTSToken, autoPlay: false }), text })
+        let token = this.$store.getters.getTTSToken
+        this.tts = new WebSocket('wss://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?voice=pt-BR_IsabelaVoice&watson-token=' + token)
+        this.tts.onmessage = (evt) => {
+          if (typeof evt.data === 'string') {
+            console.log('Received string message: ', evt.data)
+          } else {
+            console.log('Received ' + evt.data.size + ' binary bytes', evt.data.type)
+            this.ttsAudioStream.push(evt.data)
+          }
+        }
+        this.tts.onclose = (evt) => {
+          console.log('WebSocket closed', evt.code, evt.reason)
+          let currentAudioBlob = new Blob(this.ttsAudioStream, {type: 'audio/wav'})
+          this.audio.src = (URL.createObjectURL(currentAudioBlob))
+          this.ttsAudioStream.length = 0
+          this.audio.load()
+          this.audio.play()
+        }
+        this.tts.onopen = (evt) => {
+          console.log('Socket open')
+          this.tts.send(JSON.stringify({text: text, accept: 'audio/mp3'}))
+        }
+        resolve({ audio: this.audio, text })
       })
     }
   },
@@ -865,7 +887,7 @@ export default {
       document.querySelector('.chat-wrapper').scrollIntoView({
         behavior: 'smooth'
       })
-      this.audio = document.getElementById('audio')
+      this.audio = document.getElementById('audio') || new Audio()
       this.initChat().then(res => {
         if (this.$store.getters.getUser.login) {
           if (this.isDenied) {

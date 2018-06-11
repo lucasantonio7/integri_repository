@@ -45,5 +45,7 @@ export default {
   dashboard_shared_content: [],
   dashboard_users: [],
   tts_token: null,
-  stt_token: null
+  ttsWebSocketOpen: false,
+  stt_token: null,
+  sttWebSocketOpen: false
 }
