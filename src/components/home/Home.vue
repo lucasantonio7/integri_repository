@@ -82,22 +82,14 @@ export default {
       }
     },
     gettingProfile () {
-      if (this.$store.getters.getContext) {
-        if (this.$store.getters.getContext.gettingProfile === 'started') {
-          console.log(this.$store.getters.getContext.gettingProfile)
-          return true
-        } else {
-          return false
-        }
-      } else {
-        return false
-      }
+      return this.$store.getters.isLeviGettingProfile
     }
   },
   beforeRouteLeave (to, from, next) {
-    console.log('Display Chat')
     if (this.$store.getters.displayChat.active) {
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
+      next()
+    } else {
       next()
     }
   },

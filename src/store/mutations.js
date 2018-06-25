@@ -151,6 +151,10 @@ export default {
     state.sttWebSocketOpen = payload
   },
   START_TO_GET_PROFILE (state) {
-    state.context.gettingProfile = 'started'
+    if (state.context) {
+      state.context.gettingProfile = 'started'
+    } else {
+      state.getProfileIntention = true
+    }
   }
 }

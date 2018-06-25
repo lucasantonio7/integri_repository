@@ -16,21 +16,16 @@
     </v-container> -->
     <v-layout row wrap>
       <v-flex xs12>
-        <jorney :fixed="true"></jorney>
-      </v-flex>
-      <v-flex xs12>
         <chat></chat>
       </v-flex>
     </v-layout>
   </div>
 </template>
 <script>
-import Jorney from '../jorney/Jorney'
 import Chat from '../chattoggle/ChatToggle'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    Jorney,
     Chat
   },
   computed: {

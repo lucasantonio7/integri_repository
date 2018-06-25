@@ -16,9 +16,7 @@ export default {
       axios.post('/api/access_denied', {
         access_status: true
       }).then(response => {
-        if (this.$store.getters.getContext) {
-          this.$store.commit('START_TO_GET_PROFILE')
-        }
+        this.$store.commit('START_TO_GET_PROFILE')
         this.$router.push('home')
       })
     }

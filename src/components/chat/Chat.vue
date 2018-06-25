@@ -221,6 +221,9 @@ export default {
     },
     inputboxactive () {
       return !this.select1.active && !this.select2.active
+    },
+    gettingProfile () {
+      return this.$store.getters.isLeviGettingProfile
     }
   },
   watch: {
@@ -900,7 +903,16 @@ export default {
             }, true)
           }
         } else {
-          this.submit({text: 'Primeiro acesso'}, true)
+          console.log(this.gettingProfile === undefined)
+          if (this.gettingProfile) {
+            console.log('This is america')
+            this.submit({
+              text: '',
+              context: Object.assign(this.$store.getters.getContext, {gettingProfile: 'started'})
+            }, true)
+          } else {
+            this.submit({text: 'Primeiro acesso'}, true)
+          }
         }
       }).catch(err => {
         console.log(err)

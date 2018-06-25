@@ -47,5 +47,6 @@ export default {
   tts_token: null,
   ttsWebSocketOpen: false,
   stt_token: null,
-  sttWebSocketOpen: false
+  sttWebSocketOpen: false,
+  getProfileIntention: false
 }

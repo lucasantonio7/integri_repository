@@ -115,5 +115,18 @@ export default {
   },
   getSTTWSConnectionState: state => {
     return state.sttWebSocketOpen
+  },
+  isLeviGettingProfile: state => {
+    let status = false
+    if (state.getProfileIntention) {
+      status = true
+    } else {
+      if (state.context) {
+        if (state.context.gettingProfile === 'started') {
+          return true
+        }
+      }
+    }
+    return status
   }
 }
