@@ -862,7 +862,6 @@ export default {
           if (typeof evt.data === 'string') {
             console.log('Received string message: ', evt.data)
           } else {
-            console.log('Received ' + evt.data.size + ' binary bytes', evt.data.type)
             this.ttsAudioStream.push(evt.data)
           }
         }
@@ -905,6 +904,12 @@ export default {
         }
       }).catch(err => {
         console.log(err)
+        if (this.$store.getters.getContext.gettingProfile === 'started') {
+          this.submit({
+            text: '',
+            context: this.$store.getters.getContext
+          }, true)
+        }
       })
     })
   }

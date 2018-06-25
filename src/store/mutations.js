@@ -2,10 +2,10 @@ export default {
   ADD_TEXT (state, payload) {
     state.chat.push(payload)
   },
-  HIDE_CHAT_NOTIFICATION (state, payload) {
+  HIDE_CHAT_NOTIFICATION (state) {
     state.displayChat.isNotificationActive = false
   },
-  HIDE_CHAT_LABEL (state, payload) {
+  HIDE_CHAT_LABEL (state) {
     state.displayLabel.isNotificationActive = false
   },
   SET_USER (state, payload) {
@@ -23,10 +23,10 @@ export default {
   SET_OPPORTUNITIES (state, payload) {
     state.opportunities = payload
   },
-  SET_CHAT_VISIBLE (state, payload) {
+  SET_CHAT_VISIBLE (state) {
     state.displayChat.active = true
   },
-  SHOW_CHAT_NOTIFICATION (state, payload) {
+  SHOW_CHAT_NOTIFICATION (state) {
     state.displayChat.isNotificationActive = true
   },
   SET_CAUSES (state, payload) {
@@ -36,7 +36,7 @@ export default {
     state.current_video = payload
     state.player_active = true
   },
-  STOP_VIDEO (state, payload) {
+  STOP_VIDEO (state) {
     state.currentVideo = {
       active: false,
       id: '',
@@ -66,10 +66,10 @@ export default {
   SET_ACCESS_SOURCE (state, payload) {
     state.access_source = payload
   },
-  CLEAR_ACCESS_SOURCE (state, payload) {
+  CLEAR_ACCESS_SOURCE (state) {
     state.access_source = null
   },
-  TOGGLE_CHAT_VISIBILITY (state, payload) {
+  TOGGLE_CHAT_VISIBILITY (state) {
     state.displayChat.active = !state.displayChat.active
   },
   TOGGLE_DRAWER (state, payload) {
@@ -117,7 +117,7 @@ export default {
   SET_LOGIN_RETURN (state, payload) {
     state.login_return = payload
   },
-  CLEAR_LOGIN_RETURN (state, payload) {
+  CLEAR_LOGIN_RETURN (state) {
     state.login_return = null
   },
   SET_FEATURES (state, payload) {
@@ -141,7 +141,7 @@ export default {
   SET_STT_TOKEN (state, payload) {
     state.stt_token = payload
   },
-  STOP_SPEECH_ANIMATION (state, payload) {
+  STOP_SPEECH_ANIMATION (state) {
     state.chat[state.chat.length - 1].isPlaying = false
   },
   SET_TTS_SOCKET_CONNECTION_STATE (state, payload) {
@@ -149,5 +149,8 @@ export default {
   },
   SET_STT_SOCKET_CONNECTION_STATE (state, payload) {
     state.sttWebSocketOpen = payload
+  },
+  START_TO_GET_PROFILE (state) {
+    state.context.gettingProfile = 'started'
   }
 }
