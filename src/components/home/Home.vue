@@ -21,8 +21,8 @@
             <v-flex xs6 pt-5>
               <div class="balloon pa-5 animated tada">
                 <p class="display-1 white--text pl-4">{{ title }}</p>
-                <p class="title white--text pl-4">
-                  {{ defaultMsg }}
+                <p class="title white--text pl-4" v-for="(msg, index) in defaultMsg" :key="index">
+                  {{ msg }}
                 </p>
               </div>
             </v-flex>
@@ -59,14 +59,17 @@ export default {
     ]),
     defaultMsg () {
       if (this.gettingProfile) {
-        return 'Posso te ajudar a iniciar sua jornada, mas antes preciso te conhecer melhor. Topa responder algumas perguntas?'
+        return [
+          'Quero te inspirar para ver você como um agente da mudança! Seja na sua casa, na sua comunidade e até no mundo. Para isso, preciso entender melhor o seu perfil.',
+          'Você aceita responder algumas perguntas enquanto te mostro mais sobre o voluntariado?'
+        ]
       } else {
-        return `Veja o que encontrei com base na análise de seu perfil do ${this.$store.getters.getAccessSource}. Clique no botão abaixo e vamos iniciar a sua jornada!`
+        return [`Veja o que encontrei com base na análise de seu perfil do ${this.$store.getters.getAccessSource}. Clique no botão abaixo e vamos iniciar a sua jornada!`]
       }
     },
     title () {
       if (this.gettingProfile) {
-        return 'Olá novamente!'
+        return 'Olá, que bom ver você de novo!'
       } else {
         return `Olá, ${this.getUser.user_data.name}`
       }
