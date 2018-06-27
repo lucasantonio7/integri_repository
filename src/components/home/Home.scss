@@ -27,23 +27,34 @@
 }
 
 .levi-wrapper{
-  min-height: calc(100vh - 64px)!important;
+  height: calc(100vh - 4.5rem)!important;
   background: #8B3BA8;
+  position: relative;
+  &.mobile{
+    height: calc(100vh - 56px)!important;
+  }
   .levi-flex{
     position: relative;
     overflow: hidden;
     justify-content: center;
     align-content: center;
     text-align: center;
-    height: calc(100vh - 64px);
+    // height: calc(100vh - 64px);
     &.crop{
       height: calc(100vh - 112px)!important;
     }
+    &.mobile {
+      position: absolute;
+      top: 3rem;
+      left: 1.5rem;
+      z-index: 100;
+      width: 33%;
+    }
     .levi {
-      width: auto;
+      width: 100%;
       max-height: calc(100vh - 64px);
+      height: auto;
       text-align: center;
-      // position: absolute;
       right: 0;
       left: 0;
       bottom: -15vh;
@@ -57,7 +68,16 @@
       border-bottom-right-radius: 7rem;
       position: relative;
       display: block;
-      box-shadow: 0.25rem 0.5rem 1rem #6D0B7F
+      box-shadow: 0.25rem 0.5rem 1rem #6D0B7F;
+      &.mobile{
+        border-radius: 0rem;
+        .title {
+          padding-left: calc(33vw - 48px)
+        }
+        .subtitle {
+          padding-left: calc(33vw - 48px)
+        }
+      }
     }
     .message-hook{
       background: #F58634!important;

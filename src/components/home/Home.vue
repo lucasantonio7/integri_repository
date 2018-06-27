@@ -11,22 +11,23 @@
         </v-layout>
       </v-container>
     </v-card-media>
-    <v-container fill-height fluid="" class="levi-wrapper animated fadeIn" py-0 px-5 :pt-5="$vuetify.breakpoint.mdAndUp" v-if="getUser.login || gettingProfile">
+    <v-container fill-height fluid="" v-lock class="levi-wrapper animated fadeIn" :class="{'mobile': $vuetify.breakpoint.smAndDown}" pt-3 :px-5="$vuetify.breakpoint.mdAndUp" :pt-5="$vuetify.breakpoint.mdAndUp" v-if="getUser.login || gettingProfile">
+      <!-- desktop -->
       <v-layout row wrap>
-        <v-flex xs12 md6 class="levi-flex" pa-5>
-          <img :src="require('@/assets/png/logo/confiante_cropped.png')" class="levi" alt="">
+        <v-flex xs12 sm6 md6 class="levi-flex" :pa-5="$vuetify.breakpoint.mdAndUp" :class="{'mobile': $vuetify.breakpoint.smAndDown}">
+          <img :src="require('@/assets/png/logo/feliz.png')" class="levi" alt="">
         </v-flex>
-        <v-flex xs12 md6 py-5 pr-5 class="message-flex">
-          <v-layout column="" wrap>
-            <v-flex xs6 pt-5>
-              <div class="balloon pa-5 animated tada">
-                <p class="display-1 white--text pl-4">{{ title }}</p>
-                <p class="title white--text pl-4" v-for="(msg, index) in defaultMsg" :key="index">
+        <v-flex xs12 sm6 md6 :py-5="$vuetify.breakpoint.mdAndUp" :pr-5="$vuetify.breakpoint.mdAndUp" class="message-flex">
+          <v-layout column="">
+            <v-flex xs6 :py-5="$vuetify.breakpoint.mdAndUp">
+              <div class="balloon animated tada pt-5 pb-3" :class="balloonClasses">
+                <p class="white--text" :pl-4="$vuetify.breakpoint.mdAndUp" :class="titleClasses">{{ title }}</p>
+                <p class="white--text" :pl-4="$vuetify.breakpoint.mdAndUp" :class="contentClasses" v-for="(msg, index) in defaultMsg" :key="index">
                   {{ msg }}
                 </p>
               </div>
             </v-flex>
-            <v-flex pb-5 mx-5>
+            <v-flex :mx-5="$vuetify.breakpoint.mdAndUp">
               <v-btn block large dark class="message-hook elevation-4" @click="callChat">{{ callToAction }}</v-btn>
             </v-flex>
           </v-layout>
@@ -69,7 +70,7 @@ export default {
     },
     title () {
       if (this.gettingProfile) {
-        return 'Olá, que bom ver você de novo!'
+        return 'Olá, que bom ver você!'
       } else {
         return `Olá, ${this.getUser.user_data.name}`
       }
@@ -83,6 +84,45 @@ export default {
     },
     gettingProfile () {
       return this.$store.getters.isLeviGettingProfile
+    },
+    balloonClasses () {
+      if (this.$vuetify.breakpoint.smAndDown) {
+        return ['mobile', 'pr-3', 'pl-5']
+      } else {
+        return ['px-5']
+      }
+    },
+    titleClasses () {
+      if (this.$vuetify.breakpoint.mdAndUp) {
+        return ['display-1']
+      } else {
+        // Mobile
+        return ['title']
+      }
+    },
+    contentClasses () {
+      if (this.$vuetify.breakpoint.mdAndUp) {
+        return ['headline']
+      } else {
+        // Mobile
+        return ['subtitle']
+      }
+    },
+    keys () {
+      return [32, 33, 34, 35, 36, 37, 38, 39, 40]
+    }
+  },
+  directives: {
+    lock: {
+      inserted: (el, binding, vnode) => {
+        if (window.addEventListener) {
+          window.addEventListener('DOMMouseScroll', vnode.context.preventDefault, false)
+        }
+        document.addEventListener('touchmove', vnode.context.preventDefault, false)
+        window.onmousewheel = document.onmousewheel = vnode.context.preventDefault
+        document.onkeydown = vnode.context.keydown
+        document.documentElement.style.overflow = 'hidden'
+      }
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -95,8 +135,32 @@ export default {
   },
   methods: {
     callChat () {
+      if (window.removeEventListener) {
+        window.removeEventListener('DOMMouseScroll', this.preventDefault, false)
+      }
+      window.onmousewheel = document.onmousewheel = document.onkeydown = null
+      document.removeEventListener('touchmove', this.preventDefault, false)
+      document.documentElement.style.overflow = 'scroll'
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
+    },
+    preventDefault (e) {
+      e = e || window.event
+      if (e.preventDefault) {
+        e.preventDefault()
+      }
+      e.returnValue = false
+    },
+    keydown (e) {
+      for (var i = this.keys.length; i--;) {
+        if (e.keyCode === this.keys[i]) {
+          this.preventDefault(e)
+          return
+        }
+      }
     }
+  },
+  mounted () {
+    window.scrollTo(0, 0)
   }
 }
 </script>
