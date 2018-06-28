@@ -161,6 +161,7 @@ export default {
   },
   mounted () {
     window.scrollTo(0, 0)
+    console.log('This is sparta')
   }
 }
 </script>
