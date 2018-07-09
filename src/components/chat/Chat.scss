@@ -275,9 +275,10 @@ $purple: #7F59A3;
         height: 5.5rem;
       }
       &.box-disabled {
-        background-color: transparentize($color: $userbox, $amount: 0.4);
+        background-color: transparentize($color: $userbox, $amount: 0.6);
+        opacity: 0.2;
         .chat-input{
-          background-color: transparentize($color: $userbox, $amount: 0.4);
+          background-color: transparentize($color: $userbox, $amount: 0.6);
         }
       }
       .chat-input{

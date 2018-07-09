@@ -135,12 +135,7 @@ export default {
   },
   methods: {
     callChat () {
-      if (window.removeEventListener) {
-        window.removeEventListener('DOMMouseScroll', this.preventDefault, false)
-      }
-      window.onmousewheel = document.onmousewheel = document.onkeydown = null
-      document.removeEventListener('touchmove', this.preventDefault, false)
-      document.documentElement.style.overflow = 'scroll'
+      this.removeScrollLock()
       this.$store.commit('TOGGLE_CHAT_VISIBILITY')
     },
     preventDefault (e) {
@@ -157,11 +152,23 @@ export default {
           return
         }
       }
+    },
+    removeScrollLock () {
+      if (window.removeEventListener) {
+        window.removeEventListener('DOMMouseScroll', this.preventDefault, false)
+      }
+      window.onmousewheel = document.onmousewheel = document.onkeydown = null
+      document.removeEventListener('touchmove', this.preventDefault, false)
+      document.documentElement.style.overflow = 'scroll'
     }
   },
   mounted () {
-    window.scrollTo(0, 0)
-    console.log('This is sparta')
+    setTimeout(() => {
+      window.scroll(0, 0)
+    }, 750)
+  },
+  destroyed () {
+    this.removeScrollLock()
   }
 }
 </script>

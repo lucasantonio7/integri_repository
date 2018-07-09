@@ -44,6 +44,7 @@ export const routes = [
     component: Dashboard,
     beforeEnter: (to, from, next) => {
       store.dispatch('LOGIN').then(res => {
+        console.log('Welcome to the club')
         console.log(store.getters.getUser.user_data.role)
         if (store.getters.getUser.login && (store.getters.getUser.user_data.role === 'admin' || store.getters.getUser.user_data.role === 'curator')) {
           store.dispatch('LOAD_FEATURES')
@@ -53,6 +54,7 @@ export const routes = [
           next('/login')
         }
       }).catch(err => {
+        console.log('You\'ve been rejected')
         console.log(err)
         store.commit('SET_LOGIN_RETURN', '/dashboard')
         next('/login')

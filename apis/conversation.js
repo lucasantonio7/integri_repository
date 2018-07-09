@@ -47,10 +47,10 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
    * @param prop - Property of each object to compare
    * @returns {Array}
    */
-  let removeDuplicates = function ( arr, prop ) {
+  let removeDuplicates = function (arr, prop) {
     let obj = {};
     return Object.keys(arr.reduce((prev, next) => {
-      if(!obj[next[prop].videoId]) obj[next[prop].videoId] = next; 
+      if (!obj[next[prop].videoId]) obj[next[prop].videoId] = next;
       return obj;
     }, obj)).map((i) => obj[i]);
   }
@@ -137,6 +137,19 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
       })
     })
   }
+  let verifyOpptyAPI = function () {
+    return Promise.all([axios.get('https://api.beta.atados.com.br/startup/', {
+        headers: {
+          'X-ovp-channel': 'pv'
+        }
+      }),
+      axios.get('https://v2.api.atados.com.br/startup/', {
+        headers: {
+          'X-ovp-channel': 'default'
+        }
+      })
+    ])
+  }
   let processConversationMessage = function (res, req, conversationObj) {
     conversation.message({
       context: conversationObj._context,
@@ -149,26 +162,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         console.error(err);
         console.log("CONVERSATION ERROR! ", err);
         res.status(500).send(err);
-      } else {        
-        if (response.context.verifyAPI) {
-          Promise.all([axios.get('https://api.beta.atados.com.br/startup/', {
-              headers: {
-                'X-ovp-channel': 'pv'
-              }
-            }),
-            axios.get('https://v2.api.atados.com.br/startup/', {
-              headers: {
-                'X-ovp-channel': 'default'
-              }
-            })
-          ]).then(res => {
-            response.context.apiOffline = false
-            delete response.context.verifyAPI
-          }).catch(err => {
-            response.context.apiOffline = true
-            delete response.context.verifyAPI
-          })
-        }
+      } else {
         // Get the context and help with profile
         if (response.context.gettingProfile && !response.context.skipNLU) {
           switch (response.context.gettingProfile) {
@@ -206,7 +200,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
                         })
                       });
                       response.context.video = [].concat.apply([], filtered);
-                      response.context.video = removeDuplicates(response.context.video,'id')
+                      response.context.video = removeDuplicates(response.context.video, 'id')
                       response.context.user = req.session.newProfile;
                       req.session.newProfile = false
                       res.json(response)
@@ -261,9 +255,43 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
                       }
                     })
                   })
-                  res.json(response)
+                  // Verify ATADOS API
+                  if (response.context.verifyAPI) {
+                    console.log('Verificando')
+                    verifyOpptyAPI().then(apistatus => {
+                      console.log(apistatus)
+                      response.context.apiOffline = false
+                      delete response.context.verifyAPI
+                      res.json(response)
+                    }).catch(err => {
+                      console.log('Bicho rei deu erro')
+                      console.log(err)
+                      response.context.apiOffline = true
+                      delete response.context.verifyAPI
+                      res.json(response)
+                    })
+                  } else {
+                    res.json(response)
+                  }
                 }).catch(err => {
-                  res.json(response)
+                  // Verify ATADOS API
+                  if (response.context.verifyAPI) {
+                    console.log('Verificando')
+                    verifyOpptyAPI().then(apistatus => {
+                      console.log(apistatus)
+                      response.context.apiOffline = false
+                      delete response.context.verifyAPI
+                      res.json(response)
+                    }).catch(err => {
+                      console.log('Bicho rei deu erro')
+                      console.log(err)
+                      response.context.apiOffline = true
+                      delete response.context.verifyAPI
+                      res.json(response)
+                    })
+                  } else {
+                    res.json(response)
+                  }
                 })
               }).catch(err => {
                 console.log(err)
@@ -300,7 +328,24 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
           if (conversationObj._videosList) {
             response.context.video = conversationObj._videosList
           }
-          res.json(response)
+          // Atado's API Validation
+          if (response.context.verifyAPI) {
+            console.log('Verificando')
+            verifyOpptyAPI().then(apistatus => {
+              console.log(apistatus)
+              response.context.apiOffline = false
+              delete response.context.verifyAPI
+              res.json(response)
+            }).catch(err => {
+              console.log('Bicho rei deu erro')
+              console.log(err)
+              response.context.apiOffline = true
+              delete response.context.verifyAPI
+              res.json(response)
+            })
+          } else {
+            res.json(response)
+          }
         }
       }
     });
@@ -355,7 +400,7 @@ module.exports = function (appEnv, dbHandler, envVars, model) {
         processConversationMessage(res, req, conversationInput)
       }
     } catch (ex) {
-      res.send(ex)
+      res.status(500).json(ex)
     }
   })
 

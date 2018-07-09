@@ -55,5 +55,5 @@ export default {
 </script>
 
 <style lang="sass">
-  @import './FBC'
+  @import './FCB'
 </style>

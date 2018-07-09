@@ -78,10 +78,14 @@ export default {
         if (resp.data.authenticationStatus) {
           if (resp.data.role === 'admin' || resp.data.role === 'curator') {
             this.$store.dispatch('LOGIN').then(res => {
-              this.$router.push(this.$store.getters.getLoginReturn)
+              if (this.$store.getters.getLoginReturn) {
+                this.$router.push(this.$store.getters.getLoginReturn)
+              } else {
+                this.$router.push('dashboard')
+              }
             })
           } else {
-            window.location.href = '/'
+            this.$router.push('home')
           }
         } else {
           this.error.status = true

@@ -4,12 +4,28 @@ export default {
   LOGIN ({ commit, state }) {
     return new Promise((resolve, reject) => {
       axios.get('/api/twitter/user').then(response => {
-        commit('SET_USER', {
-          login: response.data.login,
-          user_data: response.data.user,
-          access_denied: response.data.denied
-        })
-        resolve(true)
+        if (response.data.login) {
+          commit('SET_USER', {
+            login: response.data.login,
+            user_data: response.data.user,
+            access_denied: response.data.denied
+          })
+          if (response.data.user.medias.facebook) {
+            commit('SET_ACCESS_SOURCE', 'Facebook')
+          } else if (response.data.user.medias.twitter) {
+            commit('SET_ACCESS_SOURCE', 'Twitter')
+          } else {
+            commit('SET_ACCESS_SOURCE', 'Integri')
+          }
+          resolve(true)
+        } else {
+          commit('SET_USER', {
+            login: response.data.login,
+            user_data: null,
+            access_denied: response.data.denied
+          })
+          reject(false)
+        }
       }).catch(err => {
         commit('SET_USER', {
           login: err.data.login,

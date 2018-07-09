@@ -13,6 +13,7 @@ export default {
     }
   },
   mounted () {
+    this.$store.commit('SET_LOGIN_RETURN', '/home')
     this.$store.dispatch('LOGIN')
   }
 }

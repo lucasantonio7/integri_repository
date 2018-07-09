@@ -153,8 +153,7 @@ export default {
   START_TO_GET_PROFILE (state) {
     if (state.context) {
       state.context.gettingProfile = 'started'
-    } else {
-      state.getProfileIntention = true
     }
+    state.getProfileIntention = true
   }
 }

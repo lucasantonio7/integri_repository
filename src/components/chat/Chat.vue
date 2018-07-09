@@ -10,7 +10,10 @@
         </v-btn>
       </v-toolbar>
     </div>
-    <h5 class="sound-warning">ligue seu som ou coloque fones de ouvido <v-icon right class="white--text">fas fa-headphones</v-icon></h5>
+    <h5 class="sound-warning" :class="{'animated pulse infinite': !notificationRead}">
+      Ligue seu som ou coloque fones de ouvido e aguarde até o fim das sentenças para digitar. <v-icon right class="white--text">fas fa-headphones</v-icon>
+      <v-btn v-if="!notificationRead" @click="notificationRead = true">Entendi</v-btn>
+    </h5>
     <div class="chatbox-messages">
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
@@ -117,8 +120,8 @@
           </form>
         </v-dialog>
       </div>
-      <div class="chatbox-footer" :class="{'box': select1.active || select2.active, 'box-disabled': !inputBoxEnabled}" >
-        <input ref="inputbox" type="text" class="chat-input" v-model="message" :disabled="!inputBoxEnabled" v-on:keyup.enter="submit" v-if="inputboxactive">
+      <div class="chatbox-footer" :class="{'box': select1.active || select2.active, 'box-disabled': !inputBoxEnabled}">
+        <input ref="inputbox" type="text" class="chat-input" v-model="message" :disabled="!inputBoxEnabled" v-focus="inputBoxEnabled" v-on:keyup.enter="submit" v-if="inputboxactive">
         <v-layout class="selections" v-if="select1.active || select2.active" row wrap>
           <v-flex xs12 md6 lg4 class="selection-box">
             <v-select solo v-on:keyup.enter="submit" v-bind:items="select1.items" :disabled="!inputBoxEnabled" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
@@ -127,8 +130,10 @@
             <v-select solo v-on:keyup.enter="submit" v-bind:items="select2.items" :disabled="!inputBoxEnabled" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
           </v-flex>
         </v-layout>
-        <v-icon v-if="canSend" :disabled="!canSend" @click="submit">send</v-icon>
-        <v-icon v-if="!canSend" @click="recognizeMicro" :class="{'error--text animated pulse ininite': isRecognizing}">fas fa-microphone</v-icon>
+        <v-btn icon flat v-if="canSend" :disabled="!canSend" @click="submit">
+          <v-icon>send</v-icon>
+        </v-btn>
+        <!-- <v-icon v-if="!canSend" @click="recognizeMicro" :class="{'error--text animated pulse ininite': isRecognizing}">fas fa-microphone</v-icon> -->
       </div>
     </div>
     <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
@@ -241,6 +246,16 @@ export default {
         this.select2.active = true
         this.select2.icon = 'place'
       }
+    },
+    isTyping (val) {
+      if (val) {
+        this.inputBoxEnabled = false
+      }
+    },
+    displayLoginBox (val) {
+      if (val) {
+        this.inputBoxEnabled = false
+      }
     }
   },
   data () {
@@ -258,7 +273,7 @@ export default {
           url: ''
         }
       },
-      inputBoxEnabled: true,
+      inputBoxEnabled: false,
       isRecognizing: false,
       message: '',
       displayLoginBox: false,
@@ -270,6 +285,7 @@ export default {
         like: []
       },
       newDialog: null,
+      notificationRead: false,
       video_group: [],
       valid: false,
       select1: {
@@ -302,6 +318,15 @@ export default {
       },
       feedback: null,
       isFeedback: null
+    }
+  },
+  directives: {
+    focus: {
+      update: (el, binding, vnode) => {
+        if (binding) {
+          el.focus()
+        }
+      }
     }
   },
   methods: {
@@ -532,6 +557,7 @@ export default {
         case 'login':
           delete response.data.context.hook
           this.$store.commit('SET_CONTEXT', response.data.context)
+          this.$store.commit('SET_LOGIN_RETURN', '/home')
           this.$router.push('login')
           break
         case 'conteudo':
@@ -567,6 +593,20 @@ export default {
               })
               response.data.context.question.action === 'feedback' ? this.isFeedback = true : this.isFeedback = false
             }
+          }
+          if (response.data.context.apiOffline) {
+            console.log('Ta off')
+            this.submit({
+              text: '',
+              context: this.$store.getters.getContext
+            }, true)
+          }
+          // Trigger when a silent and automatic verification is needed
+          if (response.data.context.trigger) {
+            this.submit({
+              text: '',
+              context: this.$store.getters.getContext
+            }, true)
           }
         })
       })
@@ -787,7 +827,12 @@ export default {
             reject(err)
           })
         } else {
-          reject(false)
+          // is user logged in?
+          if (this.$store.getters.getUser.login) {
+            resolve(true)
+          } else {
+            reject(false)
+          }
         }
       })
     },
@@ -825,6 +870,7 @@ export default {
         this.error = false
         this.$store.dispatch('LOGIN').then(() => {
           this.displayLoginBox = false
+          this.inputBoxEnabled = true
           let data = {
             text: 'Perfil salvo',
             context: Object.assign(this.$store.getters.getContext, {userLocation: this.$store.getters.getUser.user_data.location})
@@ -923,6 +969,11 @@ export default {
           }, true)
         }
       })
+    })
+  },
+  updated () {
+    document.querySelector('.chat-wrapper').scrollIntoView({
+      behavior: 'smooth'
     })
   }
 }
