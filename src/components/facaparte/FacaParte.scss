@@ -1,4 +1,5 @@
 $purple: #845bab;
+$dark-purple: #7A3773;
 $dark-gray:#999;
 $pink: #c93680;
 $red: #ff3860;
@@ -7,7 +8,18 @@ $red: #ff3860;
   padding: 0;
   margin: 0;
   width: 100%;
-
+  .waiting {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    background-color: transparentize($color: #000000, $amount: 0.5);
+    z-index: 999;
+  }
   h1 {
     color: white;
     max-width: 367px;
@@ -72,6 +84,9 @@ $red: #ff3860;
     white-space: normal;
     margin: 0;
     text-transform: capitalize;
+    &.active{
+      background-color: $dark-purple!important;
+    }
     *{
       text-decoration: none;
       color: white!important
@@ -79,6 +94,7 @@ $red: #ff3860;
     .btn__content{
       width: 100%;
       white-space: normal;
+      position: absolute;
     }
   }
 

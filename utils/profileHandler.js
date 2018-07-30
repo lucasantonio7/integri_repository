@@ -50,7 +50,8 @@ module.exports = (model, userModel, dbHandler, env) => {
                       location: body.rows[0].value.location,
                       medias: body.rows[0].value.medias,
                       like: body.rows[0].value.like,
-                      role: body.rows[0].value.role
+                      role: body.rows[0].value.role,
+                      access: body.rows[0].value.access
                     }
                     let resp = {
                       token: jsonWT.sign(payload, env.global_secret, {

@@ -10,14 +10,19 @@
         </v-btn>
       </v-toolbar>
     </div>
+    <h5 class="sound-warning" :class="{'animated pulse infinite': !notificationRead}">
+      Ligue seu som ou coloque fones de ouvido e aguarde até o fim das sentenças para digitar. <v-icon right class="white--text">fas fa-headphones</v-icon>
+      <v-btn v-if="!notificationRead" @click="notificationRead = true">Entendi</v-btn>
+    </h5>
     <div class="chatbox-messages">
       <div class="chatbox-messages-wrapper">
         <div class="chatbox-dialog-line" v-for="(message, index) in chat" :key="index" :class="{ deactivated: !message.active && message.type === 'yn_question' }">
           <v-layout align-end>
             <v-avatar v-if="message.sender === 'watson'" class="white levi">
-              <img :src="require('@/assets/png/logo/levi.png')" alt="">
+              <img :src="require('@/assets/png/logo/super_feliz.png')" alt="">
             </v-avatar>
             <div class="chatbox-watson" v-if="message.sender === 'watson'" v-html="message.message"></div>
+            <v-icon class="audio-feedback white--text" :class="{'animated pulse infinite': message.isPlaying}" v-if="message.isPlaying">fas fa-volume-up</v-icon>
           </v-layout>
           <v-container grid-list-xs text-xs-center v-if="message.videos">
             <carousel :perPage="1" :navigationEnabled="true" class="video-slider">
@@ -52,21 +57,26 @@
           <div class="chatbox-user" v-if="message.sender === 'user'">{{ message.message }}</div>
           <v-container grid-list-xs v-if="message.type === 'yn_question' && message.active">
             <v-layout row wrap class="chatbox-yn-question" >
-              <v-flex xs12 md4 @click.stop="YNSelector(true, message)">
+              <v-flex xs12 md3 @click.stop="YNSelector('yes', message)">
                 <v-btn block flat large>
                   {{ message.options.yes }}
                   <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-up</v-icon>
                 </v-btn>
               </v-flex>
-              <v-flex xs12 md4 @click.stop="YNSelector(false, message)">
+              <v-flex xs12 md3 @click.stop="YNSelector(false, message)">
                 <v-btn block flat large>
                   {{ message.options.no }}
                   <v-icon right dark v-if="message.action === 'feedback'">fa fa-thumbs-down</v-icon>
                 </v-btn>
               </v-flex>
-              <v-flex xs12 md4 v-if="message.options.cancel">
+              <v-flex xs12 md3 v-if="message.options.cancel">
                 <v-btn block flat large @click.stop="openLink(message.options.cancel.link)">
                   {{ message.options.cancel.text }}
+                </v-btn>
+              </v-flex>
+              <v-flex xs12 md3 @click.stop="YNSelector('oppty', message)" v-if="message.options.oppty">
+                <v-btn block flat large>
+                  {{ message.options.oppty }}
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -79,7 +89,7 @@
             <div class="dot"></div>
           </div>
         </div>
-        <v-dialog v-model="displayLoginBox" persistent content-class="show-overflow">
+        <v-dialog v-model="displayLoginBox" persistent content-class="show-overflow" :fullscreen="$vuetify.breakpoint.smAndDown" :max-width="$vuetify.breakpoint.width * 0.65">
           <form class="login-dialog-wrapper">
             <div class="login-dialog-title">
               <div class="login-feather-detail">
@@ -88,20 +98,16 @@
             </div>
             <div class="login-form">
               <div class="input-addon">
-                <i class="fa fa-user-o" aria-hidden="true"></i>
-                <input type="text" v-model="newUser.name" placeholder="Nome" required>
+                <v-text-field solo label="Nome" v-model="newUser.name" prepend-icon="far fa-user" required></v-text-field>
               </div>
               <div class="input-addon">
-                <i class="fa fa-envelope-o" aria-hidden="true"></i>
-                <input type="email" v-model="newUser.email" placeholder="E-mail" required>
+                <v-text-field solo label="E-mail" v-model="newUser.email" prepend-icon="far fa-envelope" type="email" required></v-text-field>
               </div>
               <div class="input-addon">
-                <i class="fa fa-lock" aria-hidden="true"></i>
-                <input type="password" v-model="newUser.pwd" placeholder="Senha" required>
+                <v-text-field solo label="Senha" type="password" v-model="newUser.pwd" prepend-icon="fas fa-lock" required></v-text-field>
               </div>
               <div class="input-addon">
-                <i class="fa fa-lock" aria-hidden="true"></i>
-                <input type="password" v-model="newUser._pwdConf" placeholder="Confirme sua senha" required>
+                <v-text-field solo label="Confirme sua senha" type="password" v-model="newUser._pwdConf" prepend-icon="fas fa-lock" required></v-text-field>
               </div>
               <v-layout>
                 <v-flex>
@@ -114,17 +120,20 @@
           </form>
         </v-dialog>
       </div>
-      <div class="chatbox-footer" :class="{'box': select1.active || select2.active, 'box-disabled': !inputBoxEnabled}" >
-        <input ref="inputbox" type="text" class="chat-input" v-model="message" :disabled="!inputBoxEnabled" v-on:keyup.enter="submit" v-if="inputboxactive">
+      <div class="chatbox-footer" :class="{'box': select1.active || select2.active, 'box-disabled': !inputBoxEnabled}">
+        <input ref="inputbox" type="text" class="chat-input" v-model="message" :disabled="!inputBoxEnabled" v-focus="inputBoxEnabled" v-on:keyup.enter="submit" v-if="inputboxactive">
         <v-layout class="selections" v-if="select1.active || select2.active" row wrap>
           <v-flex xs12 md6 lg4 class="selection-box">
-            <v-select solo v-on:keyup.enter="submit" v-bind:items="select1.items" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
+            <v-select solo v-on:keyup.enter="submit" v-bind:items="select1.items" :disabled="!inputBoxEnabled" single-line :multiple="select1.multi" return-object :no-data-text="select1.noData" :item-text="select1.item_text" :item-value="select1.item_value" v-model="select1.model" clearable :label="select1.label" v-if="select1.active" autocomplete :append-icon="select1.icon"></v-select>
           </v-flex>
           <v-flex xs12 md6 lg4 class="selection-box">
-            <v-select solo v-on:keyup.enter="submit" v-bind:items="select2.items" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
+            <v-select solo v-on:keyup.enter="submit" v-bind:items="select2.items" :disabled="!inputBoxEnabled" :multiple="select2.multi" v-model="select2.model" :label="select2.label" v-if="select2.active" autocomplete clearable :prepend-icon="select2.icon"></v-select>
           </v-flex>
         </v-layout>
-        <v-icon :disabled="!canSend" @click="submit">send</v-icon>
+        <v-btn icon flat v-if="canSend" :disabled="!canSend" @click="submit">
+          <v-icon>send</v-icon>
+        </v-btn>
+        <!-- <v-icon v-if="!canSend" @click="recognizeMicro" :class="{'error--text animated pulse ininite': isRecognizing}">fas fa-microphone</v-icon> -->
       </div>
     </div>
     <v-dialog v-model="showVideo" persistent :max-width="currentVideo.thumbnail.width" :width="currentVideo.thumbnail.width">
@@ -137,6 +146,9 @@
 </template>
 <script>
 import axios from 'axios'
+import WatsonSpeech from 'watson-speech'
+// import io from 'socket.io-client'
+// const stt = io('')
 export default {
   computed: {
     causes () {
@@ -214,6 +226,9 @@ export default {
     },
     inputboxactive () {
       return !this.select1.active && !this.select2.active
+    },
+    gettingProfile () {
+      return this.$store.getters.isLeviGettingProfile
     }
   },
   watch: {
@@ -231,10 +246,21 @@ export default {
         this.select2.active = true
         this.select2.icon = 'place'
       }
+    },
+    isTyping (val) {
+      if (val) {
+        this.inputBoxEnabled = false
+      }
+    },
+    displayLoginBox (val) {
+      if (val) {
+        this.inputBoxEnabled = false
+      }
     }
   },
   data () {
     return {
+      audio: null,
       axiosUrl: '',
       axiosConfig: {},
       axiosOppty: '',
@@ -247,7 +273,8 @@ export default {
           url: ''
         }
       },
-      inputBoxEnabled: true,
+      inputBoxEnabled: false,
+      isRecognizing: false,
       message: '',
       displayLoginBox: false,
       newUser: {
@@ -258,6 +285,7 @@ export default {
         like: []
       },
       newDialog: null,
+      notificationRead: false,
       video_group: [],
       valid: false,
       select1: {
@@ -282,11 +310,23 @@ export default {
         item_text: ''
       },
       showVideo: false,
+      stt: null,
+      tts: null,
+      ttsAudioStream: [],
       error: {
         message: ''
       },
       feedback: null,
       isFeedback: null
+    }
+  },
+  directives: {
+    focus: {
+      update: (el, binding, vnode) => {
+        if (binding) {
+          el.focus()
+        }
+      }
     }
   },
   methods: {
@@ -310,6 +350,44 @@ export default {
         target[prop] = payload[prop]
       }
     },
+    recognizeMicro () {
+      this.isRecognizing = true
+      let stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+        token: this.$store.getters.getSTTToken,
+        model: 'pt-BR_BroadbandModel',
+        inactivity_timeout: 3,
+        smart_formatting: true,
+        object_mode: false
+      })
+      stream.setEncoding('utf8')
+      stream.on('data', data => {
+        console.log(data)
+        if (this.message) {
+          this.message += data
+        } else {
+          this.message = data
+        }
+      })
+      stream.on('close', (reasonCode, description) => {
+        console.log('CLOSE')
+        console.log(reasonCode)
+        console.log(description)
+      })
+      stream.on('message', (message, data) => {
+        console.log('message')
+        console.log(message)
+        console.log('Data')
+        console.log(data)
+      })
+      stream.on('error', (err) => {
+        console.log(err)
+        if (this.message) {
+          this.isRecognizing = false
+          this.submit()
+        }
+        stream.stop()
+      })
+    },
     adjustLocationByOppty () {
       if (this.newUser.location) {
         if (this.needAPIBeta(this.newUser.location)) {
@@ -319,7 +397,7 @@ export default {
         } else {
           this.axiosUrl = 'https://v2.api.atados.com.br/'
           this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
-          this.axiosOppty = 'https://atados.com.br/vaga/'
+          this.axiosOppty = 'https://www.atados.com.br/vaga/'
         }
       } else if (this.needAPIBeta(this.userData.user_data.location)) {
         this.axiosUrl = 'https://api.beta.atados.com.br/'
@@ -328,12 +406,11 @@ export default {
       } else {
         this.axiosUrl = 'https://v2.api.atados.com.br/'
         this.axiosConfig = {headers: {'X-ovp-channel': 'default'}}
-        this.axiosOppty = 'https://atados.com.br/vaga/'
+        this.axiosOppty = 'https://www.atados.com.br/vaga/'
       }
     },
     needAPIBeta (value) {
       value = value.toLowerCase()
-      console.log(value)
       if (value.includes('rio grande do sul')) {
         return true
       } else {
@@ -368,7 +445,7 @@ export default {
         if (message.action === 'save_profile') {
           this.displayLoginBox = true
         } else {
-          this.message = message.options.yes
+          this.message = message.options[payload]
           if (message.action === 'feedback') {
             this.feedback = true
           }
@@ -387,8 +464,51 @@ export default {
       }
       this.inputBoxEnabled = true
     },
+    processAudioQueue (collection) {
+      return new Promise((resolve, reject) => {
+        if (collection.length > 0) {
+          let synth = collection.shift()
+          this.synthesizeAndDisplay(synth.text).then(resp => {
+            resp.audio.load()
+            resp.audio.oncanplay = () => {
+              this.$store.commit('DEACTIVATE_TYPING')
+              this.inputBoxEnabled = false
+              resp.audio.play()
+              this.$store.commit('ADD_TEXT', {
+                sender: 'watson',
+                message: resp.text,
+                videos: synth.data.context.display === 'videos' ? true : null,
+                opportunities: synth.data.context.display === 'opportunity' ? true : null,
+                isPlaying: true
+              })
+              if (synth.data.context.video && synth.data.context.display) {
+                this.$store.commit('SET_RELEVANT', synth.data.context.video)
+                delete synth.data.context.display
+                delete synth.data.context.video
+                this.$store.commit('SET_CONTEXT', synth.data.context)
+              }
+              if (synth.data.context.opportunities) {
+                this.$store.commit('SET_OPPORTUNITIES', synth.data.context.opportunities)
+                delete synth.data.context.display
+                delete synth.data.context.opportunities
+                this.$store.commit('SET_CONTEXT', synth.data.context)
+              }
+            }
+            resp.audio.onended = () => {
+              this.$store.commit('STOP_SPEECH_ANIMATION')
+              this.audio.src = null
+              this.processAudioQueue(collection).then(() => {
+                resolve(true)
+              })
+            }
+          })
+        } else {
+          this.inputBoxEnabled = true
+          resolve(true)
+        }
+      })
+    },
     processMessage (response) {
-      this.$store.commit('DEACTIVATE_TYPING')
       console.log(response)
       switch (response.data.context.capture_user_feedback) {
         case 'started':
@@ -437,6 +557,7 @@ export default {
         case 'login':
           delete response.data.context.hook
           this.$store.commit('SET_CONTEXT', response.data.context)
+          this.$store.commit('SET_LOGIN_RETURN', '/home')
           this.$router.push('login')
           break
         case 'conteudo':
@@ -444,52 +565,54 @@ export default {
           break
       }
       this.$store.commit('SET_CONTEXT', response.data.context)
-      console.log(response.data.context)
-      response.data.output.text.forEach((text, index) => {
+      // Direct responses
+      let synthesisQueue = response.data.output.text.map((text, index) => {
         if (text.includes('user_name')) {
           text = text.replace('user_name', this.$store.getters.getUser.user_data.name)
         }
         if (text.includes('social_media')) {
           text = text.replace('social_media', this.$store.getters.getAccessSource)
         }
-        this.$store.commit('ADD_TEXT', {
-          sender: 'watson',
-          message: text,
-          videos: response.data.context.display === 'videos' ? true : null,
-          opportunities: response.data.context.display === 'opportunity' ? true : null
+        return new Promise((resolve, reject) => {
+          resolve({ audio: null, data: response.data, text })
         })
-        if (response.data.context.video && response.data.context.display) {
-          console.log(response.data.context.video)
-          this.$store.commit('SET_RELEVANT', response.data.context.video)
-          delete response.data.context.display
-          delete response.data.context.video
-          this.$store.commit('SET_CONTEXT', response.data.context)
-        }
-        if (response.data.context.opportunities) {
-          console.log(response.data.context.opportunities)
-          this.$store.commit('SET_OPPORTUNITIES', response.data.context.opportunities)
-          delete response.data.context.display
-          delete response.data.context.opportunities
-          this.$store.commit('SET_CONTEXT', response.data.context)
-        }
+      })
+      Promise.all(synthesisQueue).then(processedSynth => {
+        this.processAudioQueue(processedSynth).then(res => {
+          // Question options
+          if (response.data.context.question) {
+            if (response.data.context.question.type === 'yn_question') {
+              this.inputBoxEnabled = false
+              this.$nextTick().then(() => {
+                this.$store.commit('ADD_TEXT', {
+                  type: 'yn_question',
+                  action: response.data.context.question.action,
+                  active: true,
+                  options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
+                })
+              })
+              response.data.context.question.action === 'feedback' ? this.isFeedback = true : this.isFeedback = false
+            }
+          }
+          if (response.data.context.apiOffline) {
+            console.log('Ta off')
+            this.submit({
+              text: '',
+              context: this.$store.getters.getContext
+            }, true)
+          }
+          // Trigger when a silent and automatic verification is needed
+          if (response.data.context.trigger) {
+            this.submit({
+              text: '',
+              context: this.$store.getters.getContext
+            }, true)
+          }
+        })
       })
       if (response.data.context.user) {
         this.newUser._id = response.data.context.user._id
         this.newUser.like = response.data.context.user.analysis
-      }
-      if (response.data.context.question) {
-        if (response.data.context.question.type === 'yn_question') {
-          this.inputBoxEnabled = false
-          this.$nextTick().then(() => {
-            this.$store.commit('ADD_TEXT', {
-              type: 'yn_question',
-              action: response.data.context.question.action,
-              active: true,
-              options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
-            })
-          })
-          response.data.context.question.action === 'feedback' ? this.isFeedback = true : this.isFeedback = false
-        }
       }
       switch (response.data.context.selection_question) {
         case 'state-city': {
@@ -545,7 +668,6 @@ export default {
         case 'causes':
           this.adjustLocationByOppty()
           axios.get(this.axiosUrl + 'startup/', this.axiosConfig).then(resp => {
-            console.log(resp)
             this.$store.commit('SET_CAUSES', resp.data.causes)
             this.select1.items = this.causes
             this.select1.active = true
@@ -570,27 +692,32 @@ export default {
           break
       }
     },
-    submit () {
+    submit (preset, avoid) {
       let data = null
-      if (this.canSend) {
+      console.log('submit called')
+      if (this.canSend || preset) {
         if (this.select1.active) {
           switch (this.select1.origin) {
             case 'states':
-              if (this.$store.getters.getUser.login) {
-                let userData = this.$store.getters.getUser
-                userData.user_data.location = this.select2.model + ', ' + this.select1.model.nome
-                this.$store.commit('SET_USER', userData)
-                this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: userData.user_data.location}))
-                // OBS: Salvar usuário
+              if (!this.select2.model) {
+                return false
               } else {
-                this.newUser.location = this.select2.model + ', ' + this.select1.model.nome
-                this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: this.newUser.location}))
-              }
-              this.select1.active = false
-              this.select2.active = false
-              data = {
-                text: this.select2.model + ', ' + this.select1.model.sigla,
-                context: this.$store.getters.getContext
+                if (this.$store.getters.getUser.login) {
+                  let userData = this.$store.getters.getUser
+                  userData.user_data.location = this.select2.model + ', ' + this.select1.model.nome
+                  this.$store.commit('SET_USER', userData)
+                  this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: userData.user_data.location}))
+                  // OBS: Salvar usuário
+                } else {
+                  this.newUser.location = this.select2.model + ', ' + this.select1.model.nome
+                  this.$store.commit('SET_CONTEXT', Object.assign(this.$store.getters.getContext, {userLocation: this.newUser.location}))
+                }
+                this.select1.active = false
+                this.select2.active = false
+                data = {
+                  text: this.message || this.select2.model + ', ' + this.select1.model.sigla,
+                  context: this.$store.getters.getContext
+                }
               }
               break
             case 'skills':
@@ -612,15 +739,17 @@ export default {
           }
         } else {
           data = {
-            text: this.message,
-            context: this.$store.getters.getContext
+            text: preset && preset.text ? preset.text : this.message,
+            context: preset && preset.context ? preset.context : this.$store.getters.getContext
           }
         }
-        console.log(data)
-        this.$store.commit('ADD_TEXT', {
-          sender: 'user',
-          message: data.text
-        })
+        // avoidDisplay is for Automatic commands
+        if (!avoid) {
+          this.$store.commit('ADD_TEXT', {
+            sender: 'user',
+            message: data.text
+          })
+        }
         if (this.capturedDialog !== null) {
           this.newDialog = this.capturedDialog
           this.newDialog.messages.push({
@@ -655,6 +784,8 @@ export default {
           }
           console.log(err.config)
         })
+      } else {
+        console.log('Cannot send')
       }
     },
     close () {
@@ -665,24 +796,43 @@ export default {
         if (!this.$store.getters.getContext) {
           this.$store.commit('ACTIVATE_TYPING')
           axios.get('/api/conversation/init').then(response => {
-            this.$store.commit('DEACTIVATE_TYPING')
             this.$store.commit('SET_CONTEXT', response.data.context)
+            this.$store.commit('SET_TTS_TOKEN', response.data.ttsToken)
+            this.$store.commit('SET_STT_TOKEN', response.data.sttToken)
             this.$store.dispatch('LOAD_STATES')
-            response.data.output.text.forEach(text => {
-              this.$store.commit('ADD_TEXT', {
-                sender: 'watson',
-                message: text
+            Promise.all(response.data.output.text.map(text => {
+              return this.synthesizeAndDisplay(text)
+            })).then(values => {
+              values.forEach(val => {
+                val.audio.oncanplay = () => {
+                  val.audio.play()
+                  this.$store.commit('DEACTIVATE_TYPING')
+                  this.$store.commit('ADD_TEXT', {
+                    sender: 'watson',
+                    message: val.text,
+                    isPlaying: true
+                  })
+                }
+                val.audio.onended = () => {
+                  this.$store.commit('STOP_SPEECH_ANIMATION')
+                  this.audio.src = null
+                  resolve(true)
+                }
               })
             })
             axios.post('/api/access_denied', {
               access_status: false
             })
-            resolve(true)
           }).catch(err => {
             reject(err)
           })
         } else {
-          reject(false)
+          // is user logged in?
+          if (this.$store.getters.getUser.login) {
+            resolve(true)
+          } else {
+            reject(false)
+          }
         }
       })
     },
@@ -705,50 +855,6 @@ export default {
         })
       })
     },
-    notifySocialMedia () {
-      let data = {
-        text: this.$store.getters.getAccessSource + ' Access',
-        context: Object.assign(this.$store.getters.getContext, {video_query: this.$store.getters.getUser.user_data.like})
-      }
-      console.log(data)
-      this.$store.commit('ACTIVATE_TYPING')
-      axios.get('/api/conversation/message', {
-        params: data
-      }).then(response => {
-        this.$store.commit('DEACTIVATE_TYPING')
-        response.data.context.userLocation = this.$store.getters.getUser.user_data.location
-        this.processMessage(response)
-      })
-    },
-    notifyFirstAccess () {
-      let data = {
-        text: 'Primeiro acesso',
-        context: this.$store.getters.getContext
-      }
-      this.$store.commit('ACTIVATE_TYPING')
-      axios.get('/api/conversation/message', {
-        params: data
-      }).then(response => {
-        this.$store.commit('DEACTIVATE_TYPING')
-        response.data.output.text.forEach((text, index) => {
-          this.$store.commit('ADD_TEXT', {
-            sender: 'watson',
-            message: text
-          })
-        })
-        this.$store.commit('ADD_TEXT', {
-          type: 'yn_question',
-          action: response.data.context.question.action,
-          active: true,
-          options: response.data.context.question.options ? response.data.context.question.options : {yes: 'Sim', no: 'Não'}
-        })
-        this.inputBoxEnabled = false
-        this.$nextTick(function () {
-          response.data.context.question = null
-          this.$store.commit('SET_CONTEXT', response.data.context)
-        })
-      })
-    },
     openLink (link) {
       window.open(link, '_blank')
     },
@@ -764,6 +870,7 @@ export default {
         this.error = false
         this.$store.dispatch('LOGIN').then(() => {
           this.displayLoginBox = false
+          this.inputBoxEnabled = true
           let data = {
             text: 'Perfil salvo',
             context: Object.assign(this.$store.getters.getContext, {userLocation: this.$store.getters.getUser.user_data.location})
@@ -789,6 +896,38 @@ export default {
           console.log('err', err.message)
         }
       })
+    },
+    /**
+     * Synthesize a text. If it fails to synthesize
+     *
+     * @param {String} text
+     * @public
+     */
+    synthesizeAndDisplay (text) {
+      return new Promise((resolve, reject) => {
+        let token = this.$store.getters.getTTSToken
+        this.tts = new WebSocket('wss://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?voice=pt-BR_IsabelaVoice&watson-token=' + token)
+        this.tts.onmessage = (evt) => {
+          if (typeof evt.data === 'string') {
+            console.log('Received string message: ', evt.data)
+          } else {
+            this.ttsAudioStream.push(evt.data)
+          }
+        }
+        this.tts.onclose = (evt) => {
+          console.log('WebSocket closed', evt.code, evt.reason)
+          let currentAudioBlob = new Blob(this.ttsAudioStream, {type: 'audio/wav'})
+          this.audio.src = (URL.createObjectURL(currentAudioBlob))
+          this.ttsAudioStream.length = 0
+          this.audio.load()
+          this.audio.play()
+        }
+        this.tts.onopen = (evt) => {
+          console.log('Socket open')
+          this.tts.send(JSON.stringify({text: text, accept: 'audio/mp3'}))
+        }
+        resolve({ audio: this.audio, text })
+      })
     }
   },
   mounted () {
@@ -796,19 +935,45 @@ export default {
       document.querySelector('.chat-wrapper').scrollIntoView({
         behavior: 'smooth'
       })
+      this.audio = document.getElementById('audio') || new Audio()
       this.initChat().then(res => {
         if (this.$store.getters.getUser.login) {
           if (this.isDenied) {
-            this.notifyChatDeniedProfile()
+            // this.notifyChatDeniedProfile()
+            this.submit({text: 'sem acesso'}, true)
           } else {
-            this.notifySocialMedia()
+            // this.notifySocialMedia()
+            this.submit({
+              text: this.$store.getters.getAccessSource + ' Access',
+              context: Object.assign(this.$store.getters.getContext, {video_query: this.$store.getters.getUser.user_data.like})
+            }, true)
           }
         } else {
-          this.notifyFirstAccess()
+          console.log(this.gettingProfile === undefined)
+          if (this.gettingProfile) {
+            console.log('This is america')
+            this.submit({
+              text: '',
+              context: Object.assign(this.$store.getters.getContext, {gettingProfile: 'started'})
+            }, true)
+          } else {
+            this.submit({text: 'Primeiro acesso'}, true)
+          }
         }
       }).catch(err => {
         console.log(err)
+        if (this.$store.getters.getContext.gettingProfile === 'started') {
+          this.submit({
+            text: '',
+            context: this.$store.getters.getContext
+          }, true)
+        }
       })
+    })
+  },
+  updated () {
+    document.querySelector('.chat-wrapper').scrollIntoView({
+      behavior: 'smooth'
     })
   }
 }

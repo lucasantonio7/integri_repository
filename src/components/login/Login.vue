@@ -10,14 +10,23 @@
           </div>
           <form class="login-form" @submit.prevent="login">
             <h3 class="body-2 py-1 pt-3">Se você já possui cadastro, insira suas credenciais abaixo:</h3>
-            <div class="input-addon">
-              <i class="fa fa-user-o" aria-hidden="true"></i>
+            <v-layout row wrap>
+              <v-flex xs12>
+                <v-text-field prepend-icon="far fa-user" label="E-mail" v-model="user.email">
+                </v-text-field>
+              </v-flex>
+            </v-layout>
+            <v-flex xs12>
+              <v-text-field prepend-icon="fas fa-lock" type="password" label="Senha" v-model="user.pwd"></v-text-field>
+            </v-flex>
+            <!-- <div class="input-addon">
+              <i class="far fa-user" aria-hidden="true"></i>
               <input type="email" v-model="user.email" placeholder="E-mail" required>
             </div>
             <div class="input-addon">
-              <i class="fa fa-lock" aria-hidden="true"></i>
+              <i class="" aria-hidden="true"></i>
               <input type="password" v-model="user.pwd" placeholder="Senha" required>
-            </div>
+            </div> -->
             <div v-if="error.status" class="animated bounce error-text">
               {{ error.message }}
             </div>
@@ -25,7 +34,6 @@
               <v-btn type="submit" class="login-submit" :disabled="!user.email && !user.pwd">Enviar</v-btn>
             </div>
           </form>
-          
           <div class="social-media-btns" v-if="strategy !== 'admin'">
             <h3 class="body-2 pb-2">Se você ainda não possui cadastro, escolha uma das opções abaixo:</h3>
             <login-twitter></login-twitter>
@@ -62,16 +70,22 @@ export default {
   },
   methods: {
     login () {
-      axios.post('/signin', {
+      axios.post('/api/access/signin', {
         email: this.user.email,
         password: this.user.pwd
       }).then(resp => {
         console.log(resp.data)
         if (resp.data.authenticationStatus) {
-          if (resp.data.role === 'admin') {
-            this.$store.dispatch('LOGIN')
+          if (resp.data.role === 'admin' || resp.data.role === 'curator') {
+            this.$store.dispatch('LOGIN').then(res => {
+              if (this.$store.getters.getLoginReturn) {
+                this.$router.push(this.$store.getters.getLoginReturn)
+              } else {
+                this.$router.push('dashboard')
+              }
+            })
           } else {
-            window.location.href = '/'
+            this.$router.push('home')
           }
         } else {
           this.error.status = true

@@ -36,5 +36,17 @@ export default {
   current_video: null,
   classification_tags: null,
   drawer: false,
-  player_active: false
+  player_active: false,
+  login_return: null,
+  dashboard_features: null,
+  dashboard_selected_feature: null,
+  dashboard_newsletter_subscribers: [],
+  dashboard_content: [],
+  dashboard_shared_content: [],
+  dashboard_users: [],
+  tts_token: null,
+  ttsWebSocketOpen: false,
+  stt_token: null,
+  sttWebSocketOpen: false,
+  getProfileIntention: false
 }

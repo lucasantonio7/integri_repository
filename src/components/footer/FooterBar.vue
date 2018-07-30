@@ -1,5 +1,5 @@
 <template>
-  <v-footer class="footerbar-integri" dark app>
+  <v-footer class="footerbar-integri" dark app absolute="">
     <span>Uma realização Parceiros Voluntários.</span>
     <v-spacer></v-spacer>
     <v-btn flat dark class="hidden-sm-and-down" :to="{ path: '/politicas/privacidade' }">Privacidade</v-btn>

@@ -10,23 +10,37 @@ import VueRouter from 'vue-router'
 /* eslint-disable camelcase */
 // created by plugin
 import pt_BR from 'vee-validate/dist/locale/pt_BR'
-import VeeValidate, { Validator } from 'vee-validate'
+import VeeValidate from 'vee-validate'
 import { routes } from './routes'
 import store from './store/store'
 import VueCarousel from 'vue-carousel'
 import VueClipboard from 'vue-clipboard'
 import VueAnalytics from 'vue-analytics'
-
+import wysiwyg from 'vue-wysiwyg'
+import VueI18n from 'vue-i18n'
+Vue.use(wysiwyg, {
+  // Config
+})
 Vue.config.productionTip = false
 Vue.use(Vuetify)
 Vue.use(Vuex)
 Vue.use(VueYouTubeEmbed)
 Vue.use(VueRouter)
-Vue.use(VeeValidate, {locale: 'pt_BR'})
 Vue.use(VueCarousel)
 Vue.use(VueClipboard)
-Validator.addLocale(pt_BR)
-VeeValidate.Validator.setLocale('pt_BR')
+Vue.use(VueI18n)
+
+const i18n = new VueI18n({
+  locale: 'pt_BR'
+})
+
+Vue.use(VeeValidate, {
+  i18n,
+  dictionary: {
+    pt_BR
+  }
+})
+
 const moment = require('moment')
 require('moment/locale/pt-br')
 Vue.use(require('vue-moment'), {
@@ -42,6 +56,7 @@ Vue.use(VueAnalytics, {
   router
 })
 new Vue({
+  i18n,
   store,
   el: '#app',
   router,

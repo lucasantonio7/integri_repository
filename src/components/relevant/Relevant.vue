@@ -16,21 +16,22 @@
     </v-container> -->
     <v-layout row wrap>
       <v-flex xs12>
-        <jorney :fixed="true"></jorney>
+        <chat></chat>
       </v-flex>
       <v-flex xs12>
-        <chat></chat>
+        <v-btn block dark class="oppty-btn" href="https://parceirosvoluntarios.atados.com.br/" target="_blank">
+          <v-icon left>fas fa-hands-helping</v-icon>
+          <span class="text-piece">Conheça as Oportunidades de Voluntariado</span>
+        </v-btn>
       </v-flex>
     </v-layout>
   </div>
 </template>
 <script>
-import Jorney from '../jorney/Jorney'
 import Chat from '../chattoggle/ChatToggle'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    Jorney,
     Chat
   },
   computed: {

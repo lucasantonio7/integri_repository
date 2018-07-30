@@ -1,6 +1,20 @@
 const express = require('express');
 module.exports = function (appEnv) {
+  const WebSocket = require('ws').Server
   const LanguageTranslatorV2 = require('watson-developer-cloud/language-translator/v2');
+  const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
+  const TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+  const watson = require('watson-developer-cloud');
+  let tts = new TextToSpeechV1({
+    username: appEnv.services['text_to_speech'][0].credentials.username,
+    password: appEnv.services['text_to_speech'][0].credentials.password,
+    url: appEnv.services['text_to_speech'][0].credentials.url
+  })
+  let TTSParams = {
+    voice: 'pt-BR_IsabelaVoice',
+    accept: 'audio/wav'
+  }
+  
   let translatorCredentials = appEnv.services['language_translator'][0].credentials
   let translator = new LanguageTranslatorV2({
     // If unspecified here, the LANGUAGE_TRANSLATOR_USERNAME and LANGUAGE_TRANSLATOR_PASSWORD environment properties will be checked
@@ -16,7 +30,18 @@ module.exports = function (appEnv) {
     password: NLUCredentials.password,
     version_date: '2017-02-27'
   });
-  
+  let speech_to_text_authorization = new watson.AuthorizationV1({
+    username: appEnv.services['speech_to_text'][0].credentials.username,
+    password: appEnv.services['speech_to_text'][0].credentials.password,
+    url: appEnv.services['speech_to_text'][0].credentials.url
+  });
+
+  let text_to_speech_authorization = new watson.AuthorizationV1({
+    username: appEnv.services['text_to_speech'][0].credentials.username,
+    password: appEnv.services['text_to_speech'][0].credentials.password,
+    url: appEnv.services['text_to_speech'][0].credentials.url
+  });
+
   return {
     translate(source) {
       return new Promise((resolve, reject) => {
@@ -57,6 +82,39 @@ module.exports = function (appEnv) {
           } else {
             console.log(response)
             resolve(response)
+          }
+        })
+      })
+    },
+    synthesize (text, options) {
+      let params = Object.assign(text, TTSParams, options)
+      return tts.synthesize(params)
+      // return new Promise((resolve, reject) => {
+      //   let params = Object.assign(text, TTSParams, options)
+      //   // tts.synthesize(params, (err, audio) => {
+      //   //   if (err) {
+      //   //     console.log(err);
+      //   //     reject(err)
+      //   //   } else {
+      //   //     resolve(audio)
+      //   //   }
+      //   // })
+      //   return tts.synthesize(params)
+      // })
+    },
+    getSpeechTokens () {
+      return new Promise((resolve, reject) => {
+        text_to_speech_authorization.getToken((err, tts) => {
+          if(err){
+            reject(err)
+          }else {
+            speech_to_text_authorization.getToken((err, stt) => {
+              if(err){
+                reject(err)
+              }else {
+                resolve([tts, stt])
+              }
+            })
           }
         })
       })

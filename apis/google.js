@@ -2,6 +2,7 @@
 const google = require('googleapis');
 const express = require('express');
 const utils = require('../utils/promiseHandler');
+const moment = require('moment');
 module.exports = function (apiKey, dbHandler, model) {
   // Start a instance of youtube API
   const youtube = google.youtube({
@@ -62,18 +63,20 @@ module.exports = function (apiKey, dbHandler, model) {
       return new Promise((resolve, reject) => {
         youtube.videos.list({
           part: 'snippet,contentDetails,statistics',
-          id: queryGroup.reduce((prev, next) => {
+          id: queryGroup.length > 1 ? queryGroup.reduce((prev, next) => {
             if (prev.id) {
               return prev.id + "," + next.id
             } else {
               return prev + "," + next.id
             }
-          })
+          }) : queryGroup[0].id
         }, (err, resp) => {
           if (err) {
             reject(err);
           } else {
             // Max 50 videos
+            console.log('response')
+            console.log(resp)
             let relevantContent = resp.items.map(item => {
               let elementIndexQG = queryGroup.findIndex((elem, index) => {
                 if (elem.id == item.id) {
@@ -201,7 +204,6 @@ module.exports = function (apiKey, dbHandler, model) {
       if (!err) {
         let videos = body.rows[0].value;
         let queryGroups = []
-        let hasCache = false
         let stored_data = []
         let videos_cache = null
         // First of all verify if there is a cache from videos
@@ -209,7 +211,8 @@ module.exports = function (apiKey, dbHandler, model) {
           if (!err) {
             try {
               videos_cache = body.rows[0].value;
-              if (Object.keys(videos_cache.videos).length > 0 && videos_cache.videos.constructor === Object) {
+              let now = moment()
+              if (Object.keys(videos_cache.videos).length > 0 && videos_cache.videos.constructor === Object && now.diff(moment(videos_cache.last_update), 'hours') < 24) {
                 // Remove all already cached videos
                 videos.videos_sources = videos.videos_sources.filter(video => {
                   if (videos_cache.videos[video.id]) {
@@ -219,10 +222,10 @@ module.exports = function (apiKey, dbHandler, model) {
                     return video
                   }
                 })
-                hasCache = true
               }
               // Verify if there is any video that wasn't on cache
               if (videos.videos_sources.length > 0) {
+                console.log(videos.videos_sources)
                 videos.videos_sources.map(video => {
                   if (queryGroups.length < 1) {
                     queryGroups.push([video])
@@ -235,24 +238,28 @@ module.exports = function (apiKey, dbHandler, model) {
                 let queue = queryGroups.map(query => {
                   return helper.processQuery(query)
                 })
-                Promise.all(queue).then(result => {
-                  let joinedResult = [].concat.apply([], result)
+                Promise.all(queue).then(processedData => {
+                  let joinedResult = [].concat.apply([], processedData)
                   if (stored_data.length > 0) {
-                    joinedResult = joinedResult.concat.apply([], stored_data)
+                    joinedResult = joinedResult.concat(stored_data)
                   }
-                  if (!hasCache) {
-                    if (videos_cache) {
-                      model.findOneByID(videos_cache._id, (error, result) => {
-                        if (!error) {
-                          joinedResult.forEach(vid => {
-                            result.videos[vid.id] = vid
-                          })
-                          result.save(err => {
-                            console.log(err)
-                          })
+                  console.log(joinedResult)
+                  if (videos_cache) {
+                    model.findOneByID(videos_cache._id, (error, result) => {
+                      if (!error) {
+                        joinedResult.forEach(vid => {
+                          result.videos[vid.id] = vid
+                        })
+                        if (now.diff(moment(result.last_update), 'hours') >= 24){
+                          result.last_update = now
                         }
-                      })
-                    }
+                        result.save(err => {
+                          if (err) {
+                            console.log(err)
+                          }
+                        })
+                      }
+                    })
                   }
                   res.json(joinedResult)
                 }).catch(err => {

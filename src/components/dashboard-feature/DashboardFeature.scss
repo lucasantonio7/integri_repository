@@ -1,0 +1,18 @@
+.feature {
+  cursor: pointer;
+  transition:.3s ease-in;
+  &:hover{
+    background-color: #e0e0e0;
+  }
+  .feature-thumb {
+    min-width: 84px;
+    max-width: 84px;
+    // Get colors from feather
+    .border {
+      border: 2px solid #845bab;
+      .icon {
+        color: #845bab!important;
+      }
+    }  
+  }
+}

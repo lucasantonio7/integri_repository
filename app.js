@@ -26,6 +26,8 @@ const google = require('./apis/google')(envVars.youtubeAPIKey, dbHandler, myMode
 const youtube = require('./apis/youtube');
 const profile = require('./apis/profile')(myModel, userModel, envVars.youtubeAPIKey, dbHandler, envVars);
 const text = require('./apis/texts')(myModel, textModel, dbHandler, envVars);
+const external_data = require('./apis/external_data')(myModel, dbHandler);
+const newsletter = require('./apis/newsletter')(myModel, dbHandler);
 
 let _secret = "projetointegri2017";
 
@@ -66,6 +68,7 @@ if (!appEnv.isLocal){
 
 const access = require('./apis/access')(dbHandler, envVars, userModel, myModel)
 const auth = require('./utils/auth')(passport, userModel, envVars, cookieParser)
+const dashboard = require('./apis/dashboard')(dbHandler, myModel, cookieParser, envVars)
 
 // This piece of code should be changed
 let port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
@@ -165,6 +168,8 @@ const conversation = require('./apis/conversation')(appEnv, dbHandler, envVars, 
 const sources = require('./apis/sources')(dbHandler);
 let curatorshipModel = couchDBModel(dbHandler)
 const curatorship = require('./apis/curatorship')(dbHandler, curatorshipModel);
+app.use('/api/access', access)
+app.use('/api/dashboard', dashboard)
 app.use('/api/sources', sources)
 app.use('/api/curatorship', curatorship)
 app.use('/api/twitter', twitter)
@@ -173,6 +178,8 @@ app.use('/api/texts', text)
 app.use('/api/conversation', conversation)
 app.use('/api/profile', profile)
 app.use('/api/facebook', facebook)
+app.use('/api/external', external_data)
+app.use('/api/newsletter', newsletter)
 app.post('/api/access_denied', (req, res) => {
   try {
     let status = req.body.access_status
@@ -182,7 +189,6 @@ app.post('/api/access_denied', (req, res) => {
   }
   res.end();
 })
-app.use(access)
 
 app.listen(port, () => {
   console.log('running on port: ', port)

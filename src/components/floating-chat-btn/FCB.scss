@@ -1,14 +1,20 @@
 .fbc {
-  // background-color: #C93680;
-  border-radius: 0.5rem;
+  background-color: #7F59A3;
+  border-radius: 50%;
   width: 105px;
   height: 105px;
   position: absolute;
   right: 0.5rem;
   bottom: 1rem;
   padding: 0.5rem;
-  display: table;
+  display: inline-block;
   cursor: pointer;
+  text-align: center;
+  box-shadow: 0.25rem 0.25rem 1.5rem #00000099;
+  img{
+    height: 100%;
+    width: auto!important;
+  }
   &.small {
     width: 85px;
     height: 85px;
@@ -39,6 +45,7 @@
   background-color: #7F59A3;
   border-radius: 0.5rem;
   margin-left: 1rem;
+  cursor: pointer;
   &.small {
     right: 7rem;
     bottom: 3.5rem

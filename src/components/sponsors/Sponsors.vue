@@ -48,7 +48,7 @@
           <v-flex xs3>
             <img :src="require('@/assets/svg/partners/fin_partners_processor.svg')" alt="">
           </v-flex>
-          <v-flex xs2>
+          <v-flex xs3>
             <img :src="require('@/assets/svg/partners/fin_partners_puras.svg')" alt="">
           </v-flex>
           <v-flex xs3>

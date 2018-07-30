@@ -16,7 +16,7 @@ export default {
       axios.post('/api/access_denied', {
         access_status: true
       }).then(response => {
-        this.$store.commit('SET_CHAT_VISIBLE')
+        this.$store.commit('START_TO_GET_PROFILE')
         this.$router.push('home')
       })
     }

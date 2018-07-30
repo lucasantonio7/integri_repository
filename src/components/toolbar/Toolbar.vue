@@ -15,18 +15,19 @@
       <v-toolbar-side-icon class="hidden-md-and-up" @click="toggleDrawer" @input="t"></v-toolbar-side-icon>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn flat :to="{ path: '/' }">Home</v-btn>
+        <v-btn href="https://parceirosvoluntarios.atados.com.br/" target="_blank">Vagas de voluntariado</v-btn>
         <v-btn flat :to="{ path: '/conteudo' }">Conteúdo</v-btn>
-        <!-- <v-btn flat :to="{ path: '/facaparte' }">Faça Parte</v-btn> -->
+        <v-btn flat :to="{ path: '/facaparte' }">Faça Parte</v-btn>
         <v-menu offset-x :close-on-content-click="false" :nudge-width="200" v-model="menu" v-if="user.login">
           <v-avatar class="logged-profile-avatar" slot="activator" v-if="user.user_data.profile_image">
             <img :src="user.user_data.profile_image" alt="Usuário">
           </v-avatar>
-          <i class="fa fa-user-circle-o user-fallback" aria-hidden="true" v-if="!user.user_data.profile_image" slot="activator"></i>
+          <i class="far fa-user-circle user-fallback" aria-hidden="true" v-if="!user.user_data.profile_image" slot="activator"></i>
           <v-card>
             <v-list>
               <v-list-tile avatar>
                 <v-list-tile-avatar>
-                  <i class="fa fa-user-circle-o logout-fallback" v-if="!user.user_data.profile_image" aria-hidden="true" slot="activator"></i>
+                  <i class="far fa-user-circle logout-fallback" v-if="!user.user_data.profile_image" aria-hidden="true" slot="activator"></i>
                   <img :src="user.user_data.profile_image" v-if="user.user_data.profile_image" alt="Usuário">
                 </v-list-tile-avatar>
                 <v-list-tile-content>
@@ -51,7 +52,8 @@
         </v-list-tile-content>
         <v-list-tile avatar v-if="user.user_data">
           <v-list-tile-avatar>
-            <img :src="user.user_data.profile_image">
+            <img :src="user.user_data.profile_image" v-if="user.user_data.profile_image">
+            <v-icon v-if="!user.user_data.profile_image">far fa-user-circle</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title v-html="user.user_data.name"></v-list-tile-title>
@@ -64,7 +66,7 @@
         </v-list-tile>
         <v-list-tile-content><v-btn flat block :to="{ path: '/' }">Home</v-btn></v-list-tile-content>
         <v-list-tile-content><v-btn flat block :to="{ path: '/conteudo' }">Conteúdo</v-btn></v-list-tile-content>
-        <!-- <v-list-tile-content><v-btn flat block :to="{ path: '/facaparte' }">Faça Parte</v-btn></v-list-tile-content> -->
+        <v-list-tile-content><v-btn flat block :to="{ path: '/facaparte' }">Faça Parte</v-btn></v-list-tile-content>
         <v-list-tile-content><v-btn flat block :to="{ path: '/politicas/privacidade' }">Privacidade</v-btn></v-list-tile-content>
         <v-list-tile-content><v-btn flat block :to="{ path: '/politicas/uso' }">Termos de uso</v-btn></v-list-tile-content>
       </v-list>

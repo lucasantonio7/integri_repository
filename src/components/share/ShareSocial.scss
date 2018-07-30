@@ -1,6 +1,7 @@
 $purple: #7A3773;
 $gray: #E6E6E6;
 $white: #fff;
+$red: #ff3860;
 
 .social-link{
   text-decoration: none;
@@ -12,7 +13,6 @@ $white: #fff;
   .slash {
     background: $gray;
     position: relative;
-
     &::after{
       content: '';
       border-left: 100px solid transparent;
@@ -21,8 +21,13 @@ $white: #fff;
       bottom: 0;
       right: 0;
     }
+    &.bigger::after{
+      border-bottom: 19.3rem solid $purple;
+    }
   }
-
+  .input-error {
+    color: $red;
+  }
   .social-newsletter-block {
     background-color: $purple;
     padding: 2rem 1rem;
@@ -49,7 +54,9 @@ $white: #fff;
       font-weight: 400!important;
       padding: 2.5rem 0 0 1rem;
     }
-
+    .btn{
+      margin-left:0; 
+    }
     .btn.btn--raised.theme--light {
       background-color: $gray;
       border-radius: 0;
@@ -81,7 +88,7 @@ $white: #fff;
         border: 2px solid $purple!important;
         border-radius: 0!important;
         padding: 0.25rem!important;
-        .fa {
+        .icon {
           color: $purple!important;
         }
       }

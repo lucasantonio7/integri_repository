@@ -1,7 +1,7 @@
 <template>
   <div class="fb-login" @click="login">
     <div class="brand-block">
-      <i class="fa fa-facebook" aria-hidden="true"></i>
+      <i class="fab fa-facebook-f" aria-hidden="true"></i>
     </div>
     <div class="text-block">
       <span class="text-piece">Conecte-se com Facebook</span>

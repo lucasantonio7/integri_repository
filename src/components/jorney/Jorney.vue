@@ -1,6 +1,6 @@
 <template>
   <v-btn v-show="!user.login" dark class="jorney-btn" justify-start :class="{'fixed': fixed}" large block depressed :to="{ path:'/login' }">
-    <v-icon left>fa fa-user-o</v-icon>
+    <v-icon left>far fa-user</v-icon>
     <span class="text-piece">Inicie sua jornada!</span>
   </v-btn>
 </template>
@@ -13,6 +13,7 @@ export default {
     }
   },
   mounted () {
+    this.$store.commit('SET_LOGIN_RETURN', '/home')
     this.$store.dispatch('LOGIN')
   }
 }

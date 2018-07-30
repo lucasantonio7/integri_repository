@@ -92,6 +92,7 @@ $purple: #7F59A3;
   }
   .chat-header {
     padding: 1.5rem;
+    padding-bottom: 1rem;
     width: 100%;
     .text-part{
       height: 39px;
@@ -274,9 +275,10 @@ $purple: #7F59A3;
         height: 5.5rem;
       }
       &.box-disabled {
-        background-color: transparentize($color: $userbox, $amount: 0.4);
+        background-color: transparentize($color: $userbox, $amount: 0.6);
+        opacity: 0.2;
         .chat-input{
-          background-color: transparentize($color: $userbox, $amount: 0.4);
+          background-color: transparentize($color: $userbox, $amount: 0.6);
         }
       }
       .chat-input{
@@ -304,4 +306,13 @@ $purple: #7F59A3;
   color: #f00;
   font-weight: bold;
   animation-iteration-count: 3;
+}
+
+.audio-feedback {
+  padding: 1rem;
+}
+.sound-warning{
+  padding: 0rem 1.5rem 1rem 1.5rem;
+  text-align: center;
+  color: white;
 }

@@ -1,6 +1,39 @@
-# frontintegri
+# Integri
 
 > Protal Integri
+
+## Certificado de HTTPS
+
+O certificados utilizam sistema da Let’s Encrypt que é um projeto colaborativo que libera certificados SSL gratuitos
+porém eles tem a duração de 3 meses na qual um novo precisa ser gerado:
+
+O link a seguir conta com o passo a passo de geração de um novo certificado para a conta do bluemix
+https://github.com/ibmjstart/bluemix-letsencrypt
+
+> ### Estrutura do arquivo domains.json:
+>{
+  "email": "aqui é inserido o email cujo as notificações do certificado",
+  "staging": false,
+  "domains": [
+    {
+      "domain": "integri.org",
+      "hosts": [
+        ".",
+        "www"
+      ]
+    }
+  ]
+}
+
+## Uso local
+
+Este projeto utiliza a biblioteca cfenv-wrapper
+https://github.com/aerwin/node-cfenv-wrapper
+
+Dois arquivos precisam ser criados com as credenciais
+estes são: 
+- env.json (credenciais bluemix)
+- env_custom.json (variaveis de ambiente)
 
 ## Uso no bluemix
 

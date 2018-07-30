@@ -4,12 +4,28 @@ export default {
   LOGIN ({ commit, state }) {
     return new Promise((resolve, reject) => {
       axios.get('/api/twitter/user').then(response => {
-        commit('SET_USER', {
-          login: response.data.login,
-          user_data: response.data.user,
-          access_denied: response.data.denied
-        })
-        resolve(true)
+        if (response.data.login) {
+          commit('SET_USER', {
+            login: response.data.login,
+            user_data: response.data.user,
+            access_denied: response.data.denied
+          })
+          if (response.data.user.medias.facebook) {
+            commit('SET_ACCESS_SOURCE', 'Facebook')
+          } else if (response.data.user.medias.twitter) {
+            commit('SET_ACCESS_SOURCE', 'Twitter')
+          } else {
+            commit('SET_ACCESS_SOURCE', 'Integri')
+          }
+          resolve(true)
+        } else {
+          commit('SET_USER', {
+            login: response.data.login,
+            user_data: null,
+            access_denied: response.data.denied
+          })
+          reject(false)
+        }
       }).catch(err => {
         commit('SET_USER', {
           login: err.data.login,
@@ -113,6 +129,15 @@ export default {
       })
     })
   },
+  LOAD_FEATURES ({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      axios('/api/dashboard/features').then(res => {
+        commit('SET_FEATURES', res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
   LOAD_STATES ({ commit, state }) {
     return new Promise((resolve, reject) => {
       axios.get('/api/sources/places').then(resp => {
@@ -122,5 +147,70 @@ export default {
         reject(err)
       })
     })
+  },
+  CONTENT_SHARE ({ commit, state }, content) {
+    return new Promise((resolve, reject) => {
+      axios.post('/api/external/shared', content).then(res => {
+        resolve(res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  SUBSCRIBE_NEWSLETTER ({ commit, state }, email) {
+    return new Promise((resolve, reject) => {
+      axios.post('/api/newsletter/subscribe', {email}).then(res => {
+        resolve(res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  GET_NEWSLETTER_SUBSCRIPTIONS ({ commit, state }, email) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/newsletter/subscriptions').then(res => {
+        commit('SET_NEWSLETTER_SUBSCRIBERS', res.data)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  DASHBOARD_GET_SHARED_CONTENT ({ commit, state }, source) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/external/content').then(resp => {
+        commit('SET_DASHBOARD_SHARED_CONTENT', resp.data)
+        resolve(true)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  DASHBOARD_SAVE_CONTENT_VIDEO ({ commit, state }, video) {
+    return axios.post('/api/dashboard/content-video', {video})
+  },
+  DASHBOARD_SAVE_CONTENT_TEXT ({ commit, state }, text) {
+    return axios.post('/api/dashboard/content-text', {text})
+  },
+  DASHBOARD_DELETE_CONTENT_VIDEO ({ commit, state }, payload) {
+    return axios.delete('/api/dashboard/remove-video/' + payload.id)
+  },
+  DASHBOARD_DELETE_CONTENT_TEXT ({ commit, state }, payload) {
+    return axios.delete('/api/dashboard/remove-text/' + payload._id)
+  },
+  DASHBOARD_DELETE_SHARED_CONTENT ({ commit, state }, payload) {
+    return axios.delete('/api/external/delete/' + payload._id)
+  },
+  DASHBOARD_LOAD_USERS ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/dashboard/users', { params: { source: payload } }).then(resp => {
+        commit('SET_DASHBOARD_USERS', resp.data)
+        resolve(true)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  DASHBOARD_SAVE_USER_CHANGES ({ commit, state }, payload) {
+    return axios.post('/api/dashboard/update-user', { user: payload })
   }
 }
