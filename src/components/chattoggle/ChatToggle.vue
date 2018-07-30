@@ -5,8 +5,7 @@
         <v-avatar tile>
           <img :src="require('@/assets/svg/home/logo_chatbot.svg')" alt="">
         </v-avatar>
-        <span v-if="!user.login" class="text-piece">Conte-nos sobre você!</span>
-        <span v-if="user.login" class="text-piece">Dúvidas? Fale conosco!</span>
+        <span class="text-piece">Conheça a Lévi, nossa Assistente Virtual!</span>
       </span>
     </v-btn>
     <div class="chat-toggle" v-if="displayChat">

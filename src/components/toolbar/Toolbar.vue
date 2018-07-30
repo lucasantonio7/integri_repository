@@ -15,7 +15,7 @@
       <v-toolbar-side-icon class="hidden-md-and-up" @click="toggleDrawer" @input="t"></v-toolbar-side-icon>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn flat :to="{ path: '/' }">Home</v-btn>
-        <v-btn href="https://parceirosvoluntarios.atados.com.br/" target="_blank">Vagas</v-btn>
+        <v-btn href="https://parceirosvoluntarios.atados.com.br/" target="_blank">Vagas de voluntariado</v-btn>
         <v-btn flat :to="{ path: '/conteudo' }">Conteúdo</v-btn>
         <v-btn flat :to="{ path: '/facaparte' }">Faça Parte</v-btn>
         <v-menu offset-x :close-on-content-click="false" :nudge-width="200" v-model="menu" v-if="user.login">

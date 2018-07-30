@@ -18,6 +18,12 @@
       <v-flex xs12>
         <chat></chat>
       </v-flex>
+      <v-flex xs12>
+        <v-btn block dark class="oppty-btn" href="https://parceirosvoluntarios.atados.com.br/" target="_blank">
+          <v-icon left>fas fa-hands-helping</v-icon>
+          <span class="text-piece">Conheça as Oportunidades de Voluntariado</span>
+        </v-btn>
+      </v-flex>
     </v-layout>
   </div>
 </template>

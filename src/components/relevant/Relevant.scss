@@ -9,3 +9,18 @@
 .load-new{
   cursor: pointer;
 }
+
+$purple: #7F59A3;;
+.oppty-btn {
+  background-color: $purple !important;
+  text-transform: none!important;
+  width: 100%;
+  height: 65px !important;
+  font-size: 1.35rem!important;
+}
+
+.fixed {
+  .btn__content {
+    justify-content: flex-start !important;
+  }
+}
